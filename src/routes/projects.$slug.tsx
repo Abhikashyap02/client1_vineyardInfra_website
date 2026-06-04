@@ -210,7 +210,7 @@ function ProjectDetail() {
               </span>
             </button>
 
-            {project.gallery.slice(1, 5).map((g, i) => (
+            {project.gallery.slice(1, 5).map((g: { src: string; label: string }, i: number) => (
               <button
                 key={i}
                 onClick={() => { setActiveImg(i + 1); setLightbox(true); }}
@@ -235,7 +235,7 @@ function ProjectDetail() {
 
           {/* Mobile thumb strip */}
           <div className="mt-3 flex gap-2 overflow-x-auto md:hidden">
-            {project.gallery.slice(1).map((g, i) => (
+            {project.gallery.slice(1).map((g: { src: string; label: string }, i: number) => (
               <button
                 key={i}
                 onClick={() => { setActiveImg(i + 1); setLightbox(true); }}

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PropertiesRouteImport } from './routes/properties'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
@@ -17,6 +18,11 @@ import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
 const PropertiesRoute = PropertiesRouteImport.update({
   id: '/properties',
   path: '/properties',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -38,12 +44,14 @@ const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/properties': typeof PropertiesRoute
   '/projects/$slug': typeof ProjectsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/properties': typeof PropertiesRoute
   '/projects/$slug': typeof ProjectsSlugRoute
 }
@@ -51,20 +59,28 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/properties': typeof PropertiesRoute
   '/projects/$slug': typeof ProjectsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/properties' | '/projects/$slug'
+  fullPaths: '/' | '/about' | '/contact' | '/properties' | '/projects/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/properties' | '/projects/$slug'
-  id: '__root__' | '/' | '/about' | '/properties' | '/projects/$slug'
+  to: '/' | '/about' | '/contact' | '/properties' | '/projects/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/contact'
+    | '/properties'
+    | '/projects/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ContactRoute: typeof ContactRoute
   PropertiesRoute: typeof PropertiesRoute
   ProjectsSlugRoute: typeof ProjectsSlugRoute
 }
@@ -76,6 +92,13 @@ declare module '@tanstack/react-router' {
       path: '/properties'
       fullPath: '/properties'
       preLoaderRoute: typeof PropertiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -105,9 +128,20 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ContactRoute: ContactRoute,
   PropertiesRoute: PropertiesRoute,
   ProjectsSlugRoute: ProjectsSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

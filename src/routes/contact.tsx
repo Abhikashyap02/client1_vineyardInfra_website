@@ -691,7 +691,7 @@ function MobileStickyBar() {
 /* ---------- Page ---------- */
 function ContactPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background pb-16 text-foreground md:pb-0">
       <HeroSection />
       <ContactCards />
       <RequirementForm />

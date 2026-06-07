@@ -149,14 +149,69 @@ const projects: Record<string, Project> = {
   },
 };
 
+const projectOverrides: Record<string, Partial<Project>> = {
+  "vineyard-high-grove": {
+    name: "Vineyard High Grove",
+    tagline: "Premium 2 & 3 BHK residences in a fast-growing corridor",
+    location: "Sahastradhara Road, Dehradun",
+    type: "Premium Apartments",
+    startingPrice: "₹78 L*",
+    possession: "Jun 2026",
+    badge: "New Launch",
+    hero: projectApartments,
+  },
+  "vineyard-crown-residences": {
+    name: "Vineyard Crown Residences",
+    tagline: "Boutique luxury apartments on Dehradun's most coveted address",
+    location: "Rajpur Road, Dehradun",
+    type: "Luxury Apartments",
+    startingPrice: "₹1.95 Cr*",
+    possession: "Ready to Move",
+    badge: "Ready to Move",
+    hero: interiorLiving,
+  },
+  "vineyard-pine-estate": {
+    name: "Vineyard Pine Estate",
+    tagline: "Limited edition forest-facing estate villas",
+    location: "Mussoorie Road, Dehradun",
+    type: "Estate Villas",
+    startingPrice: "₹3.2 Cr*",
+    possession: "Mar 2027",
+    badge: "New Launch",
+    hero: projectVilla,
+  },
+  "vineyard-green-county": {
+    name: "Vineyard Green County",
+    tagline: "RERA-approved residential plots with strong appreciation",
+    location: "Harrawala, Dehradun",
+    type: "Residential Plots",
+    startingPrice: "₹22.5 L*",
+    possession: "Ready to Register",
+    badge: "Ready to Move",
+    hero: projectPlots,
+  },
+  "vineyard-trade-centre": {
+    name: "Vineyard Trade Centre",
+    tagline: "Grade-A retail and office on a high-visibility stretch",
+    location: "Haridwar Road, Dehradun",
+    type: "Commercial",
+    startingPrice: "₹55 L*",
+    possession: "Dec 2026",
+    badge: "Under Construction",
+    hero: projectApartments,
+  },
+};
+
 const WHATSAPP = (name: string) =>
   `https://wa.me/919999999999?text=${encodeURIComponent(`Hi Vineyard Infra, I'd like to enquire about ${name}.`)}`;
 
 export const Route = createFileRoute("/projects/$slug")({
   loader: ({ params }) => {
-    const project = projects[params.slug];
-    if (!project) throw notFound();
-    return { project };
+    const base = projects["vineyard-signature-villas"];
+    if (projects[params.slug]) return { project: projects[params.slug] };
+    const override = projectOverrides[params.slug];
+    if (!override) throw notFound();
+    return { project: { ...base, slug: params.slug, ...override } as Project };
   },
   head: ({ loaderData }) => {
     const p = loaderData?.project;

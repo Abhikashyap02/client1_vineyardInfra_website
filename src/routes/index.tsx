@@ -256,9 +256,9 @@ function Home() {
                 </div>
               ))}
             </div>
-            <a href="#contact" className="mt-8 inline-flex items-center gap-2 rounded-sm px-6 py-3.5 text-sm font-semibold text-navy-deep" style={{ background: "var(--gradient-gold)" }}>
+            <Link to="/about" className="mt-8 inline-flex items-center gap-2 rounded-sm px-6 py-3.5 text-sm font-semibold text-navy-deep" style={{ background: "var(--gradient-gold)" }}>
               KNOW MORE ABOUT US <ArrowRight className="size-4" />
-            </a>
+            </Link>
           </div>
 
           <div className="flex justify-center">

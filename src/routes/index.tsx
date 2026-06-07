@@ -289,9 +289,9 @@ function Home() {
             <p className="mt-4 max-w-md text-slate-soft">
               Explore our projects in person and experience the quality, location and lifestyle.
             </p>
-            <a href="#contact" className="mt-6 inline-flex items-center gap-2 rounded-sm px-7 py-4 text-sm font-semibold text-navy-deep shadow-gold" style={{ background: "var(--gradient-gold)" }}>
+            <Link to="/contact" className="mt-6 inline-flex items-center gap-2 rounded-sm px-7 py-4 text-sm font-semibold text-navy-deep shadow-gold" style={{ background: "var(--gradient-gold)" }}>
               <Calendar className="size-4" /> BOOK SITE VISIT
-            </a>
+            </Link>
           </div>
           <div className="hidden md:block">
             <Calendar className="size-28 text-gold/20" strokeWidth={1} />

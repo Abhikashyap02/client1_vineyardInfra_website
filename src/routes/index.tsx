@@ -23,12 +23,17 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const navLinks = ["Home", "Projects", "About Us", "Insights", "Contact"];
+const navLinks: { label: string; to: "/" | "/properties" | "/about" | "/contact" }[] = [
+  { label: "Home", to: "/" },
+  { label: "Projects", to: "/properties" },
+  { label: "About Us", to: "/about" },
+  { label: "Contact", to: "/contact" },
+];
 
 const projects = [
-  { tag: "NEW LAUNCH", type: "Villas", name: "Vineyard Signature Villas", location: "Mussoorie Road, Dehradun", price: "₹1.45 Cr*", bhk: "3, 4 BHK", bath: "2-4 BHK", area: "2200 - 3000 Sq.Ft.", img: projectVilla },
-  { tag: "PREMIUM", type: "Apartments", name: "Vineyard High Grove", location: "Sahastradhara Road, Dehradun", price: "₹78 L*", bhk: "2, 3 BHK", bath: "2, 3 BHK", area: "1200 - 1950 Sq.Ft.", img: projectApartments },
-  { tag: "ONGOING", type: "Plots", name: "Vineyard Green County", location: "Harrawala, Dehradun", price: "₹22.5 L*", bhk: "Residential Plots", bath: "—", area: "100 - 300 Sq.Yd.", img: projectPlots },
+  { slug: "vineyard-signature-villas", tag: "NEW LAUNCH", type: "Villas", name: "Vineyard Signature Villas", location: "Mussoorie Road, Dehradun", price: "₹1.45 Cr*", bhk: "3, 4 BHK", bath: "2-4 BHK", area: "2200 - 3000 Sq.Ft.", img: projectVilla },
+  { slug: "vineyard-high-grove", tag: "PREMIUM", type: "Apartments", name: "Vineyard High Grove", location: "Sahastradhara Road, Dehradun", price: "₹78 L*", bhk: "2, 3 BHK", bath: "2, 3 BHK", area: "1200 - 1950 Sq.Ft.", img: projectApartments },
+  { slug: "vineyard-green-county", tag: "ONGOING", type: "Plots", name: "Vineyard Green County", location: "Harrawala, Dehradun", price: "₹22.5 L*", bhk: "Residential Plots", bath: "—", area: "100 - 300 Sq.Yd.", img: projectPlots },
 ];
 
 const stats = [

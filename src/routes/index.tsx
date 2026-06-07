@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Phone, Mail, MapPin, Calendar, Search, Play, ArrowRight, MessageCircle,
   Bed, Maximize, Building2, ShieldCheck, Sparkles, HandCoins, Headset,

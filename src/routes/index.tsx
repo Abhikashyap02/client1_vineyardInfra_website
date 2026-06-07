@@ -374,7 +374,7 @@ function Home() {
           <div>
             <h4 className="mb-5 text-sm font-semibold tracking-[0.2em] text-gold">QUICK LINKS</h4>
             <ul className="space-y-3 text-sm text-white/70">
-              {navLinks.map((l) => <li key={l}><a href="#" className="hover:text-gold">{l}</a></li>)}
+              {navLinks.map((l) => <li key={l.label}><Link to={l.to} className="hover:text-gold">{l.label}</Link></li>)}
             </ul>
           </div>
 

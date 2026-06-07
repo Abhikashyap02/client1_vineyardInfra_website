@@ -402,9 +402,9 @@ function PropertyCard({ p }: { p: Property }) {
           <a href="#sitevisit" className="inline-flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg text-muted-foreground hover:text-navy-deep">
             Quick Inquiry
           </a>
-          <a href="#sitevisit" className="inline-flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg text-gold hover:underline">
+          <Link to="/projects/$slug" params={{ slug: p.slug }} className="inline-flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg text-gold hover:underline">
             View Details <ArrowRight className="w-3.5 h-3.5" />
-          </a>
+          </Link>
         </div>
       </div>
     </article>

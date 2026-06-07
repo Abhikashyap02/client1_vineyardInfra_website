@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
   Search, MapPin, Building2, ShieldCheck, Sparkles, Headset,
@@ -25,6 +25,7 @@ export const Route = createFileRoute("/properties")({
 
 type Property = {
   id: string;
+  slug: string;
   name: string;
   location: string;
   type: "Villa" | "Apartment" | "Plot" | "Commercial";
@@ -42,12 +43,12 @@ type Property = {
 };
 
 const properties: Property[] = [
-  { id: "p1", name: "Vineyard Signature Villas", location: "Mussoorie Road, Dehradun", type: "Villa", category: "Luxury", status: "Ongoing", priceMin: 145, priceLabel: "₹1.45 Cr*", area: "2200 – 3000 Sq.Ft.", bhk: "3, 4 BHK", amenities: ["Clubhouse", "Pool", "Landscaped Gardens"], desc: "Hill-view luxury villas with private decks and curated interiors.", tags: ["Featured", "Hot Property"], img: projectVilla, featured: true },
-  { id: "p2", name: "Vineyard High Grove", location: "Sahastradhara Road, Dehradun", type: "Apartment", category: "Residential", status: "Under Construction", priceMin: 78, priceLabel: "₹78 L*", area: "1200 – 1950 Sq.Ft.", bhk: "2, 3 BHK", amenities: ["Gym", "Rooftop Lounge", "Kids' Play"], desc: "Premium 2 & 3 BHK residences in Dehradun's fastest growing corridor.", tags: ["New Launch"], img: projectApartments, featured: true },
-  { id: "p3", name: "Vineyard Green County", location: "Harrawala, Dehradun", type: "Plot", category: "Investment", status: "Ready to Move", priceMin: 22, priceLabel: "₹22.5 L*", area: "100 – 300 Sq.Yd.", bhk: "Residential Plots", amenities: ["Gated", "Wide Roads", "Underground Utilities"], desc: "RERA-approved residential plots with strong appreciation potential.", tags: ["Investment Opportunity"], img: projectPlots },
-  { id: "p4", name: "Vineyard Crown Residences", location: "Rajpur Road, Dehradun", type: "Apartment", category: "Luxury", status: "Ready to Move", priceMin: 195, priceLabel: "₹1.95 Cr*", area: "1800 – 2600 Sq.Ft.", bhk: "3, 4 BHK", amenities: ["Concierge", "Spa", "Sky Lounge"], desc: "Boutique luxury apartments on Dehradun's most coveted address.", tags: ["Featured", "Hot Property"], img: interiorLiving, featured: true },
-  { id: "p5", name: "Vineyard Pine Estate", location: "Mussoorie Road, Dehradun", type: "Villa", category: "Luxury", status: "Upcoming", priceMin: 320, priceLabel: "₹3.2 Cr*", area: "3500 – 4800 Sq.Ft.", bhk: "4, 5 BHK", amenities: ["Private Pool", "Home Theatre", "Smart Home"], desc: "Limited edition forest-facing estate villas for discerning families.", tags: ["New Launch"], img: heroProperty },
-  { id: "p6", name: "Vineyard Trade Centre", location: "Haridwar Road, Dehradun", type: "Commercial", category: "Commercial", status: "Under Construction", priceMin: 55, priceLabel: "₹55 L*", area: "450 – 1800 Sq.Ft.", bhk: "Retail / Office", amenities: ["High Footfall", "Ample Parking", "Power Backup"], desc: "Grade-A retail and office spaces on a high-visibility commercial stretch.", tags: ["Investment Opportunity"], img: projectApartments },
+  { id: "p1", slug: "vineyard-signature-villas", name: "Vineyard Signature Villas", location: "Mussoorie Road, Dehradun", type: "Villa", category: "Luxury", status: "Ongoing", priceMin: 145, priceLabel: "₹1.45 Cr*", area: "2200 – 3000 Sq.Ft.", bhk: "3, 4 BHK", amenities: ["Clubhouse", "Pool", "Landscaped Gardens"], desc: "Hill-view luxury villas with private decks and curated interiors.", tags: ["Featured", "Hot Property"], img: projectVilla, featured: true },
+  { id: "p2", slug: "vineyard-high-grove", name: "Vineyard High Grove", location: "Sahastradhara Road, Dehradun", type: "Apartment", category: "Residential", status: "Under Construction", priceMin: 78, priceLabel: "₹78 L*", area: "1200 – 1950 Sq.Ft.", bhk: "2, 3 BHK", amenities: ["Gym", "Rooftop Lounge", "Kids' Play"], desc: "Premium 2 & 3 BHK residences in Dehradun's fastest growing corridor.", tags: ["New Launch"], img: projectApartments, featured: true },
+  { id: "p3", slug: "vineyard-green-county", name: "Vineyard Green County", location: "Harrawala, Dehradun", type: "Plot", category: "Investment", status: "Ready to Move", priceMin: 22, priceLabel: "₹22.5 L*", area: "100 – 300 Sq.Yd.", bhk: "Residential Plots", amenities: ["Gated", "Wide Roads", "Underground Utilities"], desc: "RERA-approved residential plots with strong appreciation potential.", tags: ["Investment Opportunity"], img: projectPlots },
+  { id: "p4", slug: "vineyard-crown-residences", name: "Vineyard Crown Residences", location: "Rajpur Road, Dehradun", type: "Apartment", category: "Luxury", status: "Ready to Move", priceMin: 195, priceLabel: "₹1.95 Cr*", area: "1800 – 2600 Sq.Ft.", bhk: "3, 4 BHK", amenities: ["Concierge", "Spa", "Sky Lounge"], desc: "Boutique luxury apartments on Dehradun's most coveted address.", tags: ["Featured", "Hot Property"], img: interiorLiving, featured: true },
+  { id: "p5", slug: "vineyard-pine-estate", name: "Vineyard Pine Estate", location: "Mussoorie Road, Dehradun", type: "Villa", category: "Luxury", status: "Upcoming", priceMin: 320, priceLabel: "₹3.2 Cr*", area: "3500 – 4800 Sq.Ft.", bhk: "4, 5 BHK", amenities: ["Private Pool", "Home Theatre", "Smart Home"], desc: "Limited edition forest-facing estate villas for discerning families.", tags: ["New Launch"], img: heroProperty },
+  { id: "p6", slug: "vineyard-trade-centre", name: "Vineyard Trade Centre", location: "Haridwar Road, Dehradun", type: "Commercial", category: "Commercial", status: "Under Construction", priceMin: 55, priceLabel: "₹55 L*", area: "450 – 1800 Sq.Ft.", bhk: "Retail / Office", amenities: ["High Footfall", "Ample Parking", "Power Backup"], desc: "Grade-A retail and office spaces on a high-visibility commercial stretch.", tags: ["Investment Opportunity"], img: projectApartments },
 ];
 
 const trustChips = ["Verified Listings", "Expert Guidance", "Transparent Process", "End-to-End Support"];
@@ -117,15 +118,15 @@ function PropertiesPage() {
       {/* Top bar */}
       <header className="sticky top-0 z-40 backdrop-blur-md bg-background/85 border-b border-border">
         <div className="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-md bg-navy-deep grid place-content-center text-gold font-display font-bold">V</div>
             <span className="font-display font-semibold tracking-tight">Vineyard Infra</span>
-          </a>
+          </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
-            <a href="/" className="hover:text-foreground">Home</a>
-            <a href="/properties" className="text-foreground font-medium">Properties</a>
-            <a href="#why" className="hover:text-foreground">Why Us</a>
-            <a href="#contact" className="hover:text-foreground">Contact</a>
+            <Link to="/" className="hover:text-foreground">Home</Link>
+            <Link to="/properties" className="text-foreground font-medium">Properties</Link>
+            <Link to="/about" className="hover:text-foreground">About</Link>
+            <Link to="/contact" className="hover:text-foreground">Contact</Link>
           </nav>
           <a href="tel:+919999999999" className="hidden sm:inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full bg-navy-deep text-primary-foreground hover:opacity-90">
             <Phone className="w-4 h-4" /> Call Advisor
@@ -401,9 +402,9 @@ function PropertyCard({ p }: { p: Property }) {
           <a href="#sitevisit" className="inline-flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg text-muted-foreground hover:text-navy-deep">
             Quick Inquiry
           </a>
-          <a href="#sitevisit" className="inline-flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg text-gold hover:underline">
+          <Link to="/projects/$slug" params={{ slug: p.slug }} className="inline-flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg text-gold hover:underline">
             View Details <ArrowRight className="w-3.5 h-3.5" />
-          </a>
+          </Link>
         </div>
       </div>
     </article>
@@ -427,9 +428,9 @@ function FeaturedCard({ p }: { p: Property }) {
           </p>
           <div className="mt-4 flex items-center justify-between">
             <span className="font-display font-semibold text-gold">{p.priceLabel}</span>
-            <a href="#sitevisit" className="text-xs inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white text-navy-deep font-medium">
-              Enquire <ArrowRight className="w-3 h-3" />
-            </a>
+            <Link to="/projects/$slug" params={{ slug: p.slug }} className="text-xs inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white text-navy-deep font-medium">
+              View <ArrowRight className="w-3 h-3" />
+            </Link>
           </div>
         </div>
       </div>

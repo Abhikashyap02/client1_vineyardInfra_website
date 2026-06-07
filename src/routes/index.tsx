@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Phone, Mail, MapPin, Calendar, Search, Play, ArrowRight, MessageCircle,
   Bed, Maximize, Building2, ShieldCheck, Sparkles, HandCoins, Headset,
@@ -23,12 +23,17 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const navLinks = ["Home", "Projects", "About Us", "Insights", "Contact"];
+const navLinks: { label: string; to: "/" | "/properties" | "/about" | "/contact" }[] = [
+  { label: "Home", to: "/" },
+  { label: "Projects", to: "/properties" },
+  { label: "About Us", to: "/about" },
+  { label: "Contact", to: "/contact" },
+];
 
 const projects = [
-  { tag: "NEW LAUNCH", type: "Villas", name: "Vineyard Signature Villas", location: "Mussoorie Road, Dehradun", price: "₹1.45 Cr*", bhk: "3, 4 BHK", bath: "2-4 BHK", area: "2200 - 3000 Sq.Ft.", img: projectVilla },
-  { tag: "PREMIUM", type: "Apartments", name: "Vineyard High Grove", location: "Sahastradhara Road, Dehradun", price: "₹78 L*", bhk: "2, 3 BHK", bath: "2, 3 BHK", area: "1200 - 1950 Sq.Ft.", img: projectApartments },
-  { tag: "ONGOING", type: "Plots", name: "Vineyard Green County", location: "Harrawala, Dehradun", price: "₹22.5 L*", bhk: "Residential Plots", bath: "—", area: "100 - 300 Sq.Yd.", img: projectPlots },
+  { slug: "vineyard-signature-villas", tag: "NEW LAUNCH", type: "Villas", name: "Vineyard Signature Villas", location: "Mussoorie Road, Dehradun", price: "₹1.45 Cr*", bhk: "3, 4 BHK", bath: "2-4 BHK", area: "2200 - 3000 Sq.Ft.", img: projectVilla },
+  { slug: "vineyard-high-grove", tag: "PREMIUM", type: "Apartments", name: "Vineyard High Grove", location: "Sahastradhara Road, Dehradun", price: "₹78 L*", bhk: "2, 3 BHK", bath: "2, 3 BHK", area: "1200 - 1950 Sq.Ft.", img: projectApartments },
+  { slug: "vineyard-green-county", tag: "ONGOING", type: "Plots", name: "Vineyard Green County", location: "Harrawala, Dehradun", price: "₹22.5 L*", bhk: "Residential Plots", bath: "—", area: "100 - 300 Sq.Yd.", img: projectPlots },
 ];
 
 const stats = [
@@ -64,24 +69,24 @@ function Home() {
         {/* Header */}
         <header className="relative z-20">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-            <a href="#" className="flex items-center gap-3 text-white">
+            <Link to="/" className="flex items-center gap-3 text-white">
               <div className="grid size-11 place-items-center rounded-sm border border-gold/40 font-display text-gold text-lg">V</div>
               <div className="leading-tight">
                 <div className="font-display text-lg font-bold tracking-wide">VINEYARD</div>
                 <div className="text-[10px] tracking-[0.4em] text-gold">INFRA</div>
               </div>
-            </a>
+            </Link>
             <nav className="hidden items-center gap-9 text-sm font-medium text-white/85 lg:flex">
               {navLinks.map((l, i) => (
-                <a key={l} href="#" className={`hover:text-gold transition-colors ${i === 0 ? "text-white" : ""}`}>
-                  {l.toUpperCase()}
-                </a>
+                <Link key={l.label} to={l.to} className={`hover:text-gold transition-colors ${i === 0 ? "text-white" : ""}`}>
+                  {l.label.toUpperCase()}
+                </Link>
               ))}
             </nav>
             <div className="flex items-center gap-3">
-              <a href="#contact" className="hidden items-center gap-2 rounded-sm bg-gradient-gold px-5 py-3 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105 md:inline-flex" style={{ background: "var(--gradient-gold)" }}>
+              <Link to="/contact" className="hidden items-center gap-2 rounded-sm bg-gradient-gold px-5 py-3 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105 md:inline-flex" style={{ background: "var(--gradient-gold)" }}>
                 <Calendar className="size-4" /> BOOK SITE VISIT
-              </a>
+              </Link>
               <button className="grid size-11 place-items-center rounded-sm border border-white/20 text-white lg:hidden">
                 <Menu className="size-5" />
               </button>
@@ -101,12 +106,12 @@ function Home() {
               Curated real estate opportunities in Dehradun backed by market expertise and honest advice.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <a href="#projects" className="inline-flex items-center gap-2 rounded-sm px-7 py-4 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105" style={{ background: "var(--gradient-gold)" }}>
+              <Link to="/properties" className="inline-flex items-center gap-2 rounded-sm px-7 py-4 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105" style={{ background: "var(--gradient-gold)" }}>
                 EXPLORE PROJECTS <ArrowRight className="size-4" />
-              </a>
-              <a href="#contact" className="inline-flex items-center gap-2 rounded-sm border border-white/30 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10">
+              </Link>
+              <Link to="/contact" className="inline-flex items-center gap-2 rounded-sm border border-white/30 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10">
                 <Calendar className="size-4" /> BOOK SITE VISIT
-              </a>
+              </Link>
             </div>
 
             <div className="mt-14 flex items-center gap-6">
@@ -147,7 +152,7 @@ function Home() {
             <h3 className="font-display text-2xl font-semibold text-navy-deep md:text-3xl">
               Find Your <span className="font-italic-serif text-gold">Perfect</span> Property
             </h3>
-            <a href="#projects" className="text-sm font-semibold text-gold hover:underline">View All Projects →</a>
+            <Link to="/properties" className="text-sm font-semibold text-gold hover:underline">View All Projects →</Link>
           </div>
           <div className="grid gap-4 md:grid-cols-5">
             {[
@@ -212,15 +217,15 @@ function Home() {
                   </div>
                 </div>
                 <div className="mt-5 flex items-center justify-between border-t border-border pt-4 text-xs font-semibold">
-                  <button className="flex items-center gap-1 text-navy-deep transition hover:text-gold">
+                  <Link to="/projects/$slug" params={{ slug: p.slug }} className="flex items-center gap-1 text-navy-deep transition hover:text-gold">
                     VIEW DETAILS <ArrowRight className="size-3.5" />
-                  </button>
-                  <button className="flex items-center gap-1.5 text-navy-deep transition hover:text-gold">
+                  </Link>
+                  <a href={`https://wa.me/919999999999?text=${encodeURIComponent(`Hi Vineyard Infra, I'd like to enquire about ${p.name}.`)}`} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-navy-deep transition hover:text-gold">
                     GET IN TOUCH
                     <span className="grid size-6 place-items-center rounded-full bg-[#25D366] text-white">
                       <MessageCircle className="size-3" />
                     </span>
-                  </button>
+                  </a>
                 </div>
               </div>
             </article>
@@ -251,9 +256,9 @@ function Home() {
                 </div>
               ))}
             </div>
-            <a href="#contact" className="mt-8 inline-flex items-center gap-2 rounded-sm px-6 py-3.5 text-sm font-semibold text-navy-deep" style={{ background: "var(--gradient-gold)" }}>
+            <Link to="/about" className="mt-8 inline-flex items-center gap-2 rounded-sm px-6 py-3.5 text-sm font-semibold text-navy-deep" style={{ background: "var(--gradient-gold)" }}>
               KNOW MORE ABOUT US <ArrowRight className="size-4" />
-            </a>
+            </Link>
           </div>
 
           <div className="flex justify-center">
@@ -284,9 +289,9 @@ function Home() {
             <p className="mt-4 max-w-md text-slate-soft">
               Explore our projects in person and experience the quality, location and lifestyle.
             </p>
-            <a href="#contact" className="mt-6 inline-flex items-center gap-2 rounded-sm px-7 py-4 text-sm font-semibold text-navy-deep shadow-gold" style={{ background: "var(--gradient-gold)" }}>
+            <Link to="/contact" className="mt-6 inline-flex items-center gap-2 rounded-sm px-7 py-4 text-sm font-semibold text-navy-deep shadow-gold" style={{ background: "var(--gradient-gold)" }}>
               <Calendar className="size-4" /> BOOK SITE VISIT
-            </a>
+            </Link>
           </div>
           <div className="hidden md:block">
             <Calendar className="size-28 text-gold/20" strokeWidth={1} />
@@ -369,7 +374,7 @@ function Home() {
           <div>
             <h4 className="mb-5 text-sm font-semibold tracking-[0.2em] text-gold">QUICK LINKS</h4>
             <ul className="space-y-3 text-sm text-white/70">
-              {navLinks.map((l) => <li key={l}><a href="#" className="hover:text-gold">{l}</a></li>)}
+              {navLinks.map((l) => <li key={l.label}><Link to={l.to} className="hover:text-gold">{l.label}</Link></li>)}
             </ul>
           </div>
 

@@ -152,7 +152,7 @@ function Home() {
             <h3 className="font-display text-2xl font-semibold text-navy-deep md:text-3xl">
               Find Your <span className="font-italic-serif text-gold">Perfect</span> Property
             </h3>
-            <a href="#projects" className="text-sm font-semibold text-gold hover:underline">View All Projects →</a>
+            <Link to="/properties" className="text-sm font-semibold text-gold hover:underline">View All Projects →</Link>
           </div>
           <div className="grid gap-4 md:grid-cols-5">
             {[

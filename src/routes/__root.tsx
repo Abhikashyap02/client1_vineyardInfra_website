@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Vineyard sample website" },
+      { name: "description", content: "Vineyard Infra is a premium real estate website designed for lead generation and property discovery." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Vineyard sample website" },
+      { property: "og:description", content: "Vineyard Infra is a premium real estate website designed for lead generation and property discovery." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Vineyard sample website" },
+      { name: "twitter:description", content: "Vineyard Infra is a premium real estate website designed for lead generation and property discovery." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cbbcfd75-b0b0-478e-8129-4908b926db61/id-preview-c98b78ae--de1e6ad6-be74-4fe7-bced-af0d4d7161ad.lovable.app-1780815264825.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cbbcfd75-b0b0-478e-8129-4908b926db61/id-preview-c98b78ae--de1e6ad6-be74-4fe7-bced-af0d4d7161ad.lovable.app-1780815264825.png" },
     ],
     links: [
       {

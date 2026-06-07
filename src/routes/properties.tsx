@@ -118,15 +118,15 @@ function PropertiesPage() {
       {/* Top bar */}
       <header className="sticky top-0 z-40 backdrop-blur-md bg-background/85 border-b border-border">
         <div className="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-md bg-navy-deep grid place-content-center text-gold font-display font-bold">V</div>
             <span className="font-display font-semibold tracking-tight">Vineyard Infra</span>
-          </a>
+          </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
-            <a href="/" className="hover:text-foreground">Home</a>
-            <a href="/properties" className="text-foreground font-medium">Properties</a>
-            <a href="#why" className="hover:text-foreground">Why Us</a>
-            <a href="#contact" className="hover:text-foreground">Contact</a>
+            <Link to="/" className="hover:text-foreground">Home</Link>
+            <Link to="/properties" className="text-foreground font-medium">Properties</Link>
+            <Link to="/about" className="hover:text-foreground">About</Link>
+            <Link to="/contact" className="hover:text-foreground">Contact</Link>
           </nav>
           <a href="tel:+919999999999" className="hidden sm:inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full bg-navy-deep text-primary-foreground hover:opacity-90">
             <Phone className="w-4 h-4" /> Call Advisor

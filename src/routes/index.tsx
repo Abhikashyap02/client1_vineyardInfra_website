@@ -217,15 +217,15 @@ function Home() {
                   </div>
                 </div>
                 <div className="mt-5 flex items-center justify-between border-t border-border pt-4 text-xs font-semibold">
-                  <button className="flex items-center gap-1 text-navy-deep transition hover:text-gold">
+                  <Link to="/projects/$slug" params={{ slug: p.slug }} className="flex items-center gap-1 text-navy-deep transition hover:text-gold">
                     VIEW DETAILS <ArrowRight className="size-3.5" />
-                  </button>
-                  <button className="flex items-center gap-1.5 text-navy-deep transition hover:text-gold">
+                  </Link>
+                  <a href={`https://wa.me/919999999999?text=${encodeURIComponent(`Hi Vineyard Infra, I'd like to enquire about ${p.name}.`)}`} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-navy-deep transition hover:text-gold">
                     GET IN TOUCH
                     <span className="grid size-6 place-items-center rounded-full bg-[#25D366] text-white">
                       <MessageCircle className="size-3" />
                     </span>
-                  </button>
+                  </a>
                 </div>
               </div>
             </article>

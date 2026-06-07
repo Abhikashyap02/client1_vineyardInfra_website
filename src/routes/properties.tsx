@@ -428,9 +428,9 @@ function FeaturedCard({ p }: { p: Property }) {
           </p>
           <div className="mt-4 flex items-center justify-between">
             <span className="font-display font-semibold text-gold">{p.priceLabel}</span>
-            <a href="#sitevisit" className="text-xs inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white text-navy-deep font-medium">
-              Enquire <ArrowRight className="w-3 h-3" />
-            </a>
+            <Link to="/projects/$slug" params={{ slug: p.slug }} className="text-xs inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white text-navy-deep font-medium">
+              View <ArrowRight className="w-3 h-3" />
+            </Link>
           </div>
         </div>
       </div>

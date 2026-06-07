@@ -103,7 +103,7 @@ function TopNav() {
           <Link to="/" className="hover:text-gold transition-colors">Home</Link>
           <Link to="/properties" className="hover:text-gold transition-colors">Properties</Link>
           <Link to="/about" className="text-gold">About</Link>
-          <a href="#contact" className="hover:text-gold transition-colors">Contact</a>
+          <Link to="/contact" className="hover:text-gold transition-colors">Contact</Link>
         </nav>
         <Button className="bg-gold text-navy-deep hover:bg-gold-soft hidden md:inline-flex">
           <Phone className="h-4 w-4" /> +91 98765 43210

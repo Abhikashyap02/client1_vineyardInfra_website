@@ -106,12 +106,12 @@ function Home() {
               Curated real estate opportunities in Dehradun backed by market expertise and honest advice.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <a href="#projects" className="inline-flex items-center gap-2 rounded-sm px-7 py-4 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105" style={{ background: "var(--gradient-gold)" }}>
+              <Link to="/properties" className="inline-flex items-center gap-2 rounded-sm px-7 py-4 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105" style={{ background: "var(--gradient-gold)" }}>
                 EXPLORE PROJECTS <ArrowRight className="size-4" />
-              </a>
-              <a href="#contact" className="inline-flex items-center gap-2 rounded-sm border border-white/30 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10">
+              </Link>
+              <Link to="/contact" className="inline-flex items-center gap-2 rounded-sm border border-white/30 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10">
                 <Calendar className="size-4" /> BOOK SITE VISIT
-              </a>
+              </Link>
             </div>
 
             <div className="mt-14 flex items-center gap-6">

@@ -69,24 +69,24 @@ function Home() {
         {/* Header */}
         <header className="relative z-20">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-            <a href="#" className="flex items-center gap-3 text-white">
+            <Link to="/" className="flex items-center gap-3 text-white">
               <div className="grid size-11 place-items-center rounded-sm border border-gold/40 font-display text-gold text-lg">V</div>
               <div className="leading-tight">
                 <div className="font-display text-lg font-bold tracking-wide">VINEYARD</div>
                 <div className="text-[10px] tracking-[0.4em] text-gold">INFRA</div>
               </div>
-            </a>
+            </Link>
             <nav className="hidden items-center gap-9 text-sm font-medium text-white/85 lg:flex">
               {navLinks.map((l, i) => (
-                <a key={l} href="#" className={`hover:text-gold transition-colors ${i === 0 ? "text-white" : ""}`}>
-                  {l.toUpperCase()}
-                </a>
+                <Link key={l.label} to={l.to} className={`hover:text-gold transition-colors ${i === 0 ? "text-white" : ""}`}>
+                  {l.label.toUpperCase()}
+                </Link>
               ))}
             </nav>
             <div className="flex items-center gap-3">
-              <a href="#contact" className="hidden items-center gap-2 rounded-sm bg-gradient-gold px-5 py-3 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105 md:inline-flex" style={{ background: "var(--gradient-gold)" }}>
+              <Link to="/contact" className="hidden items-center gap-2 rounded-sm bg-gradient-gold px-5 py-3 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105 md:inline-flex" style={{ background: "var(--gradient-gold)" }}>
                 <Calendar className="size-4" /> BOOK SITE VISIT
-              </a>
+              </Link>
               <button className="grid size-11 place-items-center rounded-sm border border-white/20 text-white lg:hidden">
                 <Menu className="size-5" />
               </button>

@@ -361,7 +361,8 @@ function TopNav({ projectName }: { projectName: string }) {
         <nav className="hidden gap-6 text-sm text-white/80 md:flex">
           <Link to="/" className="hover:text-gold">Home</Link>
           <Link to="/properties" className="hover:text-gold">Properties</Link>
-          <span className="text-gold">{projectName}</span>
+          <Link to="/about" className="hover:text-gold">About</Link>
+          <Link to="/contact" className="hover:text-gold">Contact</Link>
         </nav>
         <a href="tel:+919999999999" className="inline-flex items-center gap-2 rounded-md bg-gold px-3 py-1.5 text-xs font-semibold text-navy-deep hover:opacity-90">
           <Phone className="h-3.5 w-3.5" /> Call Advisor

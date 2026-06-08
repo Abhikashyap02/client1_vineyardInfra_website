@@ -318,12 +318,15 @@ function ProjectDetail() {
           <div className="lg:col-span-2 space-y-12">
             <Overview project={project} wa={wa} />
             <Highlights project={project} />
+            <WhyInvest />
             <Configurations project={project} />
             <Description project={project} />
             <Amenities project={project} />
             <FloorPlan project={project} />
             <Location project={project} />
             <Walkthrough project={project} />
+            <BrochureSection projectName={project.name} />
+            <SiteVisitSection projectName={project.name} />
             <Investment project={project} />
             <Testimonials />
             <FAQ items={project.faqs} open={openFaq} setOpen={setOpenFaq} />

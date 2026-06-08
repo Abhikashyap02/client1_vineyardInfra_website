@@ -6,7 +6,7 @@ import {
   ShieldCheck, Sparkles, TrendingUp, Trees, Dumbbell, Waves, Users,
   PlayCircle, Download, Star, ChevronDown, Check, FileText, Home,
   GraduationCap, HeartPulse, ShoppingBag, Plane, Briefcase, Camera,
-  Image as ImageIcon, BadgeCheck, Quote,
+  Image as ImageIcon, BadgeCheck, Quote, Award, IndianRupee, Layers, KeyRound, Clock,
 } from "lucide-react";
 import propertyHero from "@/assets/property-hero.jpg";
 import propertyBedroom from "@/assets/property-bedroom.jpg";

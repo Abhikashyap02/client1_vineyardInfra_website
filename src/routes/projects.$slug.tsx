@@ -6,7 +6,7 @@ import {
   ShieldCheck, Sparkles, TrendingUp, Trees, Dumbbell, Waves, Users,
   PlayCircle, Download, Star, ChevronDown, Check, FileText, Home,
   GraduationCap, HeartPulse, ShoppingBag, Plane, Briefcase, Camera,
-  Image as ImageIcon, BadgeCheck, Quote,
+  Image as ImageIcon, BadgeCheck, Quote, Award, IndianRupee, Layers, KeyRound, Clock,
 } from "lucide-react";
 import propertyHero from "@/assets/property-hero.jpg";
 import propertyBedroom from "@/assets/property-bedroom.jpg";
@@ -318,12 +318,15 @@ function ProjectDetail() {
           <div className="lg:col-span-2 space-y-12">
             <Overview project={project} wa={wa} />
             <Highlights project={project} />
+            <WhyInvest />
             <Configurations project={project} />
             <Description project={project} />
             <Amenities project={project} />
             <FloorPlan project={project} />
             <Location project={project} />
             <Walkthrough project={project} />
+            <BrochureSection projectName={project.name} />
+            <SiteVisitSection projectName={project.name} />
             <Investment project={project} />
             <Testimonials />
             <FAQ items={project.faqs} open={openFaq} setOpen={setOpenFaq} />
@@ -929,3 +932,149 @@ function MobileSticky({ wa }: { wa: string }) {
     </div>
   );
 }
+
+
+function WhyInvest() {
+  const reasons = [
+    { icon: MapPin, title: "Prime Location", body: "Anchored on Dehradun's most aspirational corridor with sustained demand and limited new launches." },
+    { icon: TrendingUp, title: "Future Appreciation", body: "12–15% YoY price growth backed by 5-year trend and strong absorption rates." },
+    { icon: Layers, title: "Infrastructure Growth", body: "₹2,400 Cr+ sanctioned for roads, metro feeder, and utility upgrades around the project." },
+    { icon: IndianRupee, title: "Rental Potential", body: "₹55K–₹85K/month rental demand from HNI families, expats, and corporate tenants." },
+    { icon: Sparkles, title: "Premium Lifestyle", body: "Curated interiors, clubhouse, landscaped greens — designed for everyday luxury." },
+    { icon: Award, title: "Developer Reputation", body: "12+ years, 500+ happy families, RERA-compliant, and Grade-A construction partners." },
+  ];
+  return (
+    <div>
+      <SectionTitle kicker="Investment Edge" title="Why This Project Stands Out" desc="Six reasons buyers and investors choose this project over comparable launches in Dehradun." />
+      <div className="grid gap-4 md:grid-cols-3">
+        {reasons.map((r) => (
+          <div key={r.title} className="group rounded-xl border border-navy-deep/10 bg-white p-5 transition-shadow hover:shadow-card">
+            <span className="grid h-11 w-11 place-items-center rounded-full bg-gold/15 text-gold transition-transform group-hover:scale-110">
+              <r.icon className="h-5 w-5" />
+            </span>
+            <h3 className="mt-4 font-display text-base font-semibold text-navy-deep">{r.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-soft">{r.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BrochureSection({ projectName }: { projectName: string }) {
+  const [unlocked, setUnlocked] = useState(false);
+  return (
+    <div id="brochure" className="overflow-hidden rounded-2xl border border-gold/30 bg-gradient-to-br from-warm-bg to-white shadow-card">
+      <div className="grid gap-6 p-6 md:grid-cols-2 md:p-8">
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Project Brochure</div>
+          <h2 className="mt-1 font-display text-2xl font-bold text-navy-deep md:text-3xl">Download Complete Project Brochure</h2>
+          <p className="mt-3 text-sm leading-relaxed text-slate-soft">
+            Get the official {projectName} brochure with floor plans, pricing, payment schedules, amenity details, and master plan. Unlocks instantly after a quick verification.
+          </p>
+          <ul className="mt-4 space-y-2 text-sm text-navy-deep">
+            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-gold" /> All unit configurations & sizes</li>
+            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-gold" /> Transparent pricing & payment plans</li>
+            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-gold" /> Amenities, specs & master plan</li>
+            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-gold" /> RERA & legal documentation</li>
+          </ul>
+        </div>
+        <form
+          onSubmit={(e) => { e.preventDefault(); setUnlocked(true); }}
+          className="rounded-xl border border-navy-deep/10 bg-white p-5"
+        >
+          <div className="flex items-center gap-2 text-navy-deep">
+            <FileText className="h-5 w-5 text-gold" />
+            <h3 className="font-display text-base font-semibold">Unlock Brochure</h3>
+          </div>
+          <div className="mt-4 space-y-3">
+            <input required placeholder="Your Name" className="w-full rounded-md border border-navy-deep/15 bg-white px-3 py-2.5 text-sm outline-none focus:border-gold" />
+            <input required type="tel" placeholder="Phone Number" className="w-full rounded-md border border-navy-deep/15 bg-white px-3 py-2.5 text-sm outline-none focus:border-gold" />
+            <input required type="email" placeholder="Email Address" className="w-full rounded-md border border-navy-deep/15 bg-white px-3 py-2.5 text-sm outline-none focus:border-gold" />
+          </div>
+          {unlocked ? (
+            <a href="#" className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-emerald-600 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-700">
+              <Download className="h-4 w-4" /> Brochure Unlocked — Download Now
+            </a>
+          ) : (
+            <button type="submit" className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-navy-deep px-4 py-3 text-sm font-semibold text-white hover:bg-navy">
+              <Download className="h-4 w-4" /> Download Brochure
+            </button>
+          )}
+          <p className="mt-3 text-[10px] text-slate-soft text-center">
+            <ShieldCheck className="mr-1 inline h-3 w-3 text-gold" /> Your details stay confidential. No spam, ever.
+          </p>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function SiteVisitSection({ projectName }: { projectName: string }) {
+  const [booked, setBooked] = useState(false);
+  const times = ["10:00 AM", "11:30 AM", "1:00 PM", "3:00 PM", "4:30 PM", "6:00 PM"];
+  const [time, setTime] = useState(times[0]);
+  return (
+    <div id="site-visit" className="overflow-hidden rounded-2xl bg-navy-deep p-6 text-white md:p-10">
+      <div className="grid gap-8 md:grid-cols-2">
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Site Visit</div>
+          <h2 className="mt-1 font-display text-2xl font-bold md:text-3xl">Experience {projectName} In Person</h2>
+          <p className="mt-3 text-sm leading-relaxed text-white/75">
+            Walk the site with a senior advisor. We arrange complimentary pickup, full project walkthrough, sample unit tour, and an honest consultation — no pressure.
+          </p>
+          <div className="mt-6 space-y-3 text-sm">
+            <div className="flex items-start gap-3">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gold/15 text-gold"><Car className="h-4 w-4" /></span>
+              <div><div className="font-semibold">Complimentary Pickup & Drop</div><div className="text-white/70 text-xs">Within Dehradun city limits</div></div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gold/15 text-gold"><KeyRound className="h-4 w-4" /></span>
+              <div><div className="font-semibold">Sample Unit Walkthrough</div><div className="text-white/70 text-xs">Experience the finishing first-hand</div></div>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gold/15 text-gold"><Clock className="h-4 w-4" /></span>
+              <div><div className="font-semibold">60-Minute Visit</div><div className="text-white/70 text-xs">Includes Q&A with senior advisor</div></div>
+            </div>
+          </div>
+        </div>
+        <form
+          onSubmit={(e) => { e.preventDefault(); setBooked(true); }}
+          className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur"
+        >
+          <h3 className="font-display text-lg font-semibold">Book Your Site Visit</h3>
+          <p className="mt-1 text-xs text-white/65">Select a preferred date & time. We'll confirm within 30 minutes.</p>
+          <div className="mt-4 space-y-3">
+            <input required placeholder="Your Name" className="w-full rounded-md border border-white/15 bg-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/50 outline-none focus:border-gold" />
+            <input required type="tel" placeholder="Phone Number" className="w-full rounded-md border border-white/15 bg-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/50 outline-none focus:border-gold" />
+            <input required type="date" min={new Date().toISOString().split("T")[0]} className="w-full rounded-md border border-white/15 bg-white/10 px-3 py-2.5 text-sm text-white outline-none focus:border-gold [color-scheme:dark]" />
+            <div>
+              <div className="mb-2 text-xs text-white/65">Preferred Time</div>
+              <div className="grid grid-cols-3 gap-2">
+                {times.map((t) => (
+                  <button
+                    type="button"
+                    key={t}
+                    onClick={() => setTime(t)}
+                    className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors ${time === t ? "border-gold bg-gold text-navy-deep" : "border-white/15 bg-white/5 text-white hover:bg-white/10"}`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          {booked && (
+            <div className="mt-3 rounded-md bg-emerald-500/15 px-3 py-2 text-xs text-emerald-300">
+              Site visit requested for {time}. An advisor will confirm shortly.
+            </div>
+          )}
+          <button type="submit" className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-gold px-4 py-3 text-sm font-semibold text-navy-deep hover:opacity-90">
+            <Calendar className="h-4 w-4" /> Book Site Visit
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+

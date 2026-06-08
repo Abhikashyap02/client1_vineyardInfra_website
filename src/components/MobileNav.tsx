@@ -11,10 +11,13 @@ const links = [
 
 interface Props {
   trigger?: "light" | "dark";
+  /** breakpoint at which the button hides; default md */
+  hideAt?: "md" | "lg";
 }
 
-export function MobileNav({ trigger = "light" }: Props) {
+export function MobileNav({ trigger = "light", hideAt = "md" }: Props) {
   const [open, setOpen] = useState(false);
+  const hideClass = hideAt === "lg" ? "lg:hidden" : "md:hidden";
 
   return (
     <>
@@ -22,7 +25,7 @@ export function MobileNav({ trigger = "light" }: Props) {
         type="button"
         aria-label="Open menu"
         onClick={() => setOpen(true)}
-        className={`lg:hidden grid size-11 place-items-center rounded-sm border ${
+        className={`${hideClass} grid size-11 place-items-center rounded-sm border ${
           trigger === "light"
             ? "border-white/25 text-white"
             : "border-border text-foreground"

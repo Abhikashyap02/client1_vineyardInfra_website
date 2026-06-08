@@ -6,6 +6,7 @@ import {
   User, Home, Wallet, Briefcase, FileText, Navigation,
   Sparkles, ShieldCheck, Star, Headset,
 } from "lucide-react";
+import { MobileNav } from "@/components/MobileNav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

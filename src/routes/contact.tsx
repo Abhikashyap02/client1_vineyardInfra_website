@@ -107,9 +107,12 @@ function TopNav() {
           <Link to="/about" className="transition-colors hover:text-gold">About</Link>
           <span className="text-gold">Contact</span>
         </nav>
-        <Button className="hidden bg-gold text-navy-deep hover:bg-gold-soft md:inline-flex" asChild>
-          <a href={PHONE}><Phone className="h-4 w-4" /> +91 98765 43210</a>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button className="hidden bg-gold text-navy-deep hover:bg-gold-soft md:inline-flex" asChild>
+            <a href={PHONE}><Phone className="h-4 w-4" /> +91 98765 43210</a>
+          </Button>
+          <MobileNav trigger="light" />
+        </div>
       </div>
     </header>
   );

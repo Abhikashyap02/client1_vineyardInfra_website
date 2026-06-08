@@ -87,9 +87,7 @@ function Home() {
               <Link to="/contact" className="hidden items-center gap-2 rounded-sm bg-gradient-gold px-5 py-3 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105 md:inline-flex" style={{ background: "var(--gradient-gold)" }}>
                 <Calendar className="size-4" /> BOOK SITE VISIT
               </Link>
-              <button className="grid size-11 place-items-center rounded-sm border border-white/20 text-white lg:hidden">
-                <Menu className="size-5" />
-              </button>
+              <MobileNav trigger="light" />
             </div>
           </div>
         </header>

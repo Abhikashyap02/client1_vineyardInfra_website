@@ -931,6 +931,8 @@ function MobileSticky({ wa }: { wa: string }) {
       </a>
     </div>
   );
+}
+
 
 function WhyInvest() {
   const reasons = [

@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Phone, Mail, MapPin, Calendar, Search, Play, ArrowRight, MessageCircle,
   Bed, Maximize, Building2, ShieldCheck, Sparkles, HandCoins, Headset,
-  TrendingUp, ChevronLeft, ChevronRight, Quote, Menu,
+  TrendingUp, ChevronLeft, ChevronRight, Quote,
 } from "lucide-react";
+import { MobileNav } from "@/components/MobileNav";
 import heroProperty from "@/assets/hero-property.jpg";
 import founder from "@/assets/founder.jpg";
 import projectVilla from "@/assets/project-villa.jpg";
@@ -87,9 +88,7 @@ function Home() {
               <Link to="/contact" className="hidden items-center gap-2 rounded-sm bg-gradient-gold px-5 py-3 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105 md:inline-flex" style={{ background: "var(--gradient-gold)" }}>
                 <Calendar className="size-4" /> BOOK SITE VISIT
               </Link>
-              <button className="grid size-11 place-items-center rounded-sm border border-white/20 text-white lg:hidden">
-                <Menu className="size-5" />
-              </button>
+              <MobileNav trigger="light" hideAt="lg" />
             </div>
           </div>
         </header>

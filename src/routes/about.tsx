@@ -21,6 +21,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
+import { MobileNav } from "@/components/MobileNav";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -105,9 +106,12 @@ function TopNav() {
           <Link to="/about" className="text-gold">About</Link>
           <Link to="/contact" className="hover:text-gold transition-colors">Contact</Link>
         </nav>
-        <Button className="bg-gold text-navy-deep hover:bg-gold-soft hidden md:inline-flex">
-          <Phone className="h-4 w-4" /> +91 98765 43210
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button className="bg-gold text-navy-deep hover:bg-gold-soft hidden md:inline-flex">
+            <Phone className="h-4 w-4" /> +91 98765 43210
+          </Button>
+          <MobileNav trigger="light" />
+        </div>
       </div>
     </header>
   );

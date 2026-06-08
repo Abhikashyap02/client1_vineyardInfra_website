@@ -22,7 +22,7 @@ export function MobileNav({ trigger = "light" }: Props) {
         type="button"
         aria-label="Open menu"
         onClick={() => setOpen(true)}
-        className={`lg:hidden md:hidden grid size-11 place-items-center rounded-sm border ${
+        className={`lg:hidden grid size-11 place-items-center rounded-sm border ${
           trigger === "light"
             ? "border-white/25 text-white"
             : "border-border text-foreground"

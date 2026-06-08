@@ -8,6 +8,7 @@ import {
   GraduationCap, HeartPulse, ShoppingBag, Plane, Briefcase, Camera,
   Image as ImageIcon, BadgeCheck, Quote, Award, IndianRupee, Layers, KeyRound, Clock,
 } from "lucide-react";
+import { MobileNav } from "@/components/MobileNav";
 import propertyHero from "@/assets/property-hero.jpg";
 import propertyBedroom from "@/assets/property-bedroom.jpg";
 import propertyAmenity from "@/assets/property-amenity.jpg";

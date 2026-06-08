@@ -5,6 +5,7 @@ import {
   TrendingUp, HandCoins, MessageCircle, Phone, Calendar, ArrowRight,
   Maximize, Tag, CheckCircle2, Filter,
 } from "lucide-react";
+import { MobileNav } from "@/components/MobileNav";
 import heroProperty from "@/assets/hero-property.jpg";
 import projectVilla from "@/assets/project-villa.jpg";
 import projectApartments from "@/assets/project-apartments.jpg";

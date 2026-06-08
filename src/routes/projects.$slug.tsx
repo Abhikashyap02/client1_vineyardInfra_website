@@ -367,9 +367,12 @@ function TopNav({ projectName }: { projectName: string }) {
           <Link to="/about" className="hover:text-gold">About</Link>
           <Link to="/contact" className="hover:text-gold">Contact</Link>
         </nav>
-        <a href="tel:+919999999999" className="inline-flex items-center gap-2 rounded-md bg-gold px-3 py-1.5 text-xs font-semibold text-navy-deep hover:opacity-90">
-          <Phone className="h-3.5 w-3.5" /> Call Advisor
-        </a>
+        <div className="flex items-center gap-2">
+          <a href="tel:+919999999999" className="hidden sm:inline-flex items-center gap-2 rounded-md bg-gold px-3 py-1.5 text-xs font-semibold text-navy-deep hover:opacity-90">
+            <Phone className="h-3.5 w-3.5" /> Call Advisor
+          </a>
+          <MobileNav trigger="light" />
+        </div>
       </div>
     </header>
   );

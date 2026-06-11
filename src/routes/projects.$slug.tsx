@@ -9,6 +9,7 @@ import {
   Image as ImageIcon, BadgeCheck, Quote, Award, IndianRupee, Layers, KeyRound, Clock,
 } from "lucide-react";
 import { MobileNav } from "@/components/MobileNav";
+import { DesktopNav } from "@/components/DesktopNav";
 import propertyHero from "@/assets/property-hero.jpg";
 import propertyBedroom from "@/assets/property-bedroom.jpg";
 import propertyAmenity from "@/assets/property-amenity.jpg";
@@ -362,17 +363,12 @@ function TopNav({ projectName }: { projectName: string }) {
           <span className="grid h-8 w-8 place-items-center rounded-md bg-gold font-display text-sm font-bold text-navy-deep">V</span>
           <span className="font-display text-base font-semibold tracking-tight">Vineyard Infra</span>
         </Link>
-        <nav className="hidden gap-6 text-sm text-white/80 md:flex">
-          <Link to="/" className="hover:text-gold">Home</Link>
-          <Link to="/properties" className="hover:text-gold">Properties</Link>
-          <Link to="/about" className="hover:text-gold">About</Link>
-          <Link to="/contact" className="hover:text-gold">Contact</Link>
-        </nav>
+        <DesktopNav variant="light" />
         <div className="flex items-center gap-2">
           <a href="tel:+919999999999" className="hidden sm:inline-flex items-center gap-2 rounded-md bg-gold px-3 py-1.5 text-xs font-semibold text-navy-deep hover:opacity-90">
             <Phone className="h-3.5 w-3.5" /> Call Advisor
           </a>
-          <MobileNav trigger="light" />
+          <MobileNav trigger="light" hideAt="lg" />
         </div>
       </div>
     </header>

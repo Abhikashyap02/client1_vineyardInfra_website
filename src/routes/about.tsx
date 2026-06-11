@@ -22,6 +22,7 @@ import {
   Users,
 } from "lucide-react";
 import { MobileNav } from "@/components/MobileNav";
+import { DesktopNav } from "@/components/DesktopNav";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -100,17 +101,12 @@ function TopNav() {
             Vineyard <span className="text-gold">Infra</span>
           </div>
         </Link>
-        <nav className="hidden md:flex items-center gap-8 text-sm text-white/80">
-          <Link to="/" className="hover:text-gold transition-colors">Home</Link>
-          <Link to="/properties" className="hover:text-gold transition-colors">Properties</Link>
-          <Link to="/about" className="text-gold">About</Link>
-          <Link to="/contact" className="hover:text-gold transition-colors">Contact</Link>
-        </nav>
+        <DesktopNav variant="light" activeLabel="About Us" />
         <div className="flex items-center gap-2">
           <Button className="bg-gold text-navy-deep hover:bg-gold-soft hidden md:inline-flex">
             <Phone className="h-4 w-4" /> +91 98765 43210
           </Button>
-          <MobileNav trigger="light" />
+          <MobileNav trigger="light" hideAt="lg" />
         </div>
       </div>
     </header>

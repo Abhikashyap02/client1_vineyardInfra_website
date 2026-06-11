@@ -5,6 +5,7 @@ import {
   TrendingUp, ChevronLeft, ChevronRight, Quote,
 } from "lucide-react";
 import { MobileNav } from "@/components/MobileNav";
+import { DesktopNav } from "@/components/DesktopNav";
 import heroProperty from "@/assets/hero-property.jpg";
 import founder from "@/assets/founder.jpg";
 import projectVilla from "@/assets/project-villa.jpg";
@@ -30,6 +31,8 @@ const navLinks: { label: string; to: "/" | "/properties" | "/about" | "/contact"
   { label: "About Us", to: "/about" },
   { label: "Contact", to: "/contact" },
 ];
+
+// navLinks is still used by the footer; header now uses DesktopNav
 
 const projects = [
   { slug: "vineyard-signature-villas", tag: "NEW LAUNCH", type: "Villas", name: "Vineyard Signature Villas", location: "Mussoorie Road, Dehradun", price: "₹1.45 Cr*", bhk: "3, 4 BHK", bath: "2-4 BHK", area: "2200 - 3000 Sq.Ft.", img: projectVilla },
@@ -77,13 +80,7 @@ function Home() {
                 <div className="text-[10px] tracking-[0.4em] text-gold">INFRA</div>
               </div>
             </Link>
-            <nav className="hidden items-center gap-9 text-sm font-medium text-white/85 lg:flex">
-              {navLinks.map((l, i) => (
-                <Link key={l.label} to={l.to} className={`hover:text-gold transition-colors ${i === 0 ? "text-white" : ""}`}>
-                  {l.label.toUpperCase()}
-                </Link>
-              ))}
-            </nav>
+            <DesktopNav variant="light" />
             <div className="flex items-center gap-3">
               <Link to="/contact" className="hidden items-center gap-2 rounded-sm bg-gradient-gold px-5 py-3 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105 md:inline-flex" style={{ background: "var(--gradient-gold)" }}>
                 <Calendar className="size-4" /> BOOK SITE VISIT

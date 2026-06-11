@@ -7,6 +7,7 @@ import {
   Sparkles, ShieldCheck, Star, Headset,
 } from "lucide-react";
 import { MobileNav } from "@/components/MobileNav";
+import { DesktopNav } from "@/components/DesktopNav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -102,17 +103,12 @@ function TopNav() {
             Vineyard <span className="text-gold">Infra</span>
           </div>
         </Link>
-        <nav className="hidden items-center gap-8 text-sm text-white/80 md:flex">
-          <Link to="/" className="transition-colors hover:text-gold">Home</Link>
-          <Link to="/properties" className="transition-colors hover:text-gold">Properties</Link>
-          <Link to="/about" className="transition-colors hover:text-gold">About</Link>
-          <span className="text-gold">Contact</span>
-        </nav>
+        <DesktopNav variant="light" activeLabel="Contact" />
         <div className="flex items-center gap-2">
           <Button className="hidden bg-gold text-navy-deep hover:bg-gold-soft md:inline-flex" asChild>
             <a href={PHONE}><Phone className="h-4 w-4" /> +91 98765 43210</a>
           </Button>
-          <MobileNav trigger="light" />
+          <MobileNav trigger="light" hideAt="lg" />
         </div>
       </div>
     </header>

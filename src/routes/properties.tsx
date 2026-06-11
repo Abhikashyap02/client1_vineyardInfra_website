@@ -6,6 +6,7 @@ import {
   Maximize, Tag, CheckCircle2, Filter,
 } from "lucide-react";
 import { MobileNav } from "@/components/MobileNav";
+import { DesktopNav } from "@/components/DesktopNav";
 import heroProperty from "@/assets/hero-property.jpg";
 import projectVilla from "@/assets/project-villa.jpg";
 import projectApartments from "@/assets/project-apartments.jpg";
@@ -123,17 +124,12 @@ function PropertiesPage() {
             <div className="w-9 h-9 rounded-md bg-navy-deep grid place-content-center text-gold font-display font-bold">V</div>
             <span className="font-display font-semibold tracking-tight">Vineyard Infra</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-foreground">Home</Link>
-            <Link to="/properties" className="text-foreground font-medium">Properties</Link>
-            <Link to="/about" className="hover:text-foreground">About</Link>
-            <Link to="/contact" className="hover:text-foreground">Contact</Link>
-          </nav>
+          <DesktopNav variant="dark" activeLabel="Projects" />
           <div className="flex items-center gap-2">
             <a href="tel:+919999999999" className="hidden sm:inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full bg-navy-deep text-primary-foreground hover:opacity-90">
               <Phone className="w-4 h-4" /> Call Advisor
             </a>
-            <MobileNav trigger="dark" />
+            <MobileNav trigger="dark" hideAt="lg" />
           </div>
         </div>
       </header>

@@ -318,6 +318,9 @@ function Home() {
         </div>
       </section>
 
+      {/* VIDEO TESTIMONIALS */}
+      <VideoTestimonialsSection />
+
       {/* TESTIMONIALS */}
       <section className="bg-background py-24">
         <div className="mx-auto max-w-7xl px-6">

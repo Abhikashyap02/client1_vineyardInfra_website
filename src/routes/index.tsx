@@ -5,6 +5,7 @@ import {
   TrendingUp, ChevronLeft, ChevronRight, Quote,
 } from "lucide-react";
 import { MobileNav } from "@/components/MobileNav";
+import { VideoTestimonialsSection } from "@/components/VideoTestimonialsSection";
 import heroProperty from "@/assets/hero-property.jpg";
 import founder from "@/assets/founder.jpg";
 import projectVilla from "@/assets/project-villa.jpg";
@@ -316,6 +317,9 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* VIDEO TESTIMONIALS */}
+      <VideoTestimonialsSection />
 
       {/* TESTIMONIALS */}
       <section className="bg-background py-24">

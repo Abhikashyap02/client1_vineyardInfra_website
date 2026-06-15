@@ -8,6 +8,7 @@ import { MobileNav } from "@/components/MobileNav";
 import { DesktopNav } from "@/components/DesktopNav";
 import { VideoTestimonialsSection } from "@/components/VideoTestimonialsSection";
 import heroProperty from "@/assets/hero-property.jpg";
+import heroVideo from "@/assets/up1.mp4";
 import founder from "@/assets/founder.jpg";
 import projectVilla from "@/assets/project-villa.jpg";
 import projectApartments from "@/assets/project-apartments.jpg";
@@ -79,12 +80,11 @@ function Home() {
           poster={heroProperty}
           className="absolute inset-0 size-full object-cover"
         >
-          {/* Using a free public sample video — replace with your project footage */}
-          <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4" />
+          <source src={heroVideo} type="video/mp4" />
         </video>
-        {/* Dark overlays for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-deep/90 via-navy-deep/55 to-navy-deep/85" />
-        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/85 via-navy-deep/25 to-transparent" />
+        {/* Dark overlays for text readability — optimized to showcase the video */}
+        <div className="absolute inset-0 bg-gradient-to-b from-navy-deep/60 via-navy-deep/20 to-navy-deep/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/60 via-navy-deep/10 to-transparent" />
 
         {/* Header */}
         <header className="relative z-20">
@@ -107,21 +107,21 @@ function Home() {
         </header>
 
         {/* Hero content */}
-        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-16 pb-40 md:pt-24">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-28 pb-36 md:pt-40 md:pb-44">
           <div className="max-w-2xl animate-fade-up">
-            <p className="mb-5 text-sm tracking-[0.3em] text-gold">PREMIUM PROPERTIES. TRUSTED GUIDANCE.</p>
-            <h1 className="font-display text-5xl font-bold leading-[1.05] text-white md:text-7xl">
+            <p className="mb-4 text-xs tracking-[0.3em] text-gold">PREMIUM PROPERTIES. TRUSTED GUIDANCE.</p>
+            <h1 className="font-display text-4xl font-bold leading-[1.1] text-white md:text-5xl lg:text-6xl">
               Find. Invest. Grow.<br />
               With <span className="font-italic-serif text-gold">Confidence.</span>
             </h1>
-            <p className="mt-6 max-w-lg text-base text-white/75 md:text-lg">
+            <p className="mt-4 max-w-md text-sm text-white/70 md:text-base">
               Curated real estate opportunities in Dehradun backed by market expertise and honest advice.
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link to="/properties" className="inline-flex items-center gap-2 rounded-sm px-7 py-4 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105" style={{ background: "var(--gradient-gold)" }}>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link to="/properties" className="inline-flex items-center gap-2 rounded-sm px-5 py-3 text-xs md:text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105" style={{ background: "var(--gradient-gold)" }}>
                 EXPLORE PROJECTS <ArrowRight className="size-4" />
               </Link>
-              <Link to="/contact" className="inline-flex items-center gap-2 rounded-sm border border-white/30 bg-white/5 px-7 py-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10">
+              <Link to="/contact" className="inline-flex items-center gap-2 rounded-sm border border-white/30 bg-white/5 px-5 py-3 text-xs md:text-sm font-semibold text-white backdrop-blur transition hover:bg-white/10">
                 <Calendar className="size-4" /> BOOK SITE VISIT
               </Link>
             </div>

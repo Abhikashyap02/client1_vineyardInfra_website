@@ -118,18 +118,22 @@ function PropertiesPage() {
   return (
     <div className="bg-warm-bg text-foreground">
       {/* Top bar */}
-      <header className="sticky top-0 z-40 backdrop-blur-md bg-background/85 border-b border-border">
-        <div className="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
+      <header className="absolute top-0 left-0 right-0 z-40">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 md:px-10">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-md bg-navy-deep grid place-content-center text-gold font-display font-bold">V</div>
-            <span className="font-display font-semibold tracking-tight">Vineyard Infra</span>
+            <div className="grid h-9 w-9 place-items-center rounded-md bg-gold">
+              <span className="font-display font-bold text-navy-deep">V</span>
+            </div>
+            <div className="font-display font-semibold tracking-tight text-white">
+              Vineyard <span className="text-gold">Infra</span>
+            </div>
           </Link>
-          <DesktopNav variant="dark" activeLabel="Projects" />
+          <DesktopNav variant="light" activeLabel="Projects" />
           <div className="flex items-center gap-2">
-            <a href="tel:+919999999999" className="hidden sm:inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full bg-navy-deep text-primary-foreground hover:opacity-90">
-              <Phone className="w-4 h-4" /> Call Advisor
+            <a href="tel:+919876543210" className="hidden sm:inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full bg-gold text-navy-deep hover:opacity-90">
+              <Phone className="w-4 h-4" /> +91 98765 43210
             </a>
-            <MobileNav trigger="dark" hideAt="lg" />
+            <MobileNav trigger="light" hideAt="lg" />
           </div>
         </div>
       </header>
@@ -140,7 +144,7 @@ function PropertiesPage() {
           <img src={heroProperty} alt="Premium Dehradun property" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.55)_0%,rgba(15,23,42,0.85)_100%)]" />
         </div>
-        <div className="relative max-w-7xl mx-auto px-5 pt-20 pb-32 md:pt-28 md:pb-40 text-primary-foreground">
+        <div className="relative max-w-7xl mx-auto px-5 pt-32 pb-32 md:pt-40 md:pb-40 text-primary-foreground">
           <span className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase text-gold-soft mb-5">
             <Sparkles className="w-3.5 h-3.5" /> Property Discovery
           </span>

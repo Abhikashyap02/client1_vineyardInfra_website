@@ -8,6 +8,9 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { ChatbotProvider } from "@/components/chatbot/ChatbotProvider";
+import { ChatLauncher } from "@/components/chatbot/ChatLauncher";
+import { ChatWindow } from "@/components/chatbot/ChatWindow";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -135,8 +138,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <ChatbotProvider>
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+        <ChatLauncher />
+        <ChatWindow />
+      </ChatbotProvider>
     </QueryClientProvider>
   );
 }

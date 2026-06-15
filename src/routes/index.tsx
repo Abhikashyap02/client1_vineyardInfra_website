@@ -5,6 +5,8 @@ import {
   TrendingUp, ChevronLeft, ChevronRight, Quote,
 } from "lucide-react";
 import { MobileNav } from "@/components/MobileNav";
+import { DesktopNav } from "@/components/DesktopNav";
+import { VideoTestimonialsSection } from "@/components/VideoTestimonialsSection";
 import heroProperty from "@/assets/hero-property.jpg";
 import founder from "@/assets/founder.jpg";
 import projectVilla from "@/assets/project-villa.jpg";
@@ -65,9 +67,24 @@ function Home() {
     <div className="min-h-screen bg-background text-foreground">
       {/* HERO with header */}
       <section className="relative min-h-[860px] overflow-hidden">
-        <img src={heroProperty} alt="Luxury residential property at dusk" width={1920} height={1280} className="absolute inset-0 size-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-deep/85 via-navy-deep/55 to-navy-deep/80" />
-        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/80 via-navy-deep/20 to-transparent" />
+        {/* Fallback poster — renders instantly, avoids layout shift */}
+        <img src={heroProperty} alt="" width={1920} height={1280} className="absolute inset-0 size-full object-cover" aria-hidden="true" />
+        {/* Background video — auto plays silently over the poster */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster={heroProperty}
+          className="absolute inset-0 size-full object-cover"
+        >
+          {/* Using a free public sample video — replace with your project footage */}
+          <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4" />
+        </video>
+        {/* Dark overlays for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-navy-deep/90 via-navy-deep/55 to-navy-deep/85" />
+        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/85 via-navy-deep/25 to-transparent" />
 
         {/* Header */}
         <header className="relative z-20">
@@ -413,10 +430,8 @@ function Home() {
         </div>
       </footer>
 
-      {/* Floating WhatsApp */}
-      <a href="#" className="fixed bottom-6 right-6 z-40 grid size-14 place-items-center rounded-full bg-[#25D366] text-white shadow-gold transition hover:scale-110">
-        <MessageCircle className="size-6" />
-      </a>
+
+
     </div>
   );
 }

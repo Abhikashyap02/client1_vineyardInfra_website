@@ -7,6 +7,7 @@ import {
   PlayCircle, Download, Star, ChevronDown, Check, FileText, Home,
   GraduationCap, HeartPulse, ShoppingBag, Plane, Briefcase, Camera,
   Image as ImageIcon, BadgeCheck, Quote, Award, IndianRupee, Layers, KeyRound, Clock,
+  Facebook, Instagram, Youtube,
 } from "lucide-react";
 import { MobileNav } from "@/components/MobileNav";
 import { DesktopNav } from "@/components/DesktopNav";
@@ -205,7 +206,7 @@ const projectOverrides: Record<string, Partial<Project>> = {
 };
 
 const WHATSAPP = (name: string) =>
-  `https://wa.me/919999999999?text=${encodeURIComponent(`Hi Vineyard Infra, I'd like to enquire about ${name}.`)}`;
+  `https://wa.me/916397688989?text=${encodeURIComponent(`Hi Vineyard Infra, I'd like to enquire about ${name}.`)}`;
 
 export const Route = createFileRoute("/projects/$slug")({
   loader: ({ params }) => {
@@ -345,6 +346,7 @@ function ProjectDetail() {
       {/* SIMILAR + FINAL CTA */}
       <Similar items={project.similar} />
       <FinalCTA project={project} wa={wa} />
+      <ProjectUpdatesSection projectName={project.name} />
       <Footer />
 
       {/* MOBILE STICKY ACTIONS */}
@@ -365,7 +367,7 @@ function TopNav({ projectName }: { projectName: string }) {
         </Link>
         <DesktopNav variant="light" />
         <div className="flex items-center gap-2">
-          <a href="tel:+919999999999" className="hidden sm:inline-flex items-center gap-2 rounded-md bg-gold px-3 py-1.5 text-xs font-semibold text-navy-deep hover:opacity-90">
+          <a href="tel:+916397688989" className="hidden sm:inline-flex items-center gap-2 rounded-md bg-gold px-3 py-1.5 text-xs font-semibold text-navy-deep hover:opacity-90">
             <Phone className="h-3.5 w-3.5" /> Call Advisor
           </a>
           <MobileNav trigger="light" hideAt="lg" />
@@ -520,9 +522,8 @@ function Configurations({ project }: { project: Project }) {
             </div>
             <div>
               <div className="text-xs text-slate-soft md:hidden">Status</div>
-              <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
-                c.status === "Available" ? "bg-emerald-50 text-emerald-700" : c.status === "Few Left" ? "bg-amber-50 text-amber-700" : "bg-rose-50 text-rose-700"
-              }`}>{c.status}</span>
+              <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${c.status === "Available" ? "bg-emerald-50 text-emerald-700" : c.status === "Few Left" ? "bg-amber-50 text-amber-700" : "bg-rose-50 text-rose-700"
+                }`}>{c.status}</span>
             </div>
             <div className="md:text-right">
               <a href="#lead" className="inline-flex items-center gap-1.5 rounded-md bg-navy-deep px-3 py-2 text-xs font-semibold text-white hover:bg-navy">
@@ -884,7 +885,7 @@ function FinalCTA({ project, wa }: { project: Project; wa: string }) {
           <a href="#lead" className="inline-flex items-center gap-2 rounded-md bg-gold px-5 py-3 text-sm font-semibold text-navy-deep hover:opacity-90">
             <Calendar className="h-4 w-4" /> Book Site Visit
           </a>
-          <a href="tel:+919999999999" className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white hover:bg-white/15">
+          <a href="tel:+916397688989" className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white hover:bg-white/15">
             <Phone className="h-4 w-4" /> Talk to Advisor
           </a>
           <a href={wa} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700">
@@ -905,6 +906,11 @@ function Footer() {
       <div className="container mx-auto flex flex-col items-center justify-between gap-3 px-4 text-xs text-slate-soft md:flex-row">
         <div>© {new Date().getFullYear()} Vineyard Infra. All rights reserved.</div>
         <div className="flex gap-4">
+          <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="hover:text-navy-deep transition-colors text-slate-soft" aria-label="Facebook"><Facebook className="size-4" /></a>
+          <a href="https://www.instagram.com/vineyardinfra/" target="_blank" rel="noopener noreferrer" className="hover:text-navy-deep transition-colors text-slate-soft" aria-label="Instagram"><Instagram className="size-4" /></a>
+          <a href="https://www.youtube.com/@vineyardinfra1900" target="_blank" rel="noopener noreferrer" className="hover:text-navy-deep transition-colors text-slate-soft" aria-label="YouTube"><Youtube className="size-4" /></a>
+        </div>
+        <div className="flex gap-4">
           <Link to="/" className="hover:text-navy-deep">Home</Link>
           <Link to="/properties" className="hover:text-navy-deep">Properties</Link>
           <a href="#lead" className="hover:text-navy-deep">Contact</a>
@@ -916,8 +922,8 @@ function Footer() {
 
 function MobileSticky({ wa }: { wa: string }) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 grid grid-cols-4 gap-1 border-t border-navy-deep/10 bg-white p-2 shadow-elevated md:hidden">
-      <a href="tel:+919999999999" className="flex flex-col items-center justify-center gap-0.5 rounded-md py-2 text-[10px] font-semibold text-navy-deep">
+    <div id="mobile-sticky-nav" className="fixed bottom-0 left-0 right-0 z-40 grid grid-cols-4 gap-1 border-t border-navy-deep/10 bg-white p-2 shadow-elevated md:hidden">
+      <a href="tel:+916397688989" className="flex flex-col items-center justify-center gap-0.5 rounded-md py-2 text-[10px] font-semibold text-navy-deep">
         <Phone className="h-4 w-4 text-gold" /> Call
       </a>
       <a href={wa} target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center gap-0.5 rounded-md bg-emerald-600 py-2 text-[10px] font-semibold text-white">
@@ -1075,6 +1081,46 @@ function SiteVisitSection({ projectName }: { projectName: string }) {
         </form>
       </div>
     </div>
+  );
+}
+
+function ProjectUpdatesSection({ projectName }: { projectName: string }) {
+  return (
+    <section className="bg-warm-bg border-t border-navy-deep/5 py-12 text-center">
+      <div className="container mx-auto px-4 max-w-xl">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold">Stay Updated</p>
+        <h3 className="mt-2 font-display text-xl font-bold text-navy-deep">Want to see more project updates?</h3>
+        <p className="mt-2 text-xs text-slate-soft leading-relaxed">
+          Follow our active site channels to see the latest construction milestones, real video walkthroughs, and design updates for {projectName}.
+        </p>
+        <div className="mt-5 flex justify-center gap-3">
+          <a
+            href="https://www.facebook.com/vineyardinfra"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 rounded-md border border-navy-deep/10 bg-white px-4 py-2 text-xs font-semibold text-navy-deep transition-all duration-300 hover:border-gold hover:text-gold"
+          >
+            <Facebook className="size-3.5 text-navy-deep hover:text-gold" /> Facebook
+          </a>
+          <a
+            href="https://www.instagram.com/vineyardinfra/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 rounded-md border border-navy-deep/10 bg-white px-4 py-2 text-xs font-semibold text-navy-deep transition-all duration-300 hover:border-gold hover:text-gold"
+          >
+            <Instagram className="size-3.5 text-navy-deep hover:text-gold" /> Instagram
+          </a>
+          <a
+            href="https://www.youtube.com/@vineyardinfra1900"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 rounded-md border border-navy-deep/10 bg-white px-4 py-2 text-xs font-semibold text-navy-deep transition-all duration-300 hover:border-gold hover:text-gold"
+          >
+            <Youtube className="size-3.5 text-navy-deep hover:text-gold" /> YouTube
+          </a>
+        </div>
+      </div>
+    </section>
   );
 }
 

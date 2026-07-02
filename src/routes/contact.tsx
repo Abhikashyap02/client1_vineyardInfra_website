@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Phone, Mail, MapPin, Calendar, ArrowRight, MessageCircle,
   CheckCircle2, Clock, Car, Landmark, ChevronDown, Send,
   User, Home, Wallet, Briefcase, FileText, Navigation,
-  Sparkles, ShieldCheck, Star, Headset,
+  Sparkles, ShieldCheck, Star, Headset, Facebook, Instagram, Youtube,
 } from "lucide-react";
 import { MobileNav } from "@/components/MobileNav";
 import { DesktopNav } from "@/components/DesktopNav";
@@ -41,9 +41,9 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
-const WHATSAPP = "https://wa.me/919876543210?text=Hi%20Vineyard%20Infra%2C%20I%27m%20interested%20in%20exploring%20properties%20in%20Dehradun.";
-const PHONE = "tel:+919876543210";
-const EMAIL = "mailto:hello@vineyardinfra.com";
+const WHATSAPP = "https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I%27m%20interested%20in%20exploring%20properties%20in%20Dehradun.";
+const PHONE = "tel:+916397688989";
+const EMAIL = "mailto:vineyardinfra005@gmail.com";
 
 const trustIndicators = [
   { icon: ShieldCheck, label: "Verified Property Listings" },
@@ -56,7 +56,7 @@ const contactCards = [
   {
     icon: Phone,
     title: "Call Us",
-    detail: "+91 98765 43210",
+    detail: "+91 63976 88989",
     cta: "Call Now",
     href: PHONE,
   },
@@ -70,16 +70,16 @@ const contactCards = [
   {
     icon: Mail,
     title: "Email",
-    detail: "hello@vineyardinfra.com",
+    detail: "vineyardinfra005@gmail.com",
     cta: "Send Email",
     href: EMAIL,
   },
   {
     icon: MapPin,
     title: "Office Visit",
-    detail: "18/2 Rajpur Road, Dehradun",
+    detail: "AMAN VIHAR SAHASTRADHARA ROAD, Dehradun 248001",
     cta: "Get Directions",
-    href: "https://www.google.com/maps/search/?api=1&query=18%2F2+Rajpur+Road+Dehradun",
+    href: "https://www.google.com/maps/place/Vineyard+Infra+%7C+Construction+Company+in+Dehradun/@30.350669,78.0747649,17z/data=!4m14!1m7!3m6!1s0x3908d713b0382577:0xb00ba938afbc2032!2sVineyard+Infra+%7C+Construction+Company+in+Dehradun!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq!3m5!1s0x3908d713b0382577:0xb00ba938afbc2032!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq?entry=ttu&g_ep=EgoyMDI2MDYxMy4wIKXMDSoASAFQAw%3D%3D",
   },
 ];
 
@@ -106,7 +106,7 @@ function TopNav() {
         <DesktopNav variant="light" activeLabel="Contact" />
         <div className="flex items-center gap-2">
           <Button className="hidden bg-gold text-navy-deep hover:bg-gold-soft md:inline-flex" asChild>
-            <a href={PHONE}><Phone className="h-4 w-4" /> +91 98765 43210</a>
+            <a href={PHONE}><Phone className="h-4 w-4" /> +91 63976 88989</a>
           </Button>
           <MobileNav trigger="light" hideAt="lg" />
         </div>
@@ -259,7 +259,7 @@ function RequirementForm() {
                     <Label className="text-xs font-semibold uppercase tracking-wider text-slate-soft">Phone Number</Label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-soft" />
-                      <Input required type="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+91 98765 43210" className="h-12 pl-10" />
+                      <Input required type="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+91 63976 88989" className="h-12 pl-10" />
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -345,11 +345,6 @@ function SiteVisitSection() {
   const [submitted, setSubmitted] = useState(false);
   const update = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
-  };
-
   const properties = [
     "Vineyard Signature Villas",
     "Vineyard High Grove",
@@ -360,9 +355,28 @@ function SiteVisitSection() {
     "Other / Not Sure",
   ];
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const propParam = params.get("property");
+    if (propParam) {
+      const decodedProp = decodeURIComponent(propParam);
+      const matched = properties.find(
+        (p) => p.toLowerCase() === decodedProp.toLowerCase()
+      );
+      if (matched) {
+        setForm((f) => ({ ...f, property: matched }));
+      }
+    }
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
   return (
     <section className="mx-auto max-w-7xl px-5 py-20 md:px-10 md:py-28">
-      <div className="overflow-hidden rounded-2xl bg-navy-deep text-white md:grid md:grid-cols-2">
+      <div className="overflow-hidden rounded-2xl bg-navy-deep text-white md:grid md:grid-cols-2 border border-slate-200/80 shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
         <div className="p-8 md:p-14">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">On-Ground Experience</p>
           <h2 className="mt-3 font-display text-3xl font-semibold md:text-4xl">
@@ -401,7 +415,7 @@ function SiteVisitSection() {
               </div>
               <div>
                 <Label className="text-xs font-semibold uppercase tracking-wider text-slate-soft">Phone Number</Label>
-                <Input required type="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+91 98765 43210" className="mt-1.5 h-12" />
+                <Input required type="tel" value={form.phone} onChange={(e) => update("phone", e.target.value)} placeholder="+91 63976 88989" className="mt-1.5 h-12" />
               </div>
               <div>
                 <Label className="text-xs font-semibold uppercase tracking-wider text-slate-soft">Preferred Property</Label>
@@ -513,7 +527,7 @@ function OfficeLocation() {
               <MapPin className="h-5 w-5 text-gold" /> Vineyard Infra Office
             </h3>
             <p className="mt-3 text-sm text-slate-soft">
-              18/2 Rajpur Road, Near Clock Tower<br />
+              AMAN VIHAR SAHASTRADHARA ROAD,<br />
               Dehradun, Uttarakhand — 248001
             </p>
           </div>
@@ -532,12 +546,12 @@ function OfficeLocation() {
             </h3>
             <div className="mt-3 space-y-1 text-sm text-slate-soft">
               <p>Ample parking available behind the building</p>
-              <p>Near landmarks: Clock Tower, Paltan Bazaar</p>
-              <p>5 minutes from Dehradun Railway Station</p>
+              <p>Near landmarks: Sahastradhara Road, Aman Vihar</p>
+              <p>15 minutes from Dehradun Railway Station</p>
             </div>
           </div>
           <Button className="w-full gap-2 bg-navy-deep text-white hover:bg-navy" size="lg" asChild>
-            <a href="https://www.google.com/maps/search/?api=1&query=18%2F2+Rajpur+Road+Dehradun" target="_blank" rel="noreferrer">
+            <a href="https://www.google.com/maps/place/Vineyard+Infra+%7C+Construction+Company+in+Dehradun/@30.350669,78.0747649,17z/data=!4m14!1m7!3m6!1s0x3908d713b0382577:0xb00ba938afbc2032!2sVineyard+Infra+%7C+Construction+Company+in+Dehradun!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq!3m5!1s0x3908d713b0382577:0xb00ba938afbc2032!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq?entry=ttu&g_ep=EgoyMDI2MDYxMy4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer">
               <Navigation className="h-4 w-4" /> Get Directions
             </a>
           </Button>
@@ -545,7 +559,7 @@ function OfficeLocation() {
         <div className="overflow-hidden rounded-xl border border-border lg:col-span-2">
           <iframe
             title="Vineyard Infra Office Location"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3444.775566070929!2d78.0411!3d30.3165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzDCsDE5JzAwLjAiTiA3OMKwMDInMjguMCJF!5e0!3m2!1sen!2sin!4v1700000000000"
+            src="https://maps.google.com/maps?q=Vineyard%20Infra%20Construction%20Dehradun&t=&z=15&ie=UTF8&iwloc=&output=embed"
             width="100%"
             height="100%"
             style={{ border: 0, minHeight: 420 }}
@@ -637,6 +651,11 @@ function Footer() {
             <p className="mt-4 max-w-sm text-sm leading-relaxed">
               Premium real estate advisory in Dehradun. Helping families and investors discover properties worth owning.
             </p>
+            <div className="mt-6 flex gap-3">
+              <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="grid size-10 place-items-center rounded-sm bg-white/5 text-gold border border-white/10 hover:bg-gold hover:text-navy-deep hover:border-gold transition-all duration-300" aria-label="Facebook"><Facebook className="size-4" /></a>
+              <a href="https://www.instagram.com/vineyardinfra/" target="_blank" rel="noopener noreferrer" className="grid size-10 place-items-center rounded-sm bg-white/5 text-gold border border-white/10 hover:bg-gold hover:text-navy-deep hover:border-gold transition-all duration-300" aria-label="Instagram"><Instagram className="size-4" /></a>
+              <a href="https://www.youtube.com/@vineyardinfra1900" target="_blank" rel="noopener noreferrer" className="grid size-10 place-items-center rounded-sm bg-white/5 text-gold border border-white/10 hover:bg-gold hover:text-navy-deep hover:border-gold transition-all duration-300" aria-label="YouTube"><Youtube className="size-4" /></a>
+            </div>
           </div>
           <div>
             <h4 className="font-display text-sm font-semibold text-white">Quick Links</h4>
@@ -650,9 +669,11 @@ function Footer() {
           <div>
             <h4 className="font-display text-sm font-semibold text-white">Contact</h4>
             <div className="mt-4 flex flex-col gap-2 text-sm">
-              <a href={PHONE} className="transition-colors hover:text-gold">+91 98765 43210</a>
-              <a href={EMAIL} className="transition-colors hover:text-gold">hello@vineyardinfra.com</a>
-              <p>18/2 Rajpur Road, Dehradun</p>
+              <a href={PHONE} className="transition-colors hover:text-gold">+91 63976 88989</a>
+              <a href={EMAIL} className="transition-colors hover:text-gold">vineyardinfra005@gmail.com</a>
+              <a href="https://www.google.com/maps/place/Vineyard+Infra+%7C+Construction+Company+in+Dehradun/@30.350669,78.0747649,17z/data=!4m14!1m7!3m6!1s0x3908d713b0382577:0xb00ba938afbc2032!2sVineyard+Infra+%7C+Construction+Company+in+Dehradun!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq!3m5!1s0x3908d713b0382577:0xb00ba938afbc2032!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq?entry=ttu&g_ep=EgoyMDI2MDYxMy4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-gold">
+                AMAN VIHAR SAHASTRADHARA ROAD, Dehradun
+              </a>
             </div>
           </div>
         </div>
@@ -667,7 +688,7 @@ function Footer() {
 /* ---------- Mobile Sticky Bar ---------- */
 function MobileStickyBar() {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t border-border bg-white px-2 py-2 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] md:hidden">
+    <div id="mobile-sticky-nav" className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t border-border bg-white px-2 py-2 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] md:hidden">
       <a href={PHONE} className="flex flex-1 flex-col items-center gap-0.5 py-1 text-navy-deep">
         <Phone className="h-5 w-5" />
         <span className="text-[10px] font-medium">Call</span>
@@ -701,9 +722,70 @@ function ContactPage() {
       <AdvisorSection />
       <OfficeLocation />
       <FAQSection />
+      <ConnectWithUs />
       <FinalCTA />
       <Footer />
       <MobileStickyBar />
     </div>
+  );
+}
+
+function ConnectWithUs() {
+  return (
+    <section className="bg-white py-20 border-t border-border">
+      <div className="mx-auto max-w-4xl px-5 text-center md:px-10">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Stay Tuned</p>
+        <h2 className="mt-3 font-display text-3xl font-semibold text-navy-deep md:text-4xl">Connect With Us</h2>
+        <p className="mx-auto mt-4 max-w-xl text-slate-soft text-sm md:text-base leading-relaxed">
+          Follow Vineyard Infra for project updates, construction progress, investment opportunities, and real estate insights.
+        </p>
+        <div className="mt-10 grid gap-6 sm:grid-cols-3">
+          {[
+            {
+              name: "Facebook",
+              desc: "Follow updates & client stories",
+              link: "https://www.facebook.com/vineyardinfra",
+              icon: Facebook,
+              color: "hover:border-[#1877F2]/40 hover:bg-[#1877F2]/5 group-hover:text-[#1877F2]",
+              iconBg: "bg-[#1877F2]/10 text-[#1877F2]"
+            },
+            {
+              name: "Instagram",
+              desc: "Explore photos & reels",
+              link: "https://www.instagram.com/vineyardinfra/",
+              icon: Instagram,
+              color: "hover:border-[#E1306C]/40 hover:bg-[#E1306C]/5 group-hover:text-[#E1306C]",
+              iconBg: "bg-[#E1306C]/10 text-[#E1306C]"
+            },
+            {
+              name: "YouTube",
+              desc: "Watch site & villa tours",
+              link: "https://www.youtube.com/@vineyardinfra1900",
+              icon: Youtube,
+              color: "hover:border-[#FF0000]/40 hover:bg-[#FF0000]/5 group-hover:text-[#FF0000]",
+              iconBg: "bg-[#FF0000]/10 text-[#FF0000]"
+            }
+          ].map((item) => (
+            <a
+              key={item.name}
+              href={item.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`group flex flex-col items-center rounded-xl border border-border bg-card p-6 transition-all duration-300 hover:shadow-md ${item.color}`}
+            >
+              <div className={`grid size-12 place-items-center rounded-full transition-transform duration-300 group-hover:scale-110 ${item.iconBg}`}>
+                <item.icon className="size-6" />
+              </div>
+              <h3 className="mt-4 font-display text-lg font-semibold text-navy-deep transition-colors">
+                {item.name}
+              </h3>
+              <p className="mt-2 text-xs text-slate-soft text-center leading-relaxed">
+                {item.desc}
+              </p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

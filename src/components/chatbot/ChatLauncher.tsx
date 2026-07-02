@@ -1,21 +1,83 @@
+import { useState, useEffect } from "react";
+import { useLocation } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Sparkles } from "lucide-react";
 import { useChatbot } from "./ChatbotProvider";
 
 export function ChatLauncher() {
   const { isOpen, toggle } = useChatbot();
+  const [hasStickyNav, setHasStickyNav] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const checkStickyNav = () => {
+      const el = document.getElementById("mobile-sticky-nav");
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (el && window.innerWidth < 768) {
+        setHasStickyNav(true);
+      } else {
+        setHasStickyNav(false);
+      }
+    };
+    checkStickyNav();
+    window.addEventListener("resize", checkStickyNav);
+    const timer1 = setTimeout(checkStickyNav, 100);
+    const timer2 = setTimeout(checkStickyNav, 300);
+    const timer3 = setTimeout(checkStickyNav, 600);
+    return () => {
+      window.removeEventListener("resize", checkStickyNav);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!isMobile) {
+      setShowTooltip(true);
+      return;
+    }
+
+    // Show tooltip for 4 seconds initially
+    setShowTooltip(true);
+    const initialTimer = setTimeout(() => {
+      setShowTooltip(false);
+    }, 4000);
+
+    // Re-prompt every 30 seconds for 4 seconds
+    const interval = setInterval(() => {
+      setShowTooltip(true);
+      setTimeout(() => {
+        setShowTooltip(false);
+      }, 4000);
+    }, 30000);
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(interval);
+    };
+  }, [isMobile]);
 
   return (
-    <div className="fixed bottom-6 right-4 z-50 sm:right-6">
+    <div
+      className="fixed right-4 z-50 sm:right-6 transition-all duration-300"
+      style={{
+        bottom: hasStickyNav ? "84px" : "24px",
+      }}
+    >
       {/* Premium tooltip — only visible when chat is closed */}
       <AnimatePresence>
-        {!isOpen && (
+        {!isOpen && (showTooltip || isHovered || !isMobile) && (
           <motion.div
             initial={{ opacity: 0, y: 8, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.9 }}
-            transition={{ delay: 1.2, duration: 0.5, ease: "easeOut" }}
-            className="absolute -top-20 right-0 w-56"
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="absolute -top-20 right-0 w-56 pointer-events-none"
           >
             <div
               className="relative overflow-hidden rounded-xl border border-gold/30 px-4 py-3"
@@ -71,30 +133,31 @@ export function ChatLauncher() {
         )}
       </AnimatePresence>
 
-      {/* Pulsing ring */}
-      {!isOpen && (
-        <>
-          <span
-            className="absolute inset-0 animate-ping rounded-full opacity-20"
-            style={{ background: "var(--gradient-gold)" }}
-          />
-          <span
-            className="absolute -inset-1.5 animate-pulse rounded-full opacity-10"
-            style={{ background: "var(--gradient-gold)" }}
-          />
-        </>
-      )}
-
-      {/* Button */}
+      {/* Button with premium soft pulsing ring */}
       <motion.button
         onClick={toggle}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.92 }}
+        animate={isOpen ? {} : {
+          scale: [1, 1.04, 1],
+          boxShadow: [
+            "0_0_0_0_rgba(212,175,55,0.4)",
+            "0_0_0_12px_rgba(212,175,55,0)",
+            "0_0_0_0_rgba(212,175,55,0)"
+          ]
+        }}
+        transition={isOpen ? {} : {
+          duration: 2,
+          repeat: Infinity,
+          repeatDelay: 4,
+          ease: "easeInOut"
+        }}
         aria-label={isOpen ? "Close chat" : "Open chat"}
         className="relative grid size-14 place-items-center rounded-full text-navy-deep shadow-gold transition-shadow hover:shadow-lg"
         style={{
           background: "var(--gradient-gold)",
-          boxShadow: "var(--shadow-gold)",
         }}
       >
         <AnimatePresence mode="wait" initial={false}>

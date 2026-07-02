@@ -14,6 +14,9 @@ import {
   Eye,
   MapPin,
   ArrowRight,
+  Facebook,
+  Instagram,
+  Youtube,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -180,7 +183,7 @@ export function MobileNav({ trigger = "light", hideAt = "md" }: Props) {
                     {locations.map((loc) => (
                       <Link
                         key={loc.name}
-                        to="/properties"
+                        to={`/properties?location=${encodeURIComponent(loc.name)}`}
                         onClick={() => setOpen(false)}
                         className="flex items-center justify-between rounded-lg px-3 py-2.5 transition-colors hover:bg-white/5 group"
                       >
@@ -223,13 +226,13 @@ export function MobileNav({ trigger = "light", hideAt = "md" }: Props) {
 
             <div className="px-6 py-6 border-t border-white/10 space-y-3">
               <a
-                href="tel:+919876543210"
+                href="tel:+916397688989"
                 className="flex items-center justify-center gap-2 rounded-sm border border-white/20 py-3 text-sm font-semibold"
               >
                 <Phone className="size-4" /> Call Advisor
               </a>
               <a
-                href="https://wa.me/919876543210"
+                href="https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I'm%20interested%20in%20exploring%20properties%20in%20Dehradun."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 rounded-sm bg-emerald-500 py-3 text-sm font-semibold text-white"
@@ -244,6 +247,17 @@ export function MobileNav({ trigger = "light", hideAt = "md" }: Props) {
               >
                 <Calendar className="size-4" /> Book Site Visit
               </Link>
+              <div className="flex justify-center gap-6 pt-4 border-t border-white/5">
+                <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-gold transition-colors" aria-label="Facebook">
+                  <Facebook className="size-5" />
+                </a>
+                <a href="https://www.instagram.com/vineyardinfra/" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-gold transition-colors" aria-label="Instagram">
+                  <Instagram className="size-5" />
+                </a>
+                <a href="https://www.youtube.com/@vineyardinfra1900" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-gold transition-colors" aria-label="YouTube">
+                  <Youtube className="size-5" />
+                </a>
+              </div>
             </div>
           </div>
         </div>

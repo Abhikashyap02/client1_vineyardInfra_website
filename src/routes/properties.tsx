@@ -1,9 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
+import { useMemo, useState, useEffect } from "react";
 import {
   Search, MapPin, Building2, ShieldCheck, Sparkles, Headset,
   TrendingUp, HandCoins, MessageCircle, Phone, Calendar, ArrowRight,
-  Maximize, Tag, CheckCircle2, Filter,
+  Maximize, Tag, CheckCircle2, Filter, Facebook, Instagram, Youtube,
 } from "lucide-react";
 import { MobileNav } from "@/components/MobileNav";
 import { DesktopNav } from "@/components/DesktopNav";
@@ -62,7 +62,7 @@ const quickFilters = [
 type QuickFilter = typeof quickFilters[number];
 
 const typeOptions = ["Any Type", "Flat / Apartment", "Villa", "Independent House", "Plot", "Commercial Space", "Office Space", "Retail Shop"];
-const locationOptions = ["Any Location", "Rajpur Road", "Sahastradhara Road", "Mussoorie Road", "Haridwar Road", "Harrawala"];
+const locationOptions = ["Any Location", "Rajpur Road", "Sahastradhara Road", "Mussoorie Road", "Haridwar Road", "Harrawala", "Clement Town"];
 const budgetOptions = ["Any Budget", "Under 50 Lakhs", "50L - 1Cr", "1Cr - 2Cr", "2Cr+"];
 const statusOptions = ["Any Status", "Ongoing", "Ready to Move", "Under Construction", "Upcoming"];
 
@@ -75,7 +75,7 @@ const whyUs = [
   { icon: Headset, title: "Post-Sale Support", desc: "Registration, handover and resale — we stay with you." },
 ];
 
-const WHATSAPP = "https://wa.me/919999999999?text=Hi%20Vineyard%20Infra%2C%20I%27d%20like%20to%20enquire%20about%20a%20property.";
+const WHATSAPP = "https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I%27d%20like%20to%20enquire%20about%20a%20property.";
 
 function matchesQuickFilter(p: Property, f: QuickFilter) {
   switch (f) {
@@ -94,6 +94,35 @@ function matchesQuickFilter(p: Property, f: QuickFilter) {
 function PropertiesPage() {
   const [quick, setQuick] = useState<QuickFilter>("All Properties");
   const [search, setSearch] = useState({ type: typeOptions[0], location: locationOptions[0], budget: budgetOptions[0], status: statusOptions[0] });
+  const routerLocation = useLocation();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(routerLocation.searchStr);
+      const type = params.get("type");
+      const location = params.get("location");
+      const budget = params.get("budget");
+      const status = params.get("status");
+
+      let matchedLocation = locationOptions[0];
+      if (location) {
+        const normalizedParam = location.toLowerCase().replace(/[^a-z0-9]/g, "");
+        const found = locationOptions.find(opt => 
+          opt.toLowerCase().replace(/[^a-z0-9]/g, "") === normalizedParam
+        );
+        if (found) {
+          matchedLocation = found;
+        }
+      }
+
+      setSearch({
+        type: type || typeOptions[0],
+        location: matchedLocation,
+        budget: budget || budgetOptions[0],
+        status: status || statusOptions[0]
+      });
+    }
+  }, [routerLocation.searchStr]);
 
   const filtered = useMemo(() => properties.filter((p) => {
     if (!matchesQuickFilter(p, quick)) return false;
@@ -130,8 +159,8 @@ function PropertiesPage() {
           </Link>
           <DesktopNav variant="light" activeLabel="Projects" />
           <div className="flex items-center gap-2">
-            <a href="tel:+919876543210" className="hidden sm:inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full bg-gold text-navy-deep hover:opacity-90">
-              <Phone className="w-4 h-4" /> +91 98765 43210
+            <a href="tel:+916397688989" className="hidden sm:inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full bg-gold text-navy-deep hover:opacity-90">
+              <Phone className="w-4 h-4" /> +91 63976 88989
             </a>
             <MobileNav trigger="light" hideAt="lg" />
           </div>
@@ -158,9 +187,9 @@ function PropertiesPage() {
             <a href="#listings" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gold text-navy-deep font-medium hover:opacity-95">
               Browse Properties <ArrowRight className="w-4 h-4" />
             </a>
-            <a href="#sitevisit" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/30 text-white hover:bg-white/10">
+            <Link to="/contact" hash="site-visit" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/30 text-white hover:bg-white/10">
               <Calendar className="w-4 h-4" /> Book Site Visit
-            </a>
+            </Link>
           </div>
           <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
             {trustChips.map((t) => (
@@ -302,10 +331,10 @@ function PropertiesPage() {
           </h2>
           <p className="text-white/75 mt-4 max-w-2xl mx-auto">Speak to a Vineyard advisor today — get curated options, honest market insight and zero pressure.</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <a href="#sitevisit" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gold text-navy-deep font-medium">
+            <Link to="/contact" hash="site-visit" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gold text-navy-deep font-medium">
               <Calendar className="w-4 h-4" /> Book Site Visit
-            </a>
-            <a href="tel:+919999999999" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-navy-deep font-medium">
+            </Link>
+            <a href="tel:+916397688989" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-navy-deep font-medium">
               <Phone className="w-4 h-4" /> Talk to an Advisor
             </a>
             <a href={WHATSAPP} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/30 text-white hover:bg-white/10">
@@ -318,21 +347,26 @@ function PropertiesPage() {
       <footer className="bg-navy-deep text-white/70 text-sm py-8 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-5 flex flex-wrap items-center justify-between gap-3">
           <p>© {new Date().getFullYear()} Vineyard Infra. All rights reserved.</p>
+          <div className="flex gap-4">
+            <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors text-white/50" aria-label="Facebook"><Facebook className="size-4" /></a>
+            <a href="https://www.instagram.com/vineyardinfra/" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors text-white/50" aria-label="Instagram"><Instagram className="size-4" /></a>
+            <a href="https://www.youtube.com/@vineyardinfra1900" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors text-white/50" aria-label="YouTube"><Youtube className="size-4" /></a>
+          </div>
           <p className="text-white/50">RERA Registered · Verified Listings</p>
         </div>
       </footer>
 
       {/* Mobile sticky bar */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-background border-t border-border grid grid-cols-3 text-xs font-medium">
-        <a href="tel:+919999999999" className="flex flex-col items-center gap-1 py-3 text-navy-deep">
+      <div id="mobile-sticky-nav" className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-background border-t border-border grid grid-cols-3 text-xs font-medium">
+        <a href="tel:+916397688989" className="flex flex-col items-center gap-1 py-3 text-navy-deep">
           <Phone className="w-4 h-4" /> Call
         </a>
         <a href={WHATSAPP} target="_blank" rel="noreferrer" className="flex flex-col items-center gap-1 py-3 text-navy-deep border-x border-border">
           <MessageCircle className="w-4 h-4" /> WhatsApp
         </a>
-        <a href="#sitevisit" className="flex flex-col items-center gap-1 py-3 bg-gold text-navy-deep">
+        <Link to="/contact" hash="site-visit" className="flex flex-col items-center gap-1 py-3 bg-gold text-navy-deep">
           <Calendar className="w-4 h-4" /> Site Visit
-        </a>
+        </Link>
       </div>
       <div className="md:hidden h-16" />
     </div>
@@ -395,17 +429,17 @@ function PropertyCard({ p }: { p: Property }) {
           ))}
         </div>
         <div className="mt-5 grid grid-cols-2 gap-2">
-          <a href="#sitevisit" className="inline-flex items-center justify-center gap-1.5 text-sm font-medium px-3 py-2.5 rounded-lg bg-navy-deep text-primary-foreground hover:opacity-90">
+          <Link to={`/contact?property=${encodeURIComponent(p.name)}`} hash="site-visit" className="inline-flex items-center justify-center gap-1.5 text-sm font-medium px-3 py-2.5 rounded-lg bg-navy-deep text-primary-foreground hover:opacity-90">
             <Calendar className="w-4 h-4" /> Site Visit
-          </a>
+          </Link>
           <a href={WHATSAPP} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-1.5 text-sm font-medium px-3 py-2.5 rounded-lg border border-border hover:border-gold text-navy-deep">
             <MessageCircle className="w-4 h-4" /> WhatsApp
           </a>
         </div>
         <div className="mt-2 grid grid-cols-2 gap-2">
-          <a href="#sitevisit" className="inline-flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg text-muted-foreground hover:text-navy-deep">
+          <Link to={`/contact?property=${encodeURIComponent(p.name)}`} hash="site-visit" className="inline-flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg text-muted-foreground hover:text-navy-deep">
             Quick Inquiry
-          </a>
+          </Link>
           <Link to="/projects/$slug" params={{ slug: p.slug }} className="inline-flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg text-gold hover:underline">
             View Details <ArrowRight className="w-3.5 h-3.5" />
           </Link>

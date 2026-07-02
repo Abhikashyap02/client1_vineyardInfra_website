@@ -10,7 +10,7 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 
 const BACKEND_URL = "http://127.0.0.1:8000";
-const COMPANY_PHONE = "9997033033";
+const COMPANY_PHONE = "6397688989";
 
 export interface PropertyItem {
   id: number;

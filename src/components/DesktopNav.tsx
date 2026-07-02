@@ -235,7 +235,7 @@ export function DesktopNav({ variant = "light", activeLabel }: DesktopNavProps) 
             {locations.map((loc) => (
               <Link
                 key={loc.name}
-                to="/properties"
+                to={`/properties?location=${encodeURIComponent(loc.name)}`}
                 onClick={() => setOpenMenu(null)}
                 className="group/loc flex items-center justify-between rounded-lg px-4 py-3 transition-all duration-200 hover:bg-warm-bg"
               >

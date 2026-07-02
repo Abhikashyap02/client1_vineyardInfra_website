@@ -20,6 +20,9 @@ import {
   Target,
   TrendingUp,
   Users,
+  Facebook,
+  Instagram,
+  Youtube,
 } from "lucide-react";
 import { MobileNav } from "@/components/MobileNav";
 import { DesktopNav } from "@/components/DesktopNav";
@@ -103,8 +106,8 @@ function TopNav() {
         </Link>
         <DesktopNav variant="light" activeLabel="About Us" />
         <div className="flex items-center gap-2">
-          <Button className="bg-gold text-navy-deep hover:bg-gold-soft hidden md:inline-flex">
-            <Phone className="h-4 w-4" /> +91 98765 43210
+          <Button className="bg-gold text-navy-deep hover:bg-gold-soft hidden md:inline-flex" asChild>
+            <a href="tel:+916397688989"><Phone className="h-4 w-4" /> +91 63976 88989</a>
           </Button>
           <MobileNav trigger="light" hideAt="lg" />
         </div>
@@ -780,14 +783,23 @@ function FinalCTA() {
               <Building2 className="h-4 w-4" /> Explore Projects
             </Button>
           </Link>
-          <Button size="lg" className="h-12 px-6 bg-emerald-600 hover:bg-emerald-700 text-white">
-            <MessageCircle className="h-4 w-4" /> WhatsApp Now
+          <Button size="lg" className="h-12 px-6 bg-emerald-600 hover:bg-emerald-700 text-white" asChild>
+            <a href="https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I'm%20interested%20in%20exploring%20properties%20in%20Dehradun." target="_blank" rel="noopener noreferrer">
+              <MessageCircle className="h-4 w-4" /> WhatsApp Now
+            </a>
           </Button>
         </div>
-        <div className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-white/60">
-          <span className="flex items-center gap-2"><Phone className="h-4 w-4 text-gold" /> +91 98765 43210</span>
-          <span className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" /> Rajpur Road, Dehradun</span>
+        <div className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-white/60 border-t border-white/10 pt-8 w-full max-w-2xl mx-auto">
+          <a href="tel:+916397688989" className="flex items-center gap-2 hover:text-gold transition-colors"><Phone className="h-4 w-4 text-gold" /> +91 63976 88989</a>
+          <a href="https://www.google.com/maps/place/Vineyard+Infra+%7C+Construction+Company+in+Dehradun/@30.350669,78.0747649,17z/data=!4m14!1m7!3m6!1s0x3908d713b0382577:0xb00ba938afbc2032!2sVineyard+Infra+%7C+Construction+Company+in+Dehradun!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq!3m5!1s0x3908d713b0382577:0xb00ba938afbc2032!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq?entry=ttu&g_ep=EgoyMDI2MDYxMy4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-gold transition-colors">
+            <MapPin className="h-4 w-4 text-gold" /> AMAN VIHAR SAHASTRADHARA ROAD, Dehradun
+          </a>
           <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-gold" /> RERA: UK02000XXXXXX</span>
+        </div>
+        <div className="mt-6 flex justify-center gap-4 text-white/60">
+          <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors" aria-label="Facebook"><Facebook className="size-4" /></a>
+          <a href="https://www.instagram.com/vineyardinfra/" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors" aria-label="Instagram"><Instagram className="size-4" /></a>
+          <a href="https://www.youtube.com/@vineyardinfra1900" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors" aria-label="YouTube"><Youtube className="size-4" /></a>
         </div>
       </div>
     </section>
@@ -800,6 +812,7 @@ function AboutPage() {
     <main className="bg-white">
       <HeroStory />
       <FounderSpotlight />
+      <AboutSocialSection />
       <TrustMetrics />
       <JourneySection />
       <HowWeWork />
@@ -811,5 +824,52 @@ function AboutPage() {
       <FAQSection />
       <FinalCTA />
     </main>
+  );
+}
+
+function AboutSocialSection() {
+  return (
+    <section className="bg-navy-deep py-20 text-white relative overflow-hidden">
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute -left-24 -bottom-24 h-96 w-96 rounded-full bg-gold blur-3xl" />
+      </div>
+      <div className="max-w-7xl mx-auto px-5 md:px-10 relative z-10">
+        <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-8 md:p-12 text-center max-w-4xl mx-auto">
+          <p className="text-xs uppercase tracking-[0.2em] text-gold font-semibold">Join Our Community</p>
+          <h2 className="font-display text-2xl md:text-4xl font-semibold mt-3 text-white leading-snug">
+            Join our growing community and stay updated with our latest projects.
+          </h2>
+          <p className="mt-4 text-sm text-white/60 max-w-xl mx-auto leading-relaxed">
+            Get early access to property launches, behind-the-scenes construction tours, and expert real estate market analysis in Dehradun.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <a
+              href="https://www.facebook.com/vineyardinfra"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-gold transition-all duration-300 hover:bg-gold hover:text-navy-deep hover:border-gold hover:scale-105"
+            >
+              <Facebook className="size-4" /> Facebook
+            </a>
+            <a
+              href="https://www.instagram.com/vineyardinfra/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-gold transition-all duration-300 hover:bg-gold hover:text-navy-deep hover:border-gold hover:scale-105"
+            >
+              <Instagram className="size-4" /> Instagram
+            </a>
+            <a
+              href="https://www.youtube.com/@vineyardinfra1900"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-gold transition-all duration-300 hover:bg-gold hover:text-navy-deep hover:border-gold hover:scale-105"
+            >
+              <Youtube className="size-4" /> YouTube
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

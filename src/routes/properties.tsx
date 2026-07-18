@@ -5,8 +5,7 @@ import {
   TrendingUp, HandCoins, MessageCircle, Phone, Calendar, ArrowRight,
   Maximize, Tag, CheckCircle2, Filter, Facebook, Instagram, Youtube,
 } from "lucide-react";
-import { MobileNav } from "@/components/MobileNav";
-import { DesktopNav } from "@/components/DesktopNav";
+import { Header } from "@/components/Header";
 import heroProperty from "@/assets/hero-property.jpg";
 import projectVilla from "@/assets/project-villa.jpg";
 import projectApartments from "@/assets/project-apartments.jpg";
@@ -47,7 +46,7 @@ type Property = {
 const properties: Property[] = [
   { id: "p1", slug: "vineyard-signature-villas", name: "Vineyard Signature Villas", location: "Mussoorie Road, Dehradun", type: "Villa", category: "Luxury", status: "Ongoing", priceMin: 145, priceLabel: "₹1.45 Cr*", area: "2200 – 3000 Sq.Ft.", bhk: "3, 4 BHK", amenities: ["Clubhouse", "Pool", "Landscaped Gardens"], desc: "Hill-view luxury villas with private decks and curated interiors.", tags: ["Featured", "Hot Property"], img: projectVilla, featured: true },
   { id: "p2", slug: "vineyard-high-grove", name: "Vineyard High Grove", location: "Sahastradhara Road, Dehradun", type: "Apartment", category: "Residential", status: "Under Construction", priceMin: 78, priceLabel: "₹78 L*", area: "1200 – 1950 Sq.Ft.", bhk: "2, 3 BHK", amenities: ["Gym", "Rooftop Lounge", "Kids' Play"], desc: "Premium 2 & 3 BHK residences in Dehradun's fastest growing corridor.", tags: ["New Launch"], img: projectApartments, featured: true },
-  { id: "p3", slug: "vineyard-green-county", name: "Vineyard Green County", location: "Harrawala, Dehradun", type: "Plot", category: "Investment", status: "Ready to Move", priceMin: 22, priceLabel: "₹22.5 L*", area: "100 – 300 Sq.Yd.", bhk: "Residential Plots", amenities: ["Gated", "Wide Roads", "Underground Utilities"], desc: "RERA-approved residential plots with strong appreciation potential.", tags: ["Investment Opportunity"], img: projectPlots },
+  { id: "p3", slug: "vineyard-green-county", name: "Vineyard Green County", location: "Harrawala, Dehradun", type: "Plot", category: "Investment", status: "Ready to Move", priceMin: 22, priceLabel: "₹22.5 L*", area: "100 – 300 Sq.Yd.", bhk: "Residential Plots", amenities: ["Gated", "Wide Roads", "Underground Utilities"], desc: "Gated residential plots with strong appreciation potential.", tags: ["Investment Opportunity"], img: projectPlots },
   { id: "p4", slug: "vineyard-crown-residences", name: "Vineyard Crown Residences", location: "Rajpur Road, Dehradun", type: "Apartment", category: "Luxury", status: "Ready to Move", priceMin: 195, priceLabel: "₹1.95 Cr*", area: "1800 – 2600 Sq.Ft.", bhk: "3, 4 BHK", amenities: ["Concierge", "Spa", "Sky Lounge"], desc: "Boutique luxury apartments on Dehradun's most coveted address.", tags: ["Featured", "Hot Property"], img: interiorLiving, featured: true },
   { id: "p5", slug: "vineyard-pine-estate", name: "Vineyard Pine Estate", location: "Mussoorie Road, Dehradun", type: "Villa", category: "Luxury", status: "Upcoming", priceMin: 320, priceLabel: "₹3.2 Cr*", area: "3500 – 4800 Sq.Ft.", bhk: "4, 5 BHK", amenities: ["Private Pool", "Home Theatre", "Smart Home"], desc: "Limited edition forest-facing estate villas for discerning families.", tags: ["New Launch"], img: heroProperty },
   { id: "p6", slug: "vineyard-trade-centre", name: "Vineyard Trade Centre", location: "Haridwar Road, Dehradun", type: "Commercial", category: "Commercial", status: "Under Construction", priceMin: 55, priceLabel: "₹55 L*", area: "450 – 1800 Sq.Ft.", bhk: "Retail / Office", amenities: ["High Footfall", "Ample Parking", "Power Backup"], desc: "Grade-A retail and office spaces on a high-visibility commercial stretch.", tags: ["Investment Opportunity"], img: projectApartments },
@@ -107,7 +106,7 @@ function PropertiesPage() {
       let matchedLocation = locationOptions[0];
       if (location) {
         const normalizedParam = location.toLowerCase().replace(/[^a-z0-9]/g, "");
-        const found = locationOptions.find(opt => 
+        const found = locationOptions.find(opt =>
           opt.toLowerCase().replace(/[^a-z0-9]/g, "") === normalizedParam
         );
         if (found) {
@@ -147,25 +146,7 @@ function PropertiesPage() {
   return (
     <div className="bg-warm-bg text-foreground">
       {/* Top bar */}
-      <header className="absolute top-0 left-0 right-0 z-40">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 md:px-10">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="grid h-9 w-9 place-items-center rounded-md bg-gold">
-              <span className="font-display font-bold text-navy-deep">V</span>
-            </div>
-            <div className="font-display font-semibold tracking-tight text-white">
-              Vineyard <span className="text-gold">Infra</span>
-            </div>
-          </Link>
-          <DesktopNav variant="light" activeLabel="Projects" />
-          <div className="flex items-center gap-2">
-            <a href="tel:+916397688989" className="hidden sm:inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-full bg-gold text-navy-deep hover:opacity-90">
-              <Phone className="w-4 h-4" /> +91 63976 88989
-            </a>
-            <MobileNav trigger="light" hideAt="lg" />
-          </div>
-        </div>
-      </header>
+      <Header activeLabel="Projects" />
 
       {/* HERO */}
       <section className="relative">
@@ -228,11 +209,10 @@ function PropertiesPage() {
               <button
                 key={f}
                 onClick={() => setQuick(f)}
-                className={`whitespace-nowrap px-4 py-2 rounded-full text-sm border transition ${
-                  active
+                className={`whitespace-nowrap px-4 py-2 rounded-full text-sm border transition ${active
                     ? "bg-navy-deep text-primary-foreground border-navy-deep"
                     : "bg-background text-foreground border-border hover:border-gold hover:text-navy-deep"
-                }`}
+                  }`}
               >
                 {f}
               </button>
@@ -346,13 +326,13 @@ function PropertiesPage() {
 
       <footer className="bg-navy-deep text-white/70 text-sm py-8 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-5 flex flex-wrap items-center justify-between gap-3">
-          <p>© {new Date().getFullYear()} Vineyard Infra. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Vineyard Infra Realcon LLP. All rights reserved.</p>
           <div className="flex gap-4">
             <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors text-white/50" aria-label="Facebook"><Facebook className="size-4" /></a>
             <a href="https://www.instagram.com/vineyardinfra/" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors text-white/50" aria-label="Instagram"><Instagram className="size-4" /></a>
             <a href="https://www.youtube.com/@vineyardinfra1900" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors text-white/50" aria-label="YouTube"><Youtube className="size-4" /></a>
           </div>
-          <p className="text-white/50">RERA Registered · Verified Listings</p>
+          <p className="text-white/50">Verified Listings</p>
         </div>
       </footer>
 
@@ -440,7 +420,7 @@ function PropertyCard({ p }: { p: Property }) {
           <Link to={`/contact?property=${encodeURIComponent(p.name)}`} hash="site-visit" className="inline-flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg text-muted-foreground hover:text-navy-deep">
             Quick Inquiry
           </Link>
-          <Link to="/projects/$slug" params={{ slug: p.slug }} className="inline-flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg text-gold hover:underline">
+          <Link to="/projects/$slug" params={{ slug: p.slug }} search={{ landing: false }} className="inline-flex items-center justify-center gap-1.5 text-xs font-medium py-2 rounded-lg text-gold hover:underline">
             View Details <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -466,7 +446,7 @@ function FeaturedCard({ p }: { p: Property }) {
           </p>
           <div className="mt-4 flex items-center justify-between">
             <span className="font-display font-semibold text-gold">{p.priceLabel}</span>
-            <Link to="/projects/$slug" params={{ slug: p.slug }} className="text-xs inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white text-navy-deep font-medium">
+            <Link to="/projects/$slug" params={{ slug: p.slug }} search={{ landing: false }} className="text-xs inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white text-navy-deep font-medium">
               View <ArrowRight className="w-3 h-3" />
             </Link>
           </div>

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MapPin, Phone, MessageCircle, Calendar, ArrowRight, ArrowLeft, X,
   Bed, Bath, Maximize, Car, Compass, CalendarClock, Sofa, Building2,
@@ -7,10 +7,9 @@ import {
   PlayCircle, Download, Star, ChevronDown, Check, FileText, Home,
   GraduationCap, HeartPulse, ShoppingBag, Plane, Briefcase, Camera,
   Image as ImageIcon, BadgeCheck, Quote, Award, IndianRupee, Layers, KeyRound, Clock,
-  Facebook, Instagram, Youtube,
+  Facebook, Instagram, Youtube, Mail,
 } from "lucide-react";
-import { MobileNav } from "@/components/MobileNav";
-import { DesktopNav } from "@/components/DesktopNav";
+import { Header } from "@/components/Header";
 import propertyHero from "@/assets/property-hero.jpg";
 import propertyBedroom from "@/assets/property-bedroom.jpg";
 import propertyAmenity from "@/assets/property-amenity.jpg";
@@ -34,7 +33,7 @@ type Project = {
   hero: string;
   gallery: { src: string; label: string }[];
   videoThumb: string;
-  highlights: { icon: typeof Bed; label: string; value: string }[];
+  highlights: { icon: string; label: string; value: string }[];
   usps: string[];
   configurations: { type: string; area: string; price: string; status: string }[];
   description: {
@@ -44,11 +43,21 @@ type Project = {
     quality: string;
     investment: string;
   };
-  amenities: { icon: typeof Waves; label: string }[];
-  nearby: { icon: typeof GraduationCap; label: string; place: string; time: string }[];
+  amenities: { icon: string; label: string }[];
+  nearby: { icon: string; label: string; place: string; time: string }[];
   investment: { label: string; value: string; desc: string }[];
   faqs: { q: string; a: string }[];
   similar: { slug: string; name: string; location: string; price: string; img: string }[];
+};
+
+const lucideIconMap: Record<string, React.ComponentType<any>> = {
+  MapPin, Phone, MessageCircle, Calendar, ArrowRight, ArrowLeft, X,
+  Bed, Bath, Maximize, Car, Compass, CalendarClock, Sofa, Building2,
+  ShieldCheck, Sparkles, TrendingUp, Trees, Dumbbell, Waves, Users,
+  PlayCircle, Download, Star, ChevronDown, Check, FileText, Home,
+  GraduationCap, HeartPulse, ShoppingBag, Plane, Briefcase, Camera,
+  Image: ImageIcon, BadgeCheck, Quote, Award, IndianRupee, Layers, KeyRound, Clock,
+  Facebook, Instagram, Youtube, Mail
 };
 
 const projects: Record<string, Project> = {
@@ -76,14 +85,14 @@ const projects: Record<string, Project> = {
     ],
     videoThumb: propertyAmenity,
     highlights: [
-      { icon: Bed, label: "Bedrooms", value: "3 & 4 BHK" },
-      { icon: Bath, label: "Bathrooms", value: "4 – 5" },
-      { icon: Maximize, label: "Area", value: "2200 – 3000 Sq.Ft." },
-      { icon: Car, label: "Parking", value: "2 Covered" },
-      { icon: Compass, label: "Facing", value: "Valley / East" },
-      { icon: CalendarClock, label: "Possession", value: "Dec 2026" },
-      { icon: Sofa, label: "Furnishing", value: "Semi-Furnished" },
-      { icon: Building2, label: "Property Age", value: "New Launch" },
+      { icon: "Bed", label: "Bedrooms", value: "3 & 4 BHK" },
+      { icon: "Bath", label: "Bathrooms", value: "4 – 5" },
+      { icon: "Maximize", label: "Area", value: "2200 – 3000 Sq.Ft." },
+      { icon: "Car", label: "Parking", value: "2 Covered" },
+      { icon: "Compass", label: "Facing", value: "Valley / East" },
+      { icon: "CalendarClock", label: "Possession", value: "Dec 2026" },
+      { icon: "Sofa", label: "Furnishing", value: "Semi-Furnished" },
+      { icon: "Building2", label: "Property Age", value: "New Launch" },
     ],
     usps: [
       "Near Mussoorie Main Road",
@@ -112,23 +121,23 @@ const projects: Record<string, Project> = {
         "Mussoorie Road has clocked 14% YoY price appreciation over the last 5 years. With limited new launches and strong rental demand, Signature Villas offers both lifestyle and long-term wealth creation.",
     },
     amenities: [
-      { icon: Waves, label: "Swimming Pool" },
-      { icon: Dumbbell, label: "Fitness Centre" },
-      { icon: Users, label: "Clubhouse" },
-      { icon: Trees, label: "Landscape Garden" },
-      { icon: Sparkles, label: "Children's Play Area" },
-      { icon: TrendingUp, label: "Jogging Track" },
-      { icon: ShieldCheck, label: "24x7 Security" },
-      { icon: Building2, label: "Power Backup" },
-      { icon: BadgeCheck, label: "Smart Access" },
+      { icon: "Waves", label: "Swimming Pool" },
+      { icon: "Dumbbell", label: "Fitness Centre" },
+      { icon: "Users", label: "Clubhouse" },
+      { icon: "Trees", label: "Landscape Garden" },
+      { icon: "Sparkles", label: "Children's Play Area" },
+      { icon: "TrendingUp", label: "Jogging Track" },
+      { icon: "ShieldCheck", label: "24x7 Security" },
+      { icon: "Building2", label: "Power Backup" },
+      { icon: "BadgeCheck", label: "Smart Access" },
     ],
     nearby: [
-      { icon: GraduationCap, label: "School", place: "The Doon School", time: "5 mins" },
-      { icon: HeartPulse, label: "Hospital", place: "Max Super Speciality", time: "8 mins" },
-      { icon: ShoppingBag, label: "Market", place: "Pacific Mall", time: "10 mins" },
-      { icon: Plane, label: "Airport", place: "Jolly Grant Airport", time: "25 mins" },
-      { icon: Briefcase, label: "Business", place: "IT Park Sahastradhara", time: "15 mins" },
-      { icon: Camera, label: "Attraction", place: "Mussoorie Mall Road", time: "35 mins" },
+      { icon: "GraduationCap", label: "School", place: "The Doon School", time: "5 mins" },
+      { icon: "HeartPulse", label: "Hospital", place: "Max Super Speciality", time: "8 mins" },
+      { icon: "ShoppingBag", label: "Market", place: "Pacific Mall", time: "10 mins" },
+      { icon: "Plane", label: "Airport", place: "Jolly Grant Airport", time: "25 mins" },
+      { icon: "Briefcase", label: "Business", place: "IT Park Sahastradhara", time: "15 mins" },
+      { icon: "Camera", label: "Attraction", place: "Mussoorie Mall Road", time: "35 mins" },
     ],
     investment: [
       { label: "Expected Appreciation", value: "12–15% YoY", desc: "Backed by 5-year Mussoorie Road trend." },
@@ -209,6 +218,9 @@ const WHATSAPP = (name: string) =>
   `https://wa.me/916397688989?text=${encodeURIComponent(`Hi Vineyard Infra, I'd like to enquire about ${name}.`)}`;
 
 export const Route = createFileRoute("/projects/$slug")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    landing: search.landing === "true" || search.landing === true,
+  }),
   loader: ({ params }) => {
     const base = projects["vineyard-signature-villas"];
     if (projects[params.slug]) return { project: projects[params.slug] };
@@ -220,6 +232,7 @@ export const Route = createFileRoute("/projects/$slug")({
     const p = loaderData?.project;
     const title = p ? `${p.name} — ${p.location} | Vineyard Infra` : "Property | Vineyard Infra";
     const desc = p?.summary ?? "Premium properties by Vineyard Infra.";
+    const canonicalPath = p ? `/projects/${p.slug}` : undefined;
     return {
       meta: [
         { title },
@@ -228,6 +241,9 @@ export const Route = createFileRoute("/projects/$slug")({
         { property: "og:description", content: desc },
         ...(p ? [{ property: "og:image", content: p.hero }] : []),
       ],
+      links: [
+        ...(canonicalPath ? [{ rel: "canonical", href: canonicalPath }] : []),
+      ],
     };
   },
   component: ProjectDetail,
@@ -235,20 +251,37 @@ export const Route = createFileRoute("/projects/$slug")({
 
 function ProjectDetail() {
   const { project } = Route.useLoaderData();
+  const { landing: isLanding } = Route.useSearch();
   const [activeImg, setActiveImg] = useState(0);
   const [lightbox, setLightbox] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const wa = useMemo(() => WHATSAPP(project.name), [project.name]);
 
+  // SEO: add noindex for landing mode so search engines don't index the ads variant
+  useEffect(() => {
+    if (!isLanding) return;
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex, follow";
+    document.head.appendChild(meta);
+    return () => { document.head.removeChild(meta); };
+  }, [isLanding]);
+
   return (
     <div className="min-h-screen bg-warm-bg pb-24 md:pb-0">
-      <TopNav projectName={project.name} />
+      {/* NAV — full nav for website, simplified for landing */}
+      {isLanding ? (
+        <LandingTopNav projectName={project.name} />
+      ) : (
+        <TopNav projectName={project.name} />
+      )}
 
       {/* HERO + GALLERY */}
       <section className="bg-navy-deep">
         <div className="container mx-auto px-4 py-6 md:py-8">
-          <Breadcrumb name={project.name} />
-          <div className="mt-4 grid gap-3 md:grid-cols-4 md:grid-rows-2 md:gap-3">
+          {/* Breadcrumb — website mode only */}
+          {!isLanding && <Breadcrumb name={project.name} />}
+          <div className={`${!isLanding ? 'mt-4' : 'mt-1'} grid gap-3 md:grid-cols-4 md:grid-rows-2 md:gap-3`}>
             <button
               onClick={() => { setActiveImg(0); setLightbox(true); }}
               className="group relative col-span-4 row-span-2 md:col-span-3 overflow-hidden rounded-xl"
@@ -343,13 +376,27 @@ function ProjectDetail() {
         </div>
       </section>
 
-      {/* SIMILAR + FINAL CTA */}
-      <Similar items={project.similar} />
+      {/* FINAL CTA — always shown */}
       <FinalCTA project={project} wa={wa} />
-      <ProjectUpdatesSection projectName={project.name} />
-      <Footer />
 
-      {/* MOBILE STICKY ACTIONS */}
+      {/* WEBSITE-ONLY SECTIONS */}
+      {!isLanding && (
+        <>
+          <Similar items={project.similar} />
+          <ProjectUpdatesSection projectName={project.name} />
+          <Footer />
+        </>
+      )}
+
+      {/* LANDING-ONLY SECTIONS */}
+      {isLanding && (
+        <>
+          <LandingMinimalFooter />
+          <FloatingEnquiryWidget wa={wa} />
+        </>
+      )}
+
+      {/* MOBILE STICKY ACTIONS — always shown */}
       <MobileSticky wa={wa} />
     </div>
   );
@@ -358,23 +405,7 @@ function ProjectDetail() {
 /* ---------- Subcomponents ---------- */
 
 function TopNav({ projectName }: { projectName: string }) {
-  return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-navy-deep/95 backdrop-blur">
-      <div className="container mx-auto flex items-center justify-between px-4 py-3">
-        <Link to="/" className="flex items-center gap-2 text-white">
-          <span className="grid h-8 w-8 place-items-center rounded-md bg-gold font-display text-sm font-bold text-navy-deep">V</span>
-          <span className="font-display text-base font-semibold tracking-tight">Vineyard Infra</span>
-        </Link>
-        <DesktopNav variant="light" />
-        <div className="flex items-center gap-2">
-          <a href="tel:+916397688989" className="hidden sm:inline-flex items-center gap-2 rounded-md bg-gold px-3 py-1.5 text-xs font-semibold text-navy-deep hover:opacity-90">
-            <Phone className="h-3.5 w-3.5" /> Call Advisor
-          </a>
-          <MobileNav trigger="light" hideAt="lg" />
-        </div>
-      </div>
-    </header>
-  );
+  return <Header activeLabel="Projects" />;
 }
 
 function Breadcrumb({ name }: { name: string }) {
@@ -479,13 +510,16 @@ function Highlights({ project }: { project: Project }) {
     <div>
       <SectionTitle kicker="At a Glance" title="Key Property Highlights" />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {project.highlights.map((h) => (
-          <div key={h.label} className="rounded-xl border border-navy-deep/10 bg-white p-4">
-            <h.icon className="h-5 w-5 text-gold" />
-            <div className="mt-3 text-xs uppercase tracking-wider text-slate-soft">{h.label}</div>
-            <div className="mt-1 font-display text-sm font-semibold text-navy-deep">{h.value}</div>
-          </div>
-        ))}
+        {project.highlights.map((h) => {
+          const IconComponent = lucideIconMap[h.icon] || Home;
+          return (
+            <div key={h.label} className="rounded-xl border border-navy-deep/10 bg-white p-4">
+              <IconComponent className="h-5 w-5 text-gold" />
+              <div className="mt-3 text-xs uppercase tracking-wider text-slate-soft">{h.label}</div>
+              <div className="mt-1 font-display text-sm font-semibold text-navy-deep">{h.value}</div>
+            </div>
+          );
+        })}
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         {project.usps.map((u) => (
@@ -568,14 +602,17 @@ function Amenities({ project }: { project: Project }) {
     <div>
       <SectionTitle kicker="Lifestyle" title="World-Class Amenities" />
       <div className="grid grid-cols-3 gap-3 md:grid-cols-3">
-        {project.amenities.map((a) => (
-          <div key={a.label} className="flex flex-col items-center gap-2 rounded-xl border border-navy-deep/10 bg-white p-4 text-center">
-            <span className="grid h-11 w-11 place-items-center rounded-full bg-gold/15 text-gold">
-              <a.icon className="h-5 w-5" />
-            </span>
-            <span className="text-xs font-medium text-navy-deep md:text-sm">{a.label}</span>
-          </div>
-        ))}
+        {project.amenities.map((a) => {
+          const IconComponent = lucideIconMap[a.icon] || Home;
+          return (
+            <div key={a.label} className="flex flex-col items-center gap-2 rounded-xl border border-navy-deep/10 bg-white p-4 text-center">
+              <span className="grid h-11 w-11 place-items-center rounded-full bg-gold/15 text-gold">
+                <IconComponent className="h-5 w-5" />
+              </span>
+              <span className="text-xs font-medium text-navy-deep md:text-sm">{a.label}</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -656,20 +693,23 @@ function Location({ project }: { project: Project }) {
           />
         </div>
         <div className="space-y-2">
-          {project.nearby.map((n) => (
-            <div key={n.place} className="flex items-center justify-between rounded-lg border border-navy-deep/10 bg-white px-4 py-3">
-              <div className="flex items-center gap-3">
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-gold/15 text-gold">
-                  <n.icon className="h-4 w-4" />
-                </span>
-                <div>
-                  <div className="font-display text-sm font-semibold text-navy-deep">{n.place}</div>
-                  <div className="text-xs text-slate-soft">{n.label}</div>
+          {project.nearby.map((n) => {
+            const IconComponent = lucideIconMap[n.icon] || Home;
+            return (
+              <div key={n.place} className="flex items-center justify-between rounded-lg border border-navy-deep/10 bg-white px-4 py-3">
+                <div className="flex items-center gap-3">
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-gold/15 text-gold">
+                    <IconComponent className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <div className="font-display text-sm font-semibold text-navy-deep">{n.place}</div>
+                    <div className="text-xs text-slate-soft">{n.label}</div>
+                  </div>
                 </div>
+                <span className="text-sm font-semibold text-navy-deep">{n.time}</span>
               </div>
-              <span className="text-sm font-semibold text-navy-deep">{n.time}</span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
@@ -855,6 +895,7 @@ function Similar({ items }: { items: Project["similar"] }) {
                   <Link
                     to="/projects/$slug"
                     params={{ slug: s.slug }}
+                    search={{ landing: false }}
                     className="inline-flex items-center gap-1 text-xs font-semibold text-gold hover:underline"
                   >
                     View <ArrowRight className="h-3 w-3" />
@@ -904,7 +945,7 @@ function Footer() {
   return (
     <footer className="border-t border-navy-deep/10 bg-white py-8">
       <div className="container mx-auto flex flex-col items-center justify-between gap-3 px-4 text-xs text-slate-soft md:flex-row">
-        <div>© {new Date().getFullYear()} Vineyard Infra. All rights reserved.</div>
+        <div>© {new Date().getFullYear()} Vineyard Infra Realcon LLP. All rights reserved.</div>
         <div className="flex gap-4">
           <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="hover:text-navy-deep transition-colors text-slate-soft" aria-label="Facebook"><Facebook className="size-4" /></a>
           <a href="https://www.instagram.com/vineyardinfra/" target="_blank" rel="noopener noreferrer" className="hover:text-navy-deep transition-colors text-slate-soft" aria-label="Instagram"><Instagram className="size-4" /></a>
@@ -947,7 +988,7 @@ function WhyInvest() {
     { icon: Layers, title: "Infrastructure Growth", body: "₹2,400 Cr+ sanctioned for roads, metro feeder, and utility upgrades around the project." },
     { icon: IndianRupee, title: "Rental Potential", body: "₹55K–₹85K/month rental demand from HNI families, expats, and corporate tenants." },
     { icon: Sparkles, title: "Premium Lifestyle", body: "Curated interiors, clubhouse, landscaped greens — designed for everyday luxury." },
-    { icon: Award, title: "Developer Reputation", body: "12+ years, 500+ happy families, RERA-compliant, and Grade-A construction partners." },
+    { icon: Award, title: "Developer Reputation", body: "12+ years, 500+ happy families, legally-compliant, and Grade-A construction partners." },
   ];
   return (
     <div>
@@ -982,7 +1023,7 @@ function BrochureSection({ projectName }: { projectName: string }) {
             <li className="flex items-center gap-2"><Check className="h-4 w-4 text-gold" /> All unit configurations & sizes</li>
             <li className="flex items-center gap-2"><Check className="h-4 w-4 text-gold" /> Transparent pricing & payment plans</li>
             <li className="flex items-center gap-2"><Check className="h-4 w-4 text-gold" /> Amenities, specs & master plan</li>
-            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-gold" /> RERA & legal documentation</li>
+            <li className="flex items-center gap-2"><Check className="h-4 w-4 text-gold" /> Approved legal documentation</li>
           </ul>
         </div>
         <form
@@ -1124,3 +1165,118 @@ function ProjectUpdatesSection({ projectName }: { projectName: string }) {
   );
 }
 
+/* ---------- Landing Mode Components ---------- */
+
+function LandingTopNav({ projectName }: { projectName: string }) {
+  return (
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-navy-deep/95 backdrop-blur">
+      <div className="container mx-auto flex items-center justify-between px-4 py-3">
+        <div className="flex items-center text-white">
+          <Logo variant="horizontal" />
+        </div>
+        <div className="flex items-center gap-2">
+          <a
+            href="#lead"
+            className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/15"
+          >
+            <Download className="h-3.5 w-3.5" /> Brochure
+          </a>
+          <a
+            href="tel:+916397688989"
+            className="inline-flex items-center gap-2 rounded-md bg-gold px-3 py-1.5 text-xs font-semibold text-navy-deep hover:opacity-90"
+          >
+            <Phone className="h-3.5 w-3.5" /> Call Advisor
+          </a>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function LandingMinimalFooter() {
+  return (
+    <footer className="border-t border-navy-deep/10 bg-white py-6">
+      <div className="container mx-auto flex flex-col items-center gap-4 px-4 text-center text-xs text-slate-soft md:flex-row md:justify-between md:text-left">
+        <div>© {new Date().getFullYear()} Vineyard Infra Realcon LLP. All rights reserved.</div>
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
+          <a href="#" className="hover:text-navy-deep transition-colors">Privacy Policy</a>
+          <span className="hidden md:inline text-navy-deep/20">|</span>
+          <a href="tel:+916397688989" className="inline-flex items-center gap-1 hover:text-navy-deep transition-colors">
+            <Phone className="h-3 w-3" /> +91 63976 88989
+          </a>
+          <span className="hidden md:inline text-navy-deep/20">|</span>
+          <a href="mailto:vineyardinfra005@gmail.com" className="inline-flex items-center gap-1 hover:text-navy-deep transition-colors">
+            <Mail className="h-3 w-3" /> vineyardinfra005@gmail.com
+          </a>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function FloatingEnquiryWidget({ wa }: { wa: string }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setVisible(window.scrollY > 600);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-30 hidden md:block">
+      <div className="border-t border-white/10 bg-navy-deep/95 backdrop-blur-md shadow-elevated">
+        <div className="container mx-auto flex items-center justify-between gap-3 px-4 py-3">
+          <div className="flex items-center gap-3">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gold/15 text-gold">
+              <Sparkles className="h-4 w-4" />
+            </span>
+            <div>
+              <div className="text-sm font-semibold text-white">Interested in this property?</div>
+              <div className="text-[11px] text-white/60">Speak with a senior advisor — no obligation</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <a
+              href="#lead"
+              className="inline-flex items-center gap-1.5 rounded-md bg-gold px-4 py-2 text-xs font-semibold text-navy-deep hover:opacity-90 transition-opacity"
+            >
+              <Calendar className="h-3.5 w-3.5" /> Book Free Site Visit
+            </a>
+            <a
+              href="#lead"
+              className="inline-flex items-center gap-1.5 rounded-md border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold text-white hover:bg-white/15 transition-colors"
+            >
+              <IndianRupee className="h-3.5 w-3.5" /> Request Price List
+            </a>
+            <a
+              href="#lead"
+              className="inline-flex items-center gap-1.5 rounded-md border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold text-white hover:bg-white/15 transition-colors"
+            >
+              <Download className="h-3.5 w-3.5" /> Download Brochure
+            </a>
+            <a
+              href="tel:+916397688989"
+              className="inline-flex items-center gap-1.5 rounded-md border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold text-white hover:bg-white/15 transition-colors"
+            >
+              <Phone className="h-3.5 w-3.5" /> Talk To Expert
+            </a>
+            <a
+              href={wa}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors"
+            >
+              <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

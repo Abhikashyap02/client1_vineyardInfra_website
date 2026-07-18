@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120" width="100%" height="100%" fill="none">
+  <style>
+    .brand-text {
+      font-family: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
+      font-size: 23px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      fill: #FFFFFF;
+      text-transform: uppercase;
+    }
+    .brand-text-gold {
+      fill: url(#gold-light);
+    }
+  </style>
+  <defs>
+    <linearGradient id="gold-light" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FAEBD7" />
+      <stop offset="50%" stop-color="#F5D77F" />
+      <stop offset="100%" stop-color="#D4AF37" />
+    </linearGradient>
+    <linearGradient id="gold-medium" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5D77F" />
+      <stop offset="50%" stop-color="#C59B27" />
+      <stop offset="100%" stop-color="#9A7B1C" />
+    </linearGradient>
+  </defs>
+
+  <!-- Icon scaled and translated -->
+  <g transform="translate(15, 10) scale(0.5)">
+    <!-- Circular Arch -->
+    <path d="M 32,130 A 75,75 0 1,1 168,130" fill="none" stroke="url(#gold-light)" stroke-width="4.5" stroke-linecap="round" />
+
+    <!-- Buildings -->
+    <!-- Left Tower -->
+    <polygon points="68,55 78,60 78,113.75 68,120" fill="url(#gold-light)" />
+    <polygon points="78,60 88,65 88,107.5 78,113.75" fill="url(#gold-medium)" />
+
+    <!-- Right Tower -->
+    <polygon points="112,70 122,75 122,113.75 112,107.5" fill="url(#gold-light)" />
+    <polygon points="122,75 132,80 132,120 122,113.75" fill="url(#gold-medium)" />
+
+    <!-- Center Tower -->
+    <polygon points="88,35 100,41 100,100 88,107.5" fill="url(#gold-light)" />
+    <polygon points="100,41 112,47 112,107.5 100,100" fill="url(#gold-medium)" />
+
+    <!-- Roof Chevron -->
+    <polygon points="20,150 100,100 180,150 175,153 100,106 25,153" fill="url(#gold-light)" />
+
+    <!-- Window -->
+    <rect x="91" y="116" width="7" height="7" fill="url(#gold-light)" rx="0.5" />
+    <rect x="102" y="116" width="7" height="7" fill="url(#gold-light)" rx="0.5" />
+    <rect x="91" y="127" width="7" height="7" fill="url(#gold-light)" rx="0.5" />
+    <rect x="102" y="127" width="7" height="7" fill="url(#gold-light)" rx="0.5" />
+  </g>
+
+  <!-- Typography -->
+  <text x="135" y="69" class="brand-text">VINEYARD INFRA <tspan class="brand-text-gold">REALCON LLP</tspan></text>
+</svg>

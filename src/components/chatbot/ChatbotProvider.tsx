@@ -9,8 +9,22 @@ import {
 } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
-const BACKEND_URL = "http://127.0.0.1:8000";
+const BACKEND_URL = typeof window !== "undefined"
+  ? `http://${window.location.hostname}:8000`
+  : "http://127.0.0.1:8000";
 const COMPANY_PHONE = "6397688989";
+
+function generateUUID() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  // Fallback for insecure contexts (like HTTP over local network IP)
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
 
 export interface PropertyItem {
   id: number;
@@ -145,7 +159,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [session_id] = useState(() => crypto.randomUUID());
+  const [session_id] = useState(() => generateUUID());
 
   // State Machine and Session Memory
   const [chatState, setChatState] = useState<ChatState>("HOME");
@@ -206,7 +220,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const appendMessage = useCallback((role: "user" | "assistant", content: string, extra?: Partial<ChatMessage>) => {
-    const id = crypto.randomUUID();
+    const id = generateUUID();
     const newMsg: ChatMessage = {
       id,
       role,
@@ -656,7 +670,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
         } else {
           appendMessage(
             "assistant",
-            "Welcome to Vineyard Infra. I am your premium property consultant. How may I assist you with your real estate goals today?",
+            "Welcome to Vineyard Infra. I am Vin Bot, your premium property concierge. How may I assist you with your real estate goals today?",
             {
               suggestions: ["Find Property", "Schedule Site Visit", "Talk to Expert"],
             }
@@ -1211,7 +1225,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
 
       let adviceIntro = getPersonalizedIntro(currentMemory);
       if (chatState === "INVESTMENT_FLOW" && currentMemory.investmentGoal) {
-        adviceIntro = `📈 *Portfolio Strategy Evaluation*\n───────────────\n💡 *Strategic Reasoning:* Recommended for high-potential appreciation based on Dehradun's major road expansion corridors.\n📊 *Appreciation Potential:* 12% - 15% YoY.\n🔒 *Risk Level:* Low (Fully RERA Approved Gated Community).\n👥 *Suitable Buyer Profile:* Wealth preservation/High Net Worth Investors.\n\nHere are the recommended assets for your portfolio:`;
+        adviceIntro = `📈 *Portfolio Strategy Evaluation*\n───────────────\n💡 *Strategic Reasoning:* Recommended for high-potential appreciation based on Dehradun's major road expansion corridors.\n📊 *Appreciation Potential:* 12% - 15% YoY.\n🔒 *Risk Level:* Low (Fully Approved Gated Community).\n👥 *Suitable Buyer Profile:* Wealth preservation/High Net Worth Investors.\n\nHere are the recommended assets for your portfolio:`;
       }
 
       appendMessage("assistant", adviceIntro, {

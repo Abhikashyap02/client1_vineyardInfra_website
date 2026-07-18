@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Home, Calendar, TrendingUp, Headset, ArrowRight } from "lucide-react";
 import { useChatbot } from "./ChatbotProvider";
+import vinBotImg from "@/assets/vin-bot.jpg";
 
 const actions = [
   {
@@ -52,14 +53,18 @@ export function QuickActions() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mb-4 text-center"
+        className="mb-5 text-center flex flex-col items-center"
       >
+        <img
+          src={vinBotImg}
+          alt="Vin Bot"
+          className="size-16 rounded-full object-cover border-2 border-gold/30 shadow-md mb-3"
+        />
         <p className="font-display text-[15px] font-bold text-navy-deep">
-          Welcome to <span className="text-gold">Vineyard Infra</span>
+          Hi, I'm <span className="text-gold">Vin Bot</span>
         </p>
-        <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-          Find premium properties, book site visits, and get
-          expert consultation instantly.
+        <p className="mt-1.5 max-w-[240px] text-[11px] leading-relaxed text-muted-foreground">
+          Your personal luxury real estate concierge. How may I help you find your dream home in Dehradun today?
         </p>
       </motion.div>
 

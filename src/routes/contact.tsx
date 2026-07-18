@@ -6,8 +6,8 @@ import {
   User, Home, Wallet, Briefcase, FileText, Navigation,
   Sparkles, ShieldCheck, Star, Headset, Facebook, Instagram, Youtube,
 } from "lucide-react";
-import { MobileNav } from "@/components/MobileNav";
-import { DesktopNav } from "@/components/DesktopNav";
+import { Header } from "@/components/Header";
+import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -88,31 +88,11 @@ const faqs = [
   { q: "Do you charge consultation fees?", a: "No. Our initial consultation and property shortlisting services are completely free. We earn from the builders and developers we represent, not from you." },
   { q: "Can you arrange site visits for properties I'm interested in?", a: "Absolutely. We organize guided site visits with an advisor who explains the project details, neighborhood, and investment potential. Most visits can be arranged within 24–48 hours." },
   { q: "Do you help property investors from outside Dehradun?", a: "Yes. A large part of our clientele includes NRI and outstation investors. We provide virtual tours, video consultations, and end-to-end remote transaction support." },
-  { q: "Do you assist with documentation and legal verification?", a: "Yes. We facilitate title verification, RERA compliance checks, home loan processing, and registration paperwork through our trusted legal and banking partners." },
+  { q: "Do you assist with documentation and legal verification?", a: "Yes. We facilitate title verification, due diligence checks, home loan processing, and registration paperwork through our trusted legal and banking partners." },
 ];
 
 function TopNav() {
-  return (
-    <header className="absolute top-0 left-0 right-0 z-30">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 md:px-10">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="grid h-9 w-9 place-items-center rounded-md bg-gold">
-            <span className="font-display font-bold text-navy-deep">V</span>
-          </div>
-          <div className="font-display font-semibold tracking-tight text-white">
-            Vineyard <span className="text-gold">Infra</span>
-          </div>
-        </Link>
-        <DesktopNav variant="light" activeLabel="Contact" />
-        <div className="flex items-center gap-2">
-          <Button className="hidden bg-gold text-navy-deep hover:bg-gold-soft md:inline-flex" asChild>
-            <a href={PHONE}><Phone className="h-4 w-4" /> +91 63976 88989</a>
-          </Button>
-          <MobileNav trigger="light" hideAt="lg" />
-        </div>
-      </div>
-    </header>
-  );
+  return <Header activeLabel="Contact" />;
 }
 
 /* ---------- Section 1: Hero ---------- */
@@ -469,10 +449,10 @@ function AdvisorSection() {
           <div className="relative mx-auto max-w-sm lg:mx-0">
             <div className="absolute -inset-4 rounded-2xl bg-gradient-to-br from-gold/30 to-transparent blur-xl" />
             <div className="relative overflow-hidden rounded-2xl shadow-[var(--shadow-elevated)]">
-              <img src={founderImg} alt="Founder and Principal Advisor" width={900} height={1100} loading="lazy" className="aspect-[3/4] w-full object-cover" />
+              <img src={founderImg} alt="MD" width={900} height={1100} loading="lazy" className="aspect-[3/4] w-full object-cover" />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-deep to-transparent p-6 text-white">
-                <p className="font-display text-2xl font-semibold">Rohan Vineyard</p>
-                <p className="text-sm text-gold">Founder & Principal Advisor</p>
+                <p className="font-display text-2xl font-semibold">RUDRA THAKUR</p>
+                <p className="text-sm text-gold">MD</p>
                 <p className="mt-1 text-xs text-white/70">12+ years • Dehradun Market Expert</p>
               </div>
             </div>
@@ -640,14 +620,7 @@ function Footer() {
       <div className="mx-auto max-w-7xl px-5 md:px-10">
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
-            <div className="flex items-center gap-2">
-              <div className="grid h-9 w-9 place-items-center rounded-md bg-gold">
-                <span className="font-display font-bold text-navy-deep">V</span>
-              </div>
-              <div className="font-display font-semibold tracking-tight text-white">
-                Vineyard <span className="text-gold">Infra</span>
-              </div>
-            </div>
+            <Logo variant="horizontal" />
             <p className="mt-4 max-w-sm text-sm leading-relaxed">
               Premium real estate advisory in Dehradun. Helping families and investors discover properties worth owning.
             </p>
@@ -678,7 +651,7 @@ function Footer() {
           </div>
         </div>
         <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs">
-          © {new Date().getFullYear()} Vineyard Infra. All rights reserved.
+          © {new Date().getFullYear()} Vineyard Infra Realcon LLP. All rights reserved.
         </div>
       </div>
     </footer>

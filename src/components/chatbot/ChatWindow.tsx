@@ -1,5 +1,7 @@
 import { useRef, useEffect, useState, type FormEvent } from "react";
 import { useLocation } from "@tanstack/react-router";
+import { Logo } from "@/components/Logo";
+import vinBotImg from "@/assets/vin-bot.jpg";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Minus,
@@ -102,13 +104,15 @@ export function ChatWindow() {
             }}
           >
             {/* Logo */}
-            <div className="grid size-10 place-items-center rounded-lg border border-gold/40 font-display text-lg font-bold text-gold">
-              V
-            </div>
+            <img
+              src={vinBotImg}
+              alt="Vin Bot"
+              className="size-10 rounded-full object-cover border border-gold/30"
+            />
 
             <div className="flex-1">
               <p className="font-display text-sm font-bold tracking-wide text-white">
-                Property Assistant
+                Vin Bot
               </p>
               <div className="flex items-center gap-1.5">
                 <span className="relative flex size-2">

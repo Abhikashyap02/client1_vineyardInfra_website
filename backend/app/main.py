@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from typing import List, Optional
+from typing import List, Optional, Any
 from decimal import Decimal
+from datetime import datetime
 
 from app.database import get_db, Base, engine
 from app.config import settings
@@ -27,22 +28,22 @@ def read_root():
 # 1. Property Search
 @app.get("/search-properties", response_model=List[schemas.PropertyResponse])
 def search_properties(
-    max_budget: Optional[Decimal] = Query(None, description="Max budget in INR (Rupees)"),
+    category: Optional[str] = Query(None, description="Category (e.g. Luxury, Residential, Investment)"),
+    sub_type: Optional[str] = Query(None, description="Property type (e.g. Villa, Apartment, Plot)"),
+    city: Optional[str] = Query(None, description="City filter"),
     location: Optional[str] = Query(None, description="Location filter"),
-    property_type: Optional[str] = Query(None, description="Property type (e.g. Villa, Apartment, Plot)"),
-    bhk: Optional[int] = Query(None, description="BHK filter"),
-    ready_to_move: Optional[bool] = Query(None, description="Ready to move status"),
-    under_construction: Optional[bool] = Query(None, description="Under construction status"),
+    max_budget: Optional[Decimal] = Query(None, description="Max budget in INR (Rupees)"),
+    bedrooms: Optional[int] = Query(None, description="Bedrooms (BHK) filter"),
     db: Session = Depends(get_db),
 ):
     return crud.search_properties(
         db,
         max_budget=max_budget,
         location=location,
-        property_type=property_type,
-        bhk=bhk,
-        ready_to_move=ready_to_move,
-        under_construction=under_construction,
+        property_type=sub_type,
+        bhk=bedrooms,
+        category=category,
+        city=city,
     )
 
 # 2. Lead Qualification Flow
@@ -68,18 +69,24 @@ def update_appointment_status(appointment_id: int, status: str = Query(..., desc
 
 @app.patch("/appointments/{appointment_id}", response_model=schemas.AppointmentResponse)
 def update_appointment_details(
-    appointment_id: int,
+    appointment_id: Any,
     preferred_date: Optional[str] = Query(None),
     preferred_time: Optional[str] = Query(None),
     db: Session = Depends(get_db)
 ):
-    db_appointment = db.query(models.Appointment).filter(models.Appointment.id == appointment_id).first()
+    db_appointment = db.query(models.SiteVisit).filter(models.SiteVisit.id == appointment_id).first()
     if not db_appointment:
         raise HTTPException(status_code=404, detail="Appointment not found")
     if preferred_date:
-        db_appointment.preferred_date = preferred_date
+        try:
+            db_appointment.visit_date = datetime.strptime(preferred_date, "%Y-%m-%d").date()
+        except Exception:
+            pass
     if preferred_time:
-        db_appointment.preferred_time = preferred_time
+        try:
+            db_appointment.visit_time = datetime.strptime(preferred_time, "%H:%M").time()
+        except Exception:
+            pass
     db.commit()
     db.refresh(db_appointment)
     return db_appointment
@@ -88,12 +95,3 @@ def update_appointment_details(
 @app.get("/faqs", response_model=List[schemas.FAQResponse])
 def get_faqs(db: Session = Depends(get_db)):
     return crud.get_faqs(db)
-
-# 5. Chat History
-@app.get("/chat-history/{session_id}", response_model=List[schemas.ChatHistoryResponse])
-def get_chat_history(session_id: str, db: Session = Depends(get_db)):
-    return crud.get_chat_history(db, session_id)
-
-@app.post("/chat-history", response_model=schemas.ChatHistoryResponse)
-def create_chat_message(message: schemas.ChatHistoryCreate, db: Session = Depends(get_db)):
-    return crud.create_chat_message(db, message)

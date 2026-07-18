@@ -116,18 +116,24 @@ export function DesktopNav({ variant = "light", activeLabel }: DesktopNavProps) 
   }
 
   return (
-    <nav ref={containerRef} className="hidden items-center gap-8 text-sm font-medium lg:flex relative">
+    <nav ref={containerRef} className="hidden items-center gap-6 lg:flex relative">
       {/* Standard nav links — insert Services after "Projects" and Locations after "Services" */}
       {NAV_LINKS.map((l, i) => (
         <span key={l.label} className="contents">
           <Link
             to={l.to}
-            className={`transition-colors ${textHover} ${activeLabel === l.label ? textActive : textBase}`}
-            activeProps={{ className: `transition-colors ${textActive}` }}
+            className={`relative py-1 font-serif text-xs tracking-[0.16em] uppercase transition-all duration-300 ${textHover} ${
+              activeLabel === l.label ? textActive : textBase
+            } after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:bg-gold after:transition-transform after:duration-300 ${
+              activeLabel === l.label
+                ? "after:scale-x-100 after:origin-left"
+                : "after:scale-x-0 after:origin-right hover:after:scale-x-100 hover:after:origin-left"
+            }`}
+            activeProps={{ className: `transition-all ${textActive} after:scale-x-100 after:origin-left` }}
             activeOptions={{ exact: l.to === "/" }}
             onClick={() => setOpenMenu(null)}
           >
-            {l.label.toUpperCase()}
+            {l.label}
           </Link>
 
           {/* After "Projects" → insert Services dropdown */}
@@ -294,7 +300,7 @@ function DropdownTrigger({
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center gap-1 transition-colors ${textHover} ${isOpen ? "text-gold" : textBase}`}
+      className={`flex items-center gap-1 font-serif text-xs tracking-[0.16em] uppercase transition-colors ${textHover} ${isOpen ? "text-gold" : textBase}`}
     >
       {label}
       <ChevronDown

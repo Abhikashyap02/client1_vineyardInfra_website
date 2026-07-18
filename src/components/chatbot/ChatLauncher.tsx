@@ -3,6 +3,7 @@ import { useLocation } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Sparkles } from "lucide-react";
 import { useChatbot } from "./ChatbotProvider";
+import vinBotImg from "@/assets/vin-bot.jpg";
 
 export function ChatLauncher() {
   const { isOpen, toggle } = useChatbot();
@@ -105,15 +106,14 @@ export function ChatLauncher() {
               />
 
               <div className="relative flex items-center gap-2.5">
-                <div
-                  className="grid size-8 shrink-0 place-items-center rounded-lg"
-                  style={{ background: "var(--gradient-gold)" }}
-                >
-                  <Sparkles className="size-3.5 text-navy-deep" />
-                </div>
+                <img
+                  src={vinBotImg}
+                  alt="Vin Bot"
+                  className="size-8 shrink-0 rounded-lg object-cover border border-gold/30"
+                />
                 <div>
                   <p className="font-display text-[11px] font-bold text-gold">
-                    Property Expert
+                    Hi, I'm Vin Bot
                   </p>
                   <p className="text-[11px] leading-tight text-white/70">
                     Find your dream home today
@@ -172,15 +172,16 @@ export function ChatLauncher() {
               <X className="size-5" />
             </motion.span>
           ) : (
-            <motion.span
+            <motion.img
               key="open"
-              initial={{ rotate: 90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: -90, opacity: 0 }}
+              initial={{ rotate: 90, opacity: 0, scale: 0.8 }}
+              animate={{ rotate: 0, opacity: 1, scale: 1 }}
+              exit={{ rotate: -90, opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.2 }}
-            >
-              <MessageCircle className="size-5" />
-            </motion.span>
+              src={vinBotImg}
+              alt="Vin Bot"
+              className="size-full rounded-full object-cover border border-gold/30 shadow-inner"
+            />
           )}
         </AnimatePresence>
       </motion.button>

@@ -1,5 +1,9 @@
 import os
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
+
+# Load environment variables from .env file
+load_dotenv()
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Vineyard Infra Chatbot Backend"
@@ -10,6 +14,9 @@ class Settings(BaseSettings):
         "http://127.0.0.1:8080",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://192.168.1.6:8080",
+        "http://192.168.1.6:3000",
+        "http://192.168.1.6:5173",
     ]
 
     class Config:

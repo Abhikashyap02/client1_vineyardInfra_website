@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "@tanstack/react-router";
+import { Logo } from "@/components/Logo";
 import {
   Menu,
   X,
@@ -68,16 +70,15 @@ export function MobileNav({ trigger = "light", hideAt = "md" }: Props) {
         type="button"
         aria-label="Open menu"
         onClick={() => setOpen(true)}
-        className={`${hideClass} grid size-11 place-items-center rounded-sm border ${
-          trigger === "light"
+        className={`${hideClass} grid size-11 place-items-center rounded-sm border ${trigger === "light"
             ? "border-white/25 text-white"
             : "border-border text-foreground"
-        }`}
+          }`}
       >
         <Menu className="size-5" />
       </button>
 
-      {open && (
+      {open && typeof document !== "undefined" && createPortal(
         <div className="fixed inset-0 z-[100] lg:hidden">
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -85,13 +86,8 @@ export function MobileNav({ trigger = "light", hideAt = "md" }: Props) {
           />
           <div className="absolute right-0 top-0 h-full w-[82%] max-w-sm bg-navy-deep text-white shadow-2xl animate-fade-up flex flex-col overflow-y-auto">
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
-              <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-2">
-                <div className="h-9 w-9 rounded-md bg-gold flex items-center justify-center font-display font-bold text-navy-deep">
-                  V
-                </div>
-                <div className="font-display font-semibold">
-                  Vineyard <span className="text-gold">Infra</span>
-                </div>
+              <Link to="/" onClick={() => setOpen(false)} className="flex items-center">
+                <Logo variant="horizontal" />
               </Link>
               <button
                 aria-label="Close menu"
@@ -137,9 +133,8 @@ export function MobileNav({ trigger = "light", hideAt = "md" }: Props) {
                   />
                 </button>
                 <div
-                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                    servicesOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
-                  }`}
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${servicesOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+                    }`}
                 >
                   <div className="pb-3 pl-2 space-y-1">
                     {services.map((s) => (
@@ -175,9 +170,8 @@ export function MobileNav({ trigger = "light", hideAt = "md" }: Props) {
                   />
                 </button>
                 <div
-                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                    locationsOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-                  }`}
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${locationsOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                    }`}
                 >
                   <div className="pb-3 pl-2 space-y-0.5">
                     {locations.map((loc) => (
@@ -260,7 +254,8 @@ export function MobileNav({ trigger = "light", hideAt = "md" }: Props) {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

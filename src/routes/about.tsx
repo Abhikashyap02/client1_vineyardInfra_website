@@ -24,8 +24,7 @@ import {
   Instagram,
   Youtube,
 } from "lucide-react";
-import { MobileNav } from "@/components/MobileNav";
-import { DesktopNav } from "@/components/DesktopNav";
+import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -91,29 +90,8 @@ function useInView<T extends HTMLElement>() {
   return { ref, inView };
 }
 
-/* ---------- Nav ---------- */
 function TopNav() {
-  return (
-    <header className="absolute top-0 left-0 right-0 z-30">
-      <div className="max-w-7xl mx-auto px-5 md:px-10 py-5 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="h-9 w-9 rounded-md bg-gold flex items-center justify-center">
-            <span className="font-display font-bold text-navy-deep">V</span>
-          </div>
-          <div className="text-white font-display font-semibold tracking-tight">
-            Vineyard <span className="text-gold">Infra</span>
-          </div>
-        </Link>
-        <DesktopNav variant="light" activeLabel="About Us" />
-        <div className="flex items-center gap-2">
-          <Button className="bg-gold text-navy-deep hover:bg-gold-soft hidden md:inline-flex" asChild>
-            <a href="tel:+916397688989"><Phone className="h-4 w-4" /> +91 63976 88989</a>
-          </Button>
-          <MobileNav trigger="light" hideAt="lg" />
-        </div>
-      </div>
-    </header>
-  );
+  return <Header activeLabel="About Us" />;
 }
 
 /* ---------- 1. Hero ---------- */
@@ -159,7 +137,7 @@ function HeroStory() {
             </Link>
           </div>
           <div className="mt-12 flex flex-wrap gap-x-10 gap-y-4 text-sm text-white/70">
-            <Stat icon={<Award className="h-4 w-4 text-gold" />} label="RERA Registered" />
+            <Stat icon={<Award className="h-4 w-4 text-gold" />} label="Expert Guidance" />
             <Stat icon={<ShieldCheck className="h-4 w-4 text-gold" />} label="Verified Listings" />
             <Stat icon={<Star className="h-4 w-4 text-gold" />} label="4.9 / 5 Client Rating" />
           </div>
@@ -197,8 +175,8 @@ function FounderSpotlight() {
           <div className="relative rounded-2xl overflow-hidden shadow-[var(--shadow-elevated)]">
             <img src={founderImg} alt="Founder portrait" className="w-full h-[520px] object-cover" />
             <div className="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-navy-deep to-transparent text-white">
-              <p className="font-display text-2xl font-semibold">Rohan Vineyard</p>
-              <p className="text-sm text-gold">Founder & Principal Advisor</p>
+              <p className="font-display text-2xl font-semibold">RUDRA THAKUR</p>
+              <p className="text-sm text-gold">MD</p>
               <p className="text-xs text-white/70 mt-1">12+ years • Dehradun Market</p>
             </div>
           </div>
@@ -224,26 +202,23 @@ function FounderSpotlight() {
                   className="relative block w-full text-left py-3 group"
                 >
                   <span
-                    className={`absolute -left-[29px] top-5 h-4 w-4 rounded-full border-2 transition-all ${
-                      active === i
-                        ? "bg-gold border-gold scale-125"
-                        : "bg-white border-border group-hover:border-gold"
-                    }`}
+                    className={`absolute -left-[29px] top-5 h-4 w-4 rounded-full border-2 transition-all ${active === i
+                      ? "bg-gold border-gold scale-125"
+                      : "bg-white border-border group-hover:border-gold"
+                      }`}
                   />
                   <div className="flex flex-wrap items-baseline gap-3">
                     <span
-                      className={`font-display text-xl font-bold transition-colors ${
-                        active === i ? "text-gold" : "text-navy-deep/60"
-                      }`}
+                      className={`font-display text-xl font-bold transition-colors ${active === i ? "text-gold" : "text-navy-deep/60"
+                        }`}
                     >
                       {t.year}
                     </span>
                     <span className="font-medium text-navy-deep">{t.title}</span>
                   </div>
                   <div
-                    className={`overflow-hidden transition-all ${
-                      active === i ? "max-h-24 mt-1.5 opacity-100" : "max-h-0 opacity-0"
-                    }`}
+                    className={`overflow-hidden transition-all ${active === i ? "max-h-24 mt-1.5 opacity-100" : "max-h-0 opacity-0"
+                      }`}
                   >
                     <p className="text-slate-soft text-sm">{t.body}</p>
                   </div>
@@ -364,7 +339,7 @@ const PROCESS = [
   { n: "01", title: "Understand Requirements", body: "Deep discovery call — budget, lifestyle, goals.", icon: Target },
   { n: "02", title: "Shortlist Opportunities", body: "Curated list of 3–5 verified properties.", icon: Compass },
   { n: "03", title: "Site Visits", body: "Guided tours with full transparency and Q&A.", icon: MapPin },
-  { n: "04", title: "Due Diligence", body: "Legal, title, RERA, and bank loan check.", icon: FileCheck },
+  { n: "04", title: "Due Diligence", body: "Legal, title, and bank loan check.", icon: FileCheck },
   { n: "05", title: "Property Acquisition", body: "Negotiation, paperwork, and registration support.", icon: Handshake },
   { n: "06", title: "Post-Sale Support", body: "Possession, interiors, rentals, resale guidance.", icon: ShieldCheck },
 ];
@@ -568,9 +543,8 @@ function SuccessStories() {
               <button
                 key={i}
                 onClick={() => setActive(i)}
-                className={`h-2 rounded-full transition-all ${
-                  active === i ? "w-10 bg-gold" : "w-2 bg-white/30 hover:bg-white/50"
-                }`}
+                className={`h-2 rounded-full transition-all ${active === i ? "w-10 bg-gold" : "w-2 bg-white/30 hover:bg-white/50"
+                  }`}
                 aria-label={`Story ${i + 1}`}
               />
             ))}
@@ -624,7 +598,7 @@ function StoryBlock({ label, body, highlight }: { label: string; body: string; h
 /* ---------- 9. Our Promise ---------- */
 const PROMISES = [
   { icon: ShieldCheck, title: "Transparent Advice", body: "No hidden agenda. We tell you the trade-offs before the price." },
-  { icon: CheckCircle2, title: "Verified Opportunities", body: "Every property is title-checked, RERA-verified, site-inspected." },
+  { icon: CheckCircle2, title: "Verified Opportunities", body: "Every property is title-checked, legally-verified, site-inspected." },
   { icon: Sparkles, title: "No Hidden Surprises", body: "All-in pricing, registration costs, and timelines upfront." },
   { icon: Handshake, title: "Long-Term Relationship", body: "We're here for resale, rentals, and the next family member's home." },
   { icon: TrendingUp, title: "Market Insights", body: "Quarterly reports on price trends and emerging zones." },
@@ -665,7 +639,7 @@ function OurPromise() {
 
 /* ---------- 10. Team ---------- */
 const TEAM = [
-  { name: "Rohan Vineyard", role: "Founder & Principal Advisor", img: founderImg },
+  { name: "RUDRA THAKUR", role: "MD", img: founderImg },
   { name: "Ananya Sharma", role: "Senior Relationship Manager" },
   { name: "Vikram Negi", role: "Property Consultant — Premium" },
   { name: "Priya Bhatt", role: "Operations & Documentation" },
@@ -715,7 +689,7 @@ const FAQS = [
   { q: "Do you charge brokerage?", a: "Our advisory is largely builder-funded for new projects. For resale and custom mandates, fees are disclosed upfront — no surprises." },
   { q: "Do you work with investors?", a: "Yes. We work with HNI and NRI investors on plots, pre-launch projects, and rental yield assets with clear ROI documentation." },
   { q: "Do you assist with site visits?", a: "Absolutely. We organize guided visits — including pickup, multi-property tours in a single day, and post-visit comparison reports." },
-  { q: "Do you help with legal verification?", a: "Yes. Every property we recommend has been through title check, RERA verification, and (where needed) reviewed by our legal partners." },
+  { q: "Do you help with legal verification?", a: "Yes. Every property we recommend has been through thorough title checks and (where needed) reviewed by our legal partners." },
 ];
 
 function FAQSection() {
@@ -794,7 +768,6 @@ function FinalCTA() {
           <a href="https://www.google.com/maps/place/Vineyard+Infra+%7C+Construction+Company+in+Dehradun/@30.350669,78.0747649,17z/data=!4m14!1m7!3m6!1s0x3908d713b0382577:0xb00ba938afbc2032!2sVineyard+Infra+%7C+Construction+Company+in+Dehradun!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq!3m5!1s0x3908d713b0382577:0xb00ba938afbc2032!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq?entry=ttu&g_ep=EgoyMDI2MDYxMy4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-gold transition-colors">
             <MapPin className="h-4 w-4 text-gold" /> AMAN VIHAR SAHASTRADHARA ROAD, Dehradun
           </a>
-          <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-gold" /> RERA: UK02000XXXXXX</span>
         </div>
         <div className="mt-6 flex justify-center gap-4 text-white/60">
           <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors" aria-label="Facebook"><Facebook className="size-4" /></a>

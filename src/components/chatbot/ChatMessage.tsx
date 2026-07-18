@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { MapPin, Calendar, Info, Star, Phone, Download } from "lucide-react";
 import { useChatbot, type ChatMessage as ChatMessageType, type PropertyItem } from "./ChatbotProvider";
+import vinBotImg from "@/assets/vin-bot.jpg";
 
 interface ChatMessageProps {
   message: ChatMessageType;
@@ -223,12 +224,11 @@ export function ChatMessage({ message, index }: ChatMessageProps) {
     >
       {/* Avatar */}
       {!isUser && (
-        <div
-          className="grid size-8 shrink-0 place-items-center rounded-full font-display text-xs font-bold text-navy-deep shadow-sm"
-          style={{ background: "var(--gradient-gold)" }}
-        >
-          V
-        </div>
+        <img
+          src={vinBotImg}
+          alt="Vin Bot"
+          className="size-8 shrink-0 rounded-full object-cover border border-gold/30 shadow-sm"
+        />
       )}
 
       {/* Bubble & Rendered Content */}

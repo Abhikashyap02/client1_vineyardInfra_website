@@ -1,14 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-  Phone, Mail, MapPin, Calendar, Search, Play, ArrowRight, MessageCircle,
+  Phone, Mail, MapPin, Calendar, Search, ArrowRight, MessageCircle,
   Bed, Maximize, Building2, ShieldCheck, Sparkles, HandCoins, Headset,
   TrendingUp, ChevronLeft, ChevronRight, Quote, Facebook, Instagram, Youtube,
   Award, Clock, Heart,
 } from "lucide-react";
-import { MobileNav } from "@/components/MobileNav";
-import { DesktopNav } from "@/components/DesktopNav";
+import { Header } from "@/components/Header";
 import { VideoTestimonialsSection } from "@/components/VideoTestimonialsSection";
 import heroProperty from "@/assets/hero-property.jpg";
 import heroVideo from "@/assets/up1.mp4";
@@ -16,7 +15,7 @@ import founder from "@/assets/founder.jpg";
 import projectVilla from "@/assets/project-villa.jpg";
 import projectApartments from "@/assets/project-apartments.jpg";
 import projectPlots from "@/assets/project-plots.jpg";
-import interiorLiving from "@/assets/interior-living.jpg";
+import expertConsultation from "@/assets/expert-consultation.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -61,6 +60,20 @@ const statusOptions = ["Any Status", "Ongoing", "Ready to Move", "Under Construc
 
 function Home() {
   const navigate = useNavigate();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const [search, setSearch] = useState({
     type: typeOptions[0],
     location: locationOptions[0],
@@ -81,9 +94,16 @@ function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* HERO with header */}
-      <section className="relative min-h-[860px] overflow-hidden">
+      <section className="relative h-screen min-h-[650px] md:min-h-[800px] overflow-hidden flex flex-col justify-between">
         {/* Fallback poster — renders instantly, avoids layout shift */}
-        <img src={heroProperty} alt="" width={1920} height={1280} className="absolute inset-0 size-full object-cover" aria-hidden="true" />
+        <img
+          src={heroProperty}
+          alt=""
+          width={1920}
+          height={1280}
+          className="absolute inset-0 size-full object-cover z-0"
+          aria-hidden="true"
+        />
         {/* Background video — auto plays silently over the poster */}
         <video
           autoPlay
@@ -92,85 +112,65 @@ function Home() {
           playsInline
           preload="auto"
           poster={heroProperty}
-          className="absolute inset-0 size-full object-cover"
+          className="absolute inset-0 size-full object-cover z-0 brightness-[0.92] contrast-[1.03]"
         >
+          <source src="/up1.webm" type="video/webm" />
           <source src={heroVideo} type="video/mp4" />
         </video>
-        {/* Dark overlays for text readability — optimized to showcase the video */}
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-deep/60 via-navy-deep/20 to-navy-deep/50" />
-        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/60 via-navy-deep/10 to-transparent" />
+        
+        {/* Subtle black overlay with 10% opacity for text readability without filters */}
+        <div className="absolute inset-0 bg-black/10 z-10" />
 
         {/* Header */}
-        <header className="relative z-20">
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-            <Link to="/" className="flex items-center gap-3 text-white">
-              <div className="grid size-11 place-items-center rounded-sm border border-gold/40 font-display text-gold text-lg">V</div>
-              <div className="leading-tight">
-                <div className="font-display text-lg font-bold tracking-wide">VINEYARD</div>
-                <div className="text-[10px] tracking-[0.4em] text-gold">INFRA</div>
-              </div>
-            </Link>
-            <DesktopNav variant="light" />
-            <div className="flex items-center gap-3">
-              <a href="tel:+916397688989" className="relative hidden items-center gap-2 rounded-sm bg-gradient-gold px-5 py-3 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105 md:inline-flex animate-cta-pulse" style={{ background: "var(--gradient-gold)" }}>
-                <Phone className="size-4 animate-text-blink" /> CALL: +91 63976 88989
-              </a>
-              <MobileNav trigger="light" hideAt="lg" />
-            </div>
-          </div>
-        </header>
+        <Header activeLabel="Home" />
 
         {/* Hero content */}
-        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-28 pb-36 md:pt-40 md:pb-44">
-          <div className="max-w-2xl animate-fade-up">
-            <p className="mb-4 text-xs tracking-[0.3em] text-gold">PREMIUM PROPERTIES. TRUSTED GUIDANCE.</p>
-            <h1 className="font-display text-4xl font-bold leading-[1.1] text-white md:text-5xl lg:text-6xl">
-              Find. Invest. Grow.<br />
-              With <span className="font-italic-serif text-gold">Confidence.</span>
-            </h1>
-            <p className="mt-4 max-w-md text-sm text-white/70 md:text-base">
-              Curated real estate opportunities in Dehradun backed by market expertise and honest advice.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link to="/properties" className="inline-flex items-center gap-2 rounded-sm px-5 py-3 text-xs md:text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105" style={{ background: "var(--gradient-gold)" }}>
-                EXPLORE PROJECTS <ArrowRight className="size-4" />
+        <div className="relative z-20 mx-auto max-w-7xl px-6 md:px-12 lg:px-16 w-full flex-1 flex flex-col justify-end pb-36 md:pb-44">
+          <div className="max-w-4xl text-center md:text-left">
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}
+              className="font-display text-3xl md:text-5xl lg:text-6xl font-light tracking-wide text-white leading-[1.3] drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]"
+            >
+              Where Luxury<br />
+              <span className="font-italic-serif text-gold font-normal italic">Meets Timeless Living</span>
+            </motion.h1>
+            
+            {/* Primary & Secondary CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
+              className="mt-10 flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4"
+            >
+              <Link
+                to="/properties"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-[14px] bg-gradient-to-r from-[#C9A45C] via-[#E6C587] to-[#B08A3E] px-8 py-3.5 md:py-4 text-xs md:text-sm font-semibold tracking-[0.14em] text-navy-deep shadow-[0_4px_15px_rgba(201,164,92,0.2)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(201,164,92,0.35)] active:translate-y-0 text-center uppercase select-none"
+              >
+                Explore Projects <ArrowRight className="size-4" />
               </Link>
-              <a href="https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I'm%20interested%20in%20exploring%20properties%20in%20Dehradun." target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-sm border border-gold/60 bg-gold/10 px-5 py-3 text-xs md:text-sm font-semibold text-gold backdrop-blur transition hover:bg-gold/20 animate-border-glow">
-                <MessageCircle className="size-4 text-gold animate-text-blink" /> CHAT ON WHATSAPP
-              </a>
-            </div>
-
-            <div className="mt-14 flex items-center gap-6 flex-wrap">
-              <div className="flex items-center gap-3 text-sm">
-                <span className="font-display text-gold">01</span>
-                <span className="text-white/40">02</span>
-                <span className="text-white/40">03</span>
-              </div>
-              <div className="h-px flex-1 max-w-32 bg-white/20" />
-              <button className="flex items-center gap-3 text-white">
-                <span className="grid size-14 place-items-center rounded-full border border-white/30 bg-white/10 backdrop-blur transition hover:bg-white/20">
-                  <Play className="size-5 fill-white" />
-                </span>
-                <span className="text-sm font-medium">Watch Walkthrough</span>
-              </button>
-              <div className="hidden lg:flex items-center gap-3 border-l border-white/20 pl-6 text-xs text-white/50 tracking-wider uppercase">
-                <span>Follow us</span>
-                <div className="flex gap-2.5">
-                  <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-gold transition-colors" aria-label="Facebook"><Facebook className="size-4" /></a>
-                  <a href="https://www.instagram.com/vineyardinfra/" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-gold transition-colors" aria-label="Instagram"><Instagram className="size-4" /></a>
-                  <a href="https://www.youtube.com/@vineyardinfra1900" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-gold transition-colors" aria-label="YouTube"><Youtube className="size-4" /></a>
-                </div>
-              </div>
-            </div>
+              <Link
+                to="/contact"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-[14px] border border-gold/45 bg-white/5 backdrop-blur-md px-8 py-3.5 md:py-4 text-xs md:text-sm font-semibold text-white transition-all duration-200 hover:bg-gold hover:text-navy-deep hover:border-gold hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(212,175,55,0.15)] active:translate-y-0 text-center uppercase tracking-[0.14em] select-none"
+              >
+                <Calendar className="size-4" /> Book Site Visit
+              </Link>
+            </motion.div>
           </div>
         </div>
 
-        {/* Floating sidebar */}
-        <aside className="absolute right-4 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-2 md:flex">
+        {/* Floating action sidebar (Desktop only) */}
+        <motion.aside
+          initial={{ opacity: 0, x: 8 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.42 }}
+          className="absolute right-4 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-2.5 md:flex"
+        >
           <a
             href="tel:+916397688989"
             title="Call Us"
-            className="grid size-14 place-items-center rounded-sm bg-navy-deep/80 text-gold backdrop-blur transition hover:bg-gold hover:text-navy-deep"
+            className="grid size-14 place-items-center rounded-full bg-navy-deep/80 text-gold backdrop-blur-md border border-white/10 transition-all duration-300 hover:bg-gold hover:text-navy-deep hover:scale-110 shadow-lg"
           >
             <Phone className="size-5" />
           </a>
@@ -179,18 +179,32 @@ function Home() {
             target="_blank"
             rel="noopener noreferrer"
             title="WhatsApp Us"
-            className="grid size-14 place-items-center rounded-sm bg-navy-deep/80 text-gold backdrop-blur transition hover:bg-gold hover:text-navy-deep"
+            className="grid size-14 place-items-center rounded-full bg-navy-deep/80 text-gold backdrop-blur-md border border-white/10 transition-all duration-300 hover:bg-gold hover:text-navy-deep hover:scale-110 shadow-lg"
           >
             <MessageCircle className="size-5" />
           </a>
           <a
             href="mailto:vineyardinfra005@gmail.com"
             title="Email Us"
-            className="grid size-14 place-items-center rounded-sm bg-navy-deep/80 text-gold backdrop-blur transition hover:bg-gold hover:text-navy-deep"
+            className="grid size-14 place-items-center rounded-full bg-navy-deep/80 text-gold backdrop-blur-md border border-white/10 transition-all duration-300 hover:bg-gold hover:text-navy-deep hover:scale-110 shadow-lg"
           >
             <Mail className="size-5" />
           </a>
-        </aside>
+        </motion.aside>
+
+        {/* Mobile floating WhatsApp button */}
+        <motion.a
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.45 }}
+          href="https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I'm%20interested%20in%20exploring%20properties%20in%20Dehradun."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-6 left-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-110 active:scale-95 md:hidden"
+          aria-label="Chat on WhatsApp"
+        >
+          <MessageCircle className="h-6 w-6 fill-white text-[#25D366]" />
+        </motion.a>
       </section>
 
       {/* PROPERTY SEARCH (overlapping) */}
@@ -295,7 +309,7 @@ function Home() {
                   </div>
                 </div>
                 <div className="mt-5 flex items-center justify-between border-t border-border pt-4 text-xs font-semibold">
-                  <Link to="/projects/$slug" params={{ slug: p.slug }} className="flex items-center gap-1 text-navy-deep transition hover:text-gold">
+                  <Link to="/projects/$slug" params={{ slug: p.slug }} search={{ landing: false }} className="flex items-center gap-1 text-navy-deep transition hover:text-gold">
                     VIEW DETAILS <ArrowRight className="size-3.5" />
                   </Link>
                   <a href={`https://wa.me/916397688989?text=${encodeURIComponent(`Hi Vineyard Infra, I'd like to enquire about ${p.name}.`)}`} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-navy-deep transition hover:text-gold">
@@ -358,29 +372,90 @@ function Home() {
       </section>
 
       {/* CONTACT CTA SECTION */}
-      <section className="bg-warm-bg overflow-hidden relative">
-        <div className="mx-auto grid max-w-7xl gap-8 px-6 py-20 md:grid-cols-[1fr_1.4fr_auto] md:items-center">
-          <img src={interiorLiving} alt="Luxury interior" width={1024} height={800} loading="lazy" className="aspect-[5/4] w-full rounded-sm object-cover shadow-card" style={{ boxShadow: "var(--shadow-card)" }} />
-          <div>
-            <p className="mb-2 text-sm tracking-[0.3em] text-gold">DIRECT ACCESS TO ADVISORS</p>
-            <h2 className="font-display text-3xl font-bold text-navy-deep md:text-4xl">Talk to Our Experts</h2>
-            <p className="mt-4 max-w-md text-slate-soft">
+      <motion.section
+        initial={{ opacity: 0, y: 15 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="bg-[#FDFBF8] overflow-hidden relative border-t border-b border-[#D4AF37]/10"
+      >
+        {/* Soft radial background glow behind the card */}
+        <div className="absolute top-1/2 left-[15%] -translate-y-1/2 w-[350px] h-[350px] rounded-full bg-gold/5 blur-3xl pointer-events-none" />
+        <div className="absolute top-[20%] right-[10%] w-[250px] h-[250px] rounded-full bg-[#FAF8F3] blur-2xl pointer-events-none" />
+
+        <div className="mx-auto grid max-w-7xl grid-cols-1 md:grid-cols-[42%_58%] lg:grid-cols-[45%_55%] items-center gap-12 lg:gap-20 px-6 py-24 relative z-10">
+          {/* Left Column: Premium Card holding the illustration */}
+          <div className="flex justify-center w-full">
+            <motion.div 
+              animate={{ y: [0, -3, 0] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              className="w-full max-w-[380px] md:max-w-none bg-white rounded-[20px] border border-[#D4AF37]/8 p-4 md:p-5 shadow-[0_12px_40px_rgba(212,175,55,0.04)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.09)] transition-all duration-300 hover:scale-[1.02] relative"
+            >
+              {/* Card Inner Glow */}
+              <div className="absolute inset-0 rounded-[20px] bg-gradient-to-tr from-gold/[0.01] to-transparent pointer-events-none" />
+              <img
+                src={expertConsultation}
+                alt="Expert property consultation"
+                width={1200}
+                height={800}
+                loading="lazy"
+                className="w-full h-auto object-contain rounded-lg relative z-10"
+              />
+            </motion.div>
+          </div>
+
+          {/* Right Column: Content */}
+          <div className="flex flex-col justify-center text-left md:pl-4 md:pt-[24px]">
+            <p className="text-[11px] md:text-xs font-bold tracking-[0.25em] text-gold uppercase">PREMIUM PROPERTY CONSULTATION</p>
+            {/* Elegant thin luxury divider */}
+            <div className="w-10 h-[1.5px] bg-gold/30 mt-2.5" />
+
+            <h2 className="font-display text-2xl md:text-3xl lg:text-[32px] font-bold text-navy-deep leading-tight mt-[16px]">
+              Talk to Our Experts
+            </h2>
+            <p className="mt-[28px] max-w-xl text-[14.5px] leading-relaxed text-slate-soft">
               Get curated property suggestions, honest guidance, and direct answers. Contact us directly to fast-track your investment journey.
             </p>
-            <div className="mt-6 flex flex-wrap gap-4 items-center">
-              <a href="tel:+916397688989" className="inline-flex items-center gap-2 rounded-sm px-7 py-4 text-sm font-semibold text-navy-deep shadow-gold transition hover:brightness-105 animate-cta-pulse" style={{ background: "var(--gradient-gold)" }}>
-                <Phone className="size-4 animate-text-blink" /> Call +91 63976 88989
+            
+            {/* Call to Actions */}
+            <div className="mt-[36px] flex flex-col sm:flex-row gap-4 items-center">
+              <a 
+                href="tel:+916397688989" 
+                className="w-full sm:w-auto h-[60px] inline-flex items-center justify-center gap-3 rounded-[16px] px-8 text-sm font-medium text-navy-deep shadow-[0_4px_20px_rgba(212,175,55,0.15)] hover:shadow-[0_6px_25px_rgba(212,175,55,0.25)] transition-all duration-300 hover:-translate-y-[2px]"
+                style={{ background: "var(--gradient-gold)" }}
+              >
+                <Phone className="size-4 shrink-0" /> 
+                <span>Call +91 63976 88989</span>
               </a>
-              <a href="https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I'm%20interested%20in%20exploring%20properties%20in%20Dehradun." target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-sm border border-emerald-600/30 bg-emerald-500/10 px-7 py-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-500/20 transition-all">
-                <MessageCircle className="size-4 text-emerald-600" /> WhatsApp Now
+              <a 
+                href="https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I'm%20interested%20in%20exploring%20properties%20in%20Dehradun." 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-full sm:w-auto h-[60px] inline-flex items-center justify-center gap-3 rounded-[16px] border border-emerald-600/30 bg-emerald-500/5 hover:bg-emerald-500/10 px-8 text-sm font-medium text-emerald-700 transition-all duration-300 hover:-translate-y-[2px]"
+              >
+                <MessageCircle className="size-4 text-emerald-600 shrink-0" /> 
+                <span>WhatsApp Now</span>
               </a>
             </div>
-          </div>
-          <div className="hidden md:block">
-            <Phone className="size-28 text-gold/20 animate-text-blink" strokeWidth={1} />
+
+            {/* Trust Indicators */}
+            <div className="mt-8 pt-6 border-t border-gold/10 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-slate-soft">
+              <div className="flex items-center gap-2">
+                <span className="text-gold font-bold text-sm shrink-0">✓</span>
+                <span>Free Property Consultation</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gold font-bold text-sm shrink-0">✓</span>
+                <span>Personalized Recommendations</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gold font-bold text-sm shrink-0">✓</span>
+                <span>Schedule a Site Visit</span>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* VIDEO TESTIMONIALS */}
       <VideoTestimonialsSection />
@@ -698,7 +773,7 @@ function Home() {
         <div className="border-t border-white/10">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-5 text-xs text-white/50">
             <div className="flex items-center gap-4 flex-wrap">
-              <p>© 2024 Vineyard Infra. All Rights Reserved.</p>
+              <p>© {new Date().getFullYear()} Vineyard Infra Realcon LLP. All Rights Reserved.</p>
               <div className="flex gap-3 border-l border-white/10 pl-4">
                 <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors" aria-label="Facebook"><Facebook className="size-3.5" /></a>
                 <a href="https://www.instagram.com/vineyardinfra/" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors" aria-label="Instagram"><Instagram className="size-3.5" /></a>

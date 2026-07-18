@@ -7,12 +7,21 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import heroProperty from "@/assets/hero-property.jpg";
-import projectVilla from "@/assets/project-villa.jpg";
-import projectApartments from "@/assets/project-apartments.jpg";
-import projectPlots from "@/assets/project-plots.jpg";
 import interiorLiving from "@/assets/interior-living.jpg";
+import { searchProperties } from "@/api/properties";
+import { mapToListingProperty } from "@/mappers/propertyMapper";
 
 export const Route = createFileRoute("/properties")({
+  loader: async () => {
+    try {
+      const dbProperties = await searchProperties();
+      const listingProperties = dbProperties.map(mapToListingProperty);
+      return { properties: listingProperties };
+    } catch (error) {
+      console.error("Failed to load listing properties", error);
+      return { properties: [] };
+    }
+  },
   head: () => ({
     meta: [
       { title: "Premium Properties in Dehradun — Vineyard Infra" },
@@ -42,15 +51,6 @@ type Property = {
   img: string;
   featured?: boolean;
 };
-
-const properties: Property[] = [
-  { id: "p1", slug: "vineyard-signature-villas", name: "Vineyard Signature Villas", location: "Mussoorie Road, Dehradun", type: "Villa", category: "Luxury", status: "Ongoing", priceMin: 145, priceLabel: "₹1.45 Cr*", area: "2200 – 3000 Sq.Ft.", bhk: "3, 4 BHK", amenities: ["Clubhouse", "Pool", "Landscaped Gardens"], desc: "Hill-view luxury villas with private decks and curated interiors.", tags: ["Featured", "Hot Property"], img: projectVilla, featured: true },
-  { id: "p2", slug: "vineyard-high-grove", name: "Vineyard High Grove", location: "Sahastradhara Road, Dehradun", type: "Apartment", category: "Residential", status: "Under Construction", priceMin: 78, priceLabel: "₹78 L*", area: "1200 – 1950 Sq.Ft.", bhk: "2, 3 BHK", amenities: ["Gym", "Rooftop Lounge", "Kids' Play"], desc: "Premium 2 & 3 BHK residences in Dehradun's fastest growing corridor.", tags: ["New Launch"], img: projectApartments, featured: true },
-  { id: "p3", slug: "vineyard-green-county", name: "Vineyard Green County", location: "Harrawala, Dehradun", type: "Plot", category: "Investment", status: "Ready to Move", priceMin: 22, priceLabel: "₹22.5 L*", area: "100 – 300 Sq.Yd.", bhk: "Residential Plots", amenities: ["Gated", "Wide Roads", "Underground Utilities"], desc: "Gated residential plots with strong appreciation potential.", tags: ["Investment Opportunity"], img: projectPlots },
-  { id: "p4", slug: "vineyard-crown-residences", name: "Vineyard Crown Residences", location: "Rajpur Road, Dehradun", type: "Apartment", category: "Luxury", status: "Ready to Move", priceMin: 195, priceLabel: "₹1.95 Cr*", area: "1800 – 2600 Sq.Ft.", bhk: "3, 4 BHK", amenities: ["Concierge", "Spa", "Sky Lounge"], desc: "Boutique luxury apartments on Dehradun's most coveted address.", tags: ["Featured", "Hot Property"], img: interiorLiving, featured: true },
-  { id: "p5", slug: "vineyard-pine-estate", name: "Vineyard Pine Estate", location: "Mussoorie Road, Dehradun", type: "Villa", category: "Luxury", status: "Upcoming", priceMin: 320, priceLabel: "₹3.2 Cr*", area: "3500 – 4800 Sq.Ft.", bhk: "4, 5 BHK", amenities: ["Private Pool", "Home Theatre", "Smart Home"], desc: "Limited edition forest-facing estate villas for discerning families.", tags: ["New Launch"], img: heroProperty },
-  { id: "p6", slug: "vineyard-trade-centre", name: "Vineyard Trade Centre", location: "Haridwar Road, Dehradun", type: "Commercial", category: "Commercial", status: "Under Construction", priceMin: 55, priceLabel: "₹55 L*", area: "450 – 1800 Sq.Ft.", bhk: "Retail / Office", amenities: ["High Footfall", "Ample Parking", "Power Backup"], desc: "Grade-A retail and office spaces on a high-visibility commercial stretch.", tags: ["Investment Opportunity"], img: projectApartments },
-];
 
 const trustChips = ["Verified Listings", "Expert Guidance", "Transparent Process", "End-to-End Support"];
 
@@ -91,6 +91,7 @@ function matchesQuickFilter(p: Property, f: QuickFilter) {
 }
 
 function PropertiesPage() {
+  const { properties } = Route.useLoaderData();
   const [quick, setQuick] = useState<QuickFilter>("All Properties");
   const [search, setSearch] = useState({ type: typeOptions[0], location: locationOptions[0], budget: budgetOptions[0], status: statusOptions[0] });
   const routerLocation = useLocation();

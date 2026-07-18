@@ -10,13 +10,8 @@ import {
   Facebook, Instagram, Youtube, Mail,
 } from "lucide-react";
 import { Header } from "@/components/Header";
-import propertyHero from "@/assets/property-hero.jpg";
-import propertyBedroom from "@/assets/property-bedroom.jpg";
-import propertyAmenity from "@/assets/property-amenity.jpg";
-import interiorLiving from "@/assets/interior-living.jpg";
-import projectVilla from "@/assets/project-villa.jpg";
-import projectApartments from "@/assets/project-apartments.jpg";
-import projectPlots from "@/assets/project-plots.jpg";
+import { getPropertyBySlug } from "@/api/properties";
+import { mapToProjectDetail } from "@/mappers/propertyMapper";
 
 type Project = {
   slug: string;
@@ -60,159 +55,6 @@ const lucideIconMap: Record<string, React.ComponentType<any>> = {
   Facebook, Instagram, Youtube, Mail
 };
 
-const projects: Record<string, Project> = {
-  "vineyard-signature-villas": {
-    slug: "vineyard-signature-villas",
-    name: "Vineyard Signature Villas",
-    tagline: "Hill-view luxury villas with private decks",
-    location: "Mussoorie Road, Dehradun",
-    developer: "Vineyard Infra Developers",
-    type: "Luxury Villas",
-    startingPrice: "₹1.45 Cr*",
-    possession: "Dec 2026",
-    rera: "UKRERA-D-2024-0421",
-    badge: "Hot Property",
-    summary:
-      "Limited edition 3 & 4 BHK luxury villas perched on Mussoorie Road, offering panoramic valley views, curated interiors, and a private clubhouse — a rare investment in Dehradun's most aspirational corridor.",
-    hero: propertyHero,
-    gallery: [
-      { src: propertyHero, label: "Exterior at Sunset" },
-      { src: interiorLiving, label: "Living Room" },
-      { src: propertyBedroom, label: "Master Bedroom" },
-      { src: propertyAmenity, label: "Clubhouse Pool" },
-      { src: projectVilla, label: "Villa Facade" },
-      { src: projectApartments, label: "Interior Suite" },
-    ],
-    videoThumb: propertyAmenity,
-    highlights: [
-      { icon: "Bed", label: "Bedrooms", value: "3 & 4 BHK" },
-      { icon: "Bath", label: "Bathrooms", value: "4 – 5" },
-      { icon: "Maximize", label: "Area", value: "2200 – 3000 Sq.Ft." },
-      { icon: "Car", label: "Parking", value: "2 Covered" },
-      { icon: "Compass", label: "Facing", value: "Valley / East" },
-      { icon: "CalendarClock", label: "Possession", value: "Dec 2026" },
-      { icon: "Sofa", label: "Furnishing", value: "Semi-Furnished" },
-      { icon: "Building2", label: "Property Age", value: "New Launch" },
-    ],
-    usps: [
-      "Near Mussoorie Main Road",
-      "Premium Clubhouse",
-      "Gated Community",
-      "High Appreciation Zone",
-      "Valley Facing Plots",
-      "Private Decks",
-    ],
-    configurations: [
-      { type: "3 BHK", area: "2200 Sq.Ft.", price: "₹1.45 Cr*", status: "Available" },
-      { type: "3 BHK + Study", area: "2480 Sq.Ft.", price: "₹1.68 Cr*", status: "Few Left" },
-      { type: "4 BHK", area: "2800 Sq.Ft.", price: "₹2.15 Cr*", status: "Available" },
-      { type: "4 BHK Penthouse", area: "3000 Sq.Ft.", price: "₹2.65 Cr*", status: "Limited" },
-    ],
-    description: {
-      vision:
-        "Vineyard Signature Villas is conceived as a sanctuary in the hills — a tightly curated collection of just 24 villas designed for families who value privacy, craftsmanship, and a deep connection to the landscape.",
-      lifestyle:
-        "Wake up to valley views, host evenings at the clubhouse, and let children grow up around landscaped gardens and a heated pool. Every detail — from imported sanitaryware to smart-home wiring — has been chosen for everyday luxury.",
-      location:
-        "Located 12 minutes from Rajpur Road and 25 minutes from Jolly Grant Airport, the project sits on Dehradun's most aspirational stretch, with quick access to top schools, hospitals, and Mussoorie hill station.",
-      quality:
-        "Engineered with seismic-resilient RCC framing, double-glazed windows, and a 10-year structural warranty. Construction is led by a Grade-A contractor with a track record across the Doon valley.",
-      investment:
-        "Mussoorie Road has clocked 14% YoY price appreciation over the last 5 years. With limited new launches and strong rental demand, Signature Villas offers both lifestyle and long-term wealth creation.",
-    },
-    amenities: [
-      { icon: "Waves", label: "Swimming Pool" },
-      { icon: "Dumbbell", label: "Fitness Centre" },
-      { icon: "Users", label: "Clubhouse" },
-      { icon: "Trees", label: "Landscape Garden" },
-      { icon: "Sparkles", label: "Children's Play Area" },
-      { icon: "TrendingUp", label: "Jogging Track" },
-      { icon: "ShieldCheck", label: "24x7 Security" },
-      { icon: "Building2", label: "Power Backup" },
-      { icon: "BadgeCheck", label: "Smart Access" },
-    ],
-    nearby: [
-      { icon: "GraduationCap", label: "School", place: "The Doon School", time: "5 mins" },
-      { icon: "HeartPulse", label: "Hospital", place: "Max Super Speciality", time: "8 mins" },
-      { icon: "ShoppingBag", label: "Market", place: "Pacific Mall", time: "10 mins" },
-      { icon: "Plane", label: "Airport", place: "Jolly Grant Airport", time: "25 mins" },
-      { icon: "Briefcase", label: "Business", place: "IT Park Sahastradhara", time: "15 mins" },
-      { icon: "Camera", label: "Attraction", place: "Mussoorie Mall Road", time: "35 mins" },
-    ],
-    investment: [
-      { label: "Expected Appreciation", value: "12–15% YoY", desc: "Backed by 5-year Mussoorie Road trend." },
-      { label: "Rental Yield", value: "₹55K – ₹85K/mo", desc: "Strong demand from expats and HNI tenants." },
-      { label: "Growth Corridor", value: "Tier-1 Zone", desc: "Doon Master Plan priority development belt." },
-      { label: "Infrastructure", value: "₹2,400 Cr+", desc: "Sanctioned road, metro feeder & utility upgrades." },
-    ],
-    faqs: [
-      { q: "Is the project RERA approved?", a: "Yes, Vineyard Signature Villas is registered under UKRERA with registration number UKRERA-D-2024-0421. All construction milestones are publicly tracked." },
-      { q: "What payment plans are available?", a: "We offer flexible construction-linked, subvention, and 10:80:10 plans. A dedicated advisor will share the plan that best fits your finances." },
-      { q: "What is the possession date?", a: "Possession is scheduled for December 2026. Early-bird buyers also receive a complimentary interior consultation." },
-      { q: "Are home loans available?", a: "Yes, the project is pre-approved by HDFC, SBI, ICICI, and Axis Bank. We assist with documentation and faster sanctions." },
-      { q: "What are the maintenance charges?", a: "Indicative maintenance is ₹3.5/Sq.Ft. per month, inclusive of clubhouse, security, landscaping, and common utilities." },
-    ],
-    similar: [
-      { slug: "vineyard-high-grove", name: "Vineyard High Grove", location: "Sahastradhara Road", price: "₹78 L*", img: projectApartments },
-      { slug: "vineyard-crown-residences", name: "Vineyard Crown Residences", location: "Rajpur Road", price: "₹1.95 Cr*", img: interiorLiving },
-      { slug: "vineyard-pine-estate", name: "Vineyard Pine Estate", location: "Mussoorie Road", price: "₹3.2 Cr*", img: projectVilla },
-      { slug: "vineyard-green-county", name: "Vineyard Green County", location: "Harrawala", price: "₹22.5 L*", img: projectPlots },
-    ],
-  },
-};
-
-const projectOverrides: Record<string, Partial<Project>> = {
-  "vineyard-high-grove": {
-    name: "Vineyard High Grove",
-    tagline: "Premium 2 & 3 BHK residences in a fast-growing corridor",
-    location: "Sahastradhara Road, Dehradun",
-    type: "Premium Apartments",
-    startingPrice: "₹78 L*",
-    possession: "Jun 2026",
-    badge: "New Launch",
-    hero: projectApartments,
-  },
-  "vineyard-crown-residences": {
-    name: "Vineyard Crown Residences",
-    tagline: "Boutique luxury apartments on Dehradun's most coveted address",
-    location: "Rajpur Road, Dehradun",
-    type: "Luxury Apartments",
-    startingPrice: "₹1.95 Cr*",
-    possession: "Ready to Move",
-    badge: "Ready to Move",
-    hero: interiorLiving,
-  },
-  "vineyard-pine-estate": {
-    name: "Vineyard Pine Estate",
-    tagline: "Limited edition forest-facing estate villas",
-    location: "Mussoorie Road, Dehradun",
-    type: "Estate Villas",
-    startingPrice: "₹3.2 Cr*",
-    possession: "Mar 2027",
-    badge: "New Launch",
-    hero: projectVilla,
-  },
-  "vineyard-green-county": {
-    name: "Vineyard Green County",
-    tagline: "RERA-approved residential plots with strong appreciation",
-    location: "Harrawala, Dehradun",
-    type: "Residential Plots",
-    startingPrice: "₹22.5 L*",
-    possession: "Ready to Register",
-    badge: "Ready to Move",
-    hero: projectPlots,
-  },
-  "vineyard-trade-centre": {
-    name: "Vineyard Trade Centre",
-    tagline: "Grade-A retail and office on a high-visibility stretch",
-    location: "Haridwar Road, Dehradun",
-    type: "Commercial",
-    startingPrice: "₹55 L*",
-    possession: "Dec 2026",
-    badge: "Under Construction",
-    hero: projectApartments,
-  },
-};
 
 const WHATSAPP = (name: string) =>
   `https://wa.me/916397688989?text=${encodeURIComponent(`Hi Vineyard Infra, I'd like to enquire about ${name}.`)}`;
@@ -221,12 +63,22 @@ export const Route = createFileRoute("/projects/$slug")({
   validateSearch: (search: Record<string, unknown>) => ({
     landing: search.landing === "true" || search.landing === true,
   }),
-  loader: ({ params }) => {
-    const base = projects["vineyard-signature-villas"];
-    if (projects[params.slug]) return { project: projects[params.slug] };
-    const override = projectOverrides[params.slug];
-    if (!override) throw notFound();
-    return { project: { ...base, slug: params.slug, ...override } as Project };
+  loader: async ({ params }) => {
+    try {
+      const dbProperty = await getPropertyBySlug(params.slug);
+      if (!dbProperty) throw notFound();
+      const detailProject = mapToProjectDetail(dbProperty);
+      return { project: detailProject };
+    } catch (error: any) {
+      if (
+        error?.status === 404 ||
+        error?.message?.includes("404") ||
+        error?.message?.toLowerCase().includes("not found")
+      ) {
+        throw notFound();
+      }
+      throw error;
+    }
   },
   head: ({ loaderData }) => {
     const p = loaderData?.project;

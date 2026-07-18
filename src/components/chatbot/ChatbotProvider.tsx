@@ -8,10 +8,8 @@ import {
   type ReactNode,
 } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { BACKEND_URL, apiFetch } from "@/api/client";
 
-const BACKEND_URL = typeof window !== "undefined"
-  ? `http://${window.location.hostname}:8000`
-  : "http://127.0.0.1:8000";
 const COMPANY_PHONE = "6397688989";
 
 function generateUUID() {
@@ -192,9 +190,8 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const contact = memory.phone || memory.email;
     if (contact) {
-      fetch(`${BACKEND_URL}/appointments?contact=${encodeURIComponent(contact)}`)
-        .then(res => res.json())
-        .then((data: Booking[]) => {
+      apiFetch<Booking[]>("/appointments", { params: { contact } })
+        .then((data) => {
           setMemory(prev => ({
             ...prev,
             activeBookings: data
@@ -242,9 +239,8 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     });
 
     // Send history to backend
-    fetch(`${BACKEND_URL}/chat-history`, {
+    apiFetch("/chat-history", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         session_id,
         role,
@@ -657,8 +653,7 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     // State machine handlers
     switch (chatState) {
       case "HOME": {
-        const faqRes = await fetch(`${BACKEND_URL}/faqs`);
-        const faqsData = await faqRes.json();
+        const faqsData = await apiFetch<any[]>("/faqs");
         const matchingFaq = faqsData.find((faq: any) =>
           lowerInput.includes(faq.question.toLowerCase().replace("?", ""))
         );
@@ -988,8 +983,9 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
             const activeBooking = getActiveBookingForProperty(memory.selectedProperty || "", memory.activeBookings);
             if (activeBooking) {
               try {
-                await fetch(`${BACKEND_URL}/appointments/${activeBooking.id}/status?status=CANCELLED`, {
-                  method: "PATCH"
+                await apiFetch(`/appointments/${activeBooking.id}/status`, {
+                  method: "PATCH",
+                  params: { status: "CANCELLED" }
                 });
                 const updatedBookings = (memory.activeBookings || []).map(b => 
                   b.id === activeBooking.id ? { ...b, status: "CANCELLED" as const } : b
@@ -1152,19 +1148,18 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
 
   const fetchAndShowProperties = async (currentMemory: SessionMemory) => {
     try {
-      const params = new URLSearchParams();
+      const queryParams: Record<string, string> = {};
       if (currentMemory.location && currentMemory.location !== "Any") {
-        params.append("location", currentMemory.location);
+        queryParams["location"] = currentMemory.location;
       }
       if (currentMemory.propertyType && currentMemory.propertyType !== "Any") {
-        params.append("property_type", currentMemory.propertyType);
+        queryParams["property_type"] = currentMemory.propertyType;
       }
       if (currentMemory.bhk && currentMemory.bhk !== "Any") {
-        params.append("bhk", currentMemory.bhk);
+        queryParams["bhk"] = currentMemory.bhk;
       }
 
-      const res = await fetch(`${BACKEND_URL}/search-properties?${params.toString()}`);
-      const properties: PropertyItem[] = await res.json();
+      const properties = await apiFetch<PropertyItem[]>("/search-properties", { params: queryParams });
 
       const scoredProperties = properties.map((prop) => {
         let score = 0;
@@ -1251,9 +1246,8 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       updated.agentSummary = summary;
       setMemory(updated);
 
-      await fetch(`${BACKEND_URL}/create-lead`, {
+      await apiFetch("/create-lead", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           full_name: updated.name,
           phone: updated.phone,
@@ -1277,14 +1271,16 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     try {
       let bookingData: Booking;
       if (currentMemory.editingBookingId) {
-        const res = await fetch(`${BACKEND_URL}/appointments/${currentMemory.editingBookingId}?preferred_date=${encodeURIComponent(currentMemory.visitDate || "")}&preferred_time=${encodeURIComponent(currentMemory.visitTime || "")}`, {
+        bookingData = await apiFetch<Booking>(`/appointments/${currentMemory.editingBookingId}`, {
           method: "PATCH",
+          params: {
+            preferred_date: currentMemory.visitDate || "",
+            preferred_time: currentMemory.visitTime || "",
+          },
         });
-        bookingData = await res.json();
       } else {
-        const res = await fetch(`${BACKEND_URL}/book-visit`, {
+        bookingData = await apiFetch<Booking>("/book-visit", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             property_name: currentMemory.selectedProperty || PROPERTY_OPTIONS[0],
             preferred_date: currentMemory.visitDate,
@@ -1292,7 +1288,6 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
             contact_details: currentMemory.phone || currentMemory.email || "Details on file",
           }),
         });
-        bookingData = await res.json();
       }
 
       let updatedBookings = currentMemory.activeBookings ? [...currentMemory.activeBookings] : [];

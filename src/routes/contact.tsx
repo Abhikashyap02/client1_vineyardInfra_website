@@ -29,7 +29,18 @@ import {
 import contactHero from "@/assets/contact-hero.jpg";
 import founderImg from "@/assets/founder.jpg";
 
+import { searchProperties } from "@/api/properties";
+
 export const Route = createFileRoute("/contact")({
+  loader: async () => {
+    try {
+      const dbProperties = await searchProperties();
+      return { propertyNames: dbProperties.map((p) => p.name) };
+    } catch (error) {
+      console.error("Failed to load property names for contact form", error);
+      return { propertyNames: [] };
+    }
+  },
   head: () => ({
     meta: [
       { title: "Contact Vineyard Infra — Book a Consultation or Site Visit" },
@@ -321,19 +332,22 @@ function RequirementForm() {
 
 /* ---------- Section 4: Book Site Visit ---------- */
 function SiteVisitSection() {
+  const { propertyNames } = Route.useLoaderData();
   const [form, setForm] = useState({ name: "", phone: "", property: "", date: "", time: "" });
   const [submitted, setSubmitted] = useState(false);
   const update = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
 
-  const properties = [
-    "Vineyard Signature Villas",
-    "Vineyard High Grove",
-    "Vineyard Green County",
-    "Vineyard Crown Residences",
-    "Vineyard Pine Estate",
-    "Vineyard Trade Centre",
-    "Other / Not Sure",
-  ];
+  const properties = propertyNames && propertyNames.length > 0
+    ? [...propertyNames, "Other / Not Sure"]
+    : [
+        "Vineyard Signature Villas",
+        "Vineyard High Grove",
+        "Vineyard Green County",
+        "Vineyard Crown Residences",
+        "Vineyard Pine Estate",
+        "Vineyard Trade Centre",
+        "Other / Not Sure",
+      ];
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

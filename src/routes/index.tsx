@@ -12,12 +12,26 @@ import { VideoTestimonialsSection } from "@/components/VideoTestimonialsSection"
 import heroProperty from "@/assets/hero-property.jpg";
 import heroVideo from "@/assets/up1.mp4";
 import founder from "@/assets/founder.jpg";
-import projectVilla from "@/assets/project-villa.jpg";
-import projectApartments from "@/assets/project-apartments.jpg";
-import projectPlots from "@/assets/project-plots.jpg";
 import expertConsultation from "@/assets/expert-consultation.jpg";
+import { searchProperties } from "@/api/properties";
+import { mapToHomepageProject } from "@/mappers/propertyMapper";
 
 export const Route = createFileRoute("/")({
+  loader: async () => {
+    try {
+      const dbProperties = await searchProperties();
+      // Filter for featured properties, or fallback to first 3 if none are marked featured
+      let featured = dbProperties.filter((p) => p.featured);
+      if (featured.length === 0) {
+        featured = dbProperties.slice(0, 3);
+      }
+      const homepageProjects = featured.map(mapToHomepageProject);
+      return { projects: homepageProjects };
+    } catch (error) {
+      console.error("Failed to load featured properties for homepage", error);
+      return { projects: [] };
+    }
+  },
   head: () => ({
     meta: [
       { title: "Vineyard Infra — Premium Real Estate in Dehradun" },
@@ -36,14 +50,6 @@ const navLinks: { label: string; to: "/" | "/properties" | "/about" | "/contact"
   { label: "Contact", to: "/contact" },
 ];
 
-// navLinks is still used by the footer; header now uses DesktopNav
-
-const projects = [
-  { slug: "vineyard-signature-villas", tag: "NEW LAUNCH", type: "Villas", name: "Vineyard Signature Villas", location: "Mussoorie Road, Dehradun", price: "₹1.45 Cr*", bhk: "3, 4 BHK", bath: "2-4 BHK", area: "2200 - 3000 Sq.Ft.", img: projectVilla },
-  { slug: "vineyard-high-grove", tag: "PREMIUM", type: "Apartments", name: "Vineyard High Grove", location: "Sahastradhara Road, Dehradun", price: "₹78 L*", bhk: "2, 3 BHK", bath: "2, 3 BHK", area: "1200 - 1950 Sq.Ft.", img: projectApartments },
-  { slug: "vineyard-green-county", tag: "ONGOING", type: "Plots", name: "Vineyard Green County", location: "Harrawala, Dehradun", price: "₹22.5 L*", bhk: "Residential Plots", bath: "—", area: "100 - 300 Sq.Yd.", img: projectPlots },
-];
-
 const stats = [
   { value: "15+", label: "Years of Experience" },
   { value: "500+", label: "Happy Families" },
@@ -59,6 +65,7 @@ const budgetOptions = ["Any Budget", "Under 50 Lakhs", "50L - 1Cr", "1Cr - 2Cr",
 const statusOptions = ["Any Status", "Ongoing", "Ready to Move", "Under Construction", "Upcoming"];
 
 function Home() {
+  const { projects } = Route.useLoaderData();
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
 
@@ -283,46 +290,52 @@ function Home() {
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {projects.map((p) => (
-            <article key={p.name} className="group overflow-hidden rounded-sm bg-card shadow-card transition hover:-translate-y-1 hover:shadow-elevated" style={{ boxShadow: "var(--shadow-card)" }}>
-              <div className="relative overflow-hidden">
-                <img src={p.img} alt={p.name} width={1024} height={768} loading="lazy" className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-105" />
-                <span className="absolute left-4 top-4 rounded-sm px-3 py-1.5 text-[10px] font-bold tracking-wider text-navy-deep" style={{ background: "var(--gradient-gold)" }}>
-                  {p.tag}
-                </span>
-                <span className="absolute right-4 top-4 rounded-sm bg-navy-deep px-3 py-1.5 text-[10px] font-semibold tracking-wider text-white">
-                  {p.type}
-                </span>
-              </div>
-              <div className="p-6">
-                <h3 className="font-display text-xl font-semibold text-navy-deep">{p.name}</h3>
-                <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-soft">
-                  <MapPin className="size-4 text-gold" /> {p.location}
-                </p>
-                <div className="mt-4 border-t border-border pt-4">
-                  <p className="text-lg font-bold text-gold">{p.price} <span className="text-xs font-normal text-slate-soft">onwards</span></p>
-                  <div className="mt-3 flex flex-wrap gap-3 text-xs text-slate-soft">
-                    <span className="flex items-center gap-1"><Bed className="size-3.5 text-gold" /> {p.bhk}</span>
-                    <span className="flex items-center gap-1"><Building2 className="size-3.5 text-gold" /> {p.bath}</span>
-                    <span className="flex items-center gap-1"><Maximize className="size-3.5 text-gold" /> {p.area}</span>
+        {projects.length === 0 ? (
+          <div className="text-center py-12 text-slate-soft col-span-full">
+            No featured properties available at the moment.
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-3">
+            {projects.map((p) => (
+              <article key={p.name} className="group overflow-hidden rounded-sm bg-card shadow-card transition hover:-translate-y-1 hover:shadow-elevated" style={{ boxShadow: "var(--shadow-card)" }}>
+                <div className="relative overflow-hidden">
+                  <img src={p.img} alt={p.name} width={1024} height={768} loading="lazy" className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-105" />
+                  <span className="absolute left-4 top-4 rounded-sm px-3 py-1.5 text-[10px] font-bold tracking-wider text-navy-deep" style={{ background: "var(--gradient-gold)" }}>
+                    {p.tag}
+                  </span>
+                  <span className="absolute right-4 top-4 rounded-sm bg-navy-deep px-3 py-1.5 text-[10px] font-semibold tracking-wider text-white">
+                    {p.type}
+                  </span>
+                </div>
+                <div className="p-6">
+                  <h3 className="font-display text-xl font-semibold text-navy-deep">{p.name}</h3>
+                  <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-soft">
+                    <MapPin className="size-4 text-gold" /> {p.location}
+                  </p>
+                  <div className="mt-4 border-t border-border pt-4">
+                    <p className="text-lg font-bold text-gold">{p.price} <span className="text-xs font-normal text-slate-soft">onwards</span></p>
+                    <div className="mt-3 flex flex-wrap gap-3 text-xs text-slate-soft">
+                      <span className="flex items-center gap-1"><Bed className="size-3.5 text-gold" /> {p.bhk}</span>
+                      <span className="flex items-center gap-1"><Building2 className="size-3.5 text-gold" /> {p.bath}</span>
+                      <span className="flex items-center gap-1"><Maximize className="size-3.5 text-gold" /> {p.area}</span>
+                    </div>
+                  </div>
+                  <div className="mt-5 flex items-center justify-between border-t border-border pt-4 text-xs font-semibold">
+                    <Link to="/projects/$slug" params={{ slug: p.slug }} search={{ landing: false }} className="flex items-center gap-1 text-navy-deep transition hover:text-gold">
+                      VIEW DETAILS <ArrowRight className="size-3.5" />
+                    </Link>
+                    <a href={`https://wa.me/916397688989?text=${encodeURIComponent(`Hi Vineyard Infra, I'd like to enquire about ${p.name}.`)}`} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-navy-deep transition hover:text-gold">
+                      GET IN TOUCH
+                      <span className="grid size-6 place-items-center rounded-full bg-[#25D366] text-white">
+                        <MessageCircle className="size-3" />
+                      </span>
+                    </a>
                   </div>
                 </div>
-                <div className="mt-5 flex items-center justify-between border-t border-border pt-4 text-xs font-semibold">
-                  <Link to="/projects/$slug" params={{ slug: p.slug }} search={{ landing: false }} className="flex items-center gap-1 text-navy-deep transition hover:text-gold">
-                    VIEW DETAILS <ArrowRight className="size-3.5" />
-                  </Link>
-                  <a href={`https://wa.me/916397688989?text=${encodeURIComponent(`Hi Vineyard Infra, I'd like to enquire about ${p.name}.`)}`} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-navy-deep transition hover:text-gold">
-                    GET IN TOUCH
-                    <span className="grid size-6 place-items-center rounded-full bg-[#25D366] text-white">
-                      <MessageCircle className="size-3" />
-                    </span>
-                  </a>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* FOUNDER & TRUST */}

@@ -131,6 +131,10 @@ class FAQResponse(FAQBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+class PropertyDetailResponse(PropertyResponse):
+    faqs: List[FAQResponse] = []
+
+
 # ==========================================
 # Legacy Aliases / Deprecated Schemas
 # Keep definitions to prevent import crashes in routes/CRUD not yet fully refactored

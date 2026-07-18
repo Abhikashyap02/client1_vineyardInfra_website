@@ -46,6 +46,13 @@ def search_properties(
         city=city,
     )
 
+@app.get("/properties/{slug}", response_model=schemas.PropertyDetailResponse)
+def get_property_by_slug(slug: str, db: Session = Depends(get_db)):
+    db_property = crud.get_property_by_slug(db, slug=slug)
+    if not db_property:
+        raise HTTPException(status_code=404, detail="Property not found")
+    return db_property
+
 # 2. Lead Qualification Flow
 @app.post("/create-lead", response_model=schemas.LeadResponse)
 def create_lead(lead: schemas.LeadCreate, db: Session = Depends(get_db)):

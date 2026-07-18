@@ -56,6 +56,14 @@ def search_properties(
 
     return query.all()
 
+def get_property_by_slug(db: Session, slug: str) -> Optional[models.Property]:
+    return db.query(models.Property).options(
+        selectinload(models.Property.variants),
+        selectinload(models.Property.media),
+        selectinload(models.Property.features),
+        selectinload(models.Property.faqs)
+    ).filter(models.Property.slug == slug).first()
+
 def create_lead(db: Session, lead: schemas.LeadCreate) -> models.Lead:
     # Safely convert schema dictionary to Lead model parameters
     lead_data = lead.model_dump()

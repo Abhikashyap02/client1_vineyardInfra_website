@@ -20,6 +20,51 @@ async function getServerEntry(): Promise<ServerEntry> {
 
 // h3 swallows in-handler throws into a normal 500 Response with body
 // {"unhandled":true,"message":"HTTPError"} — try/catch alone never fires for those.
+function injectSecurityHeaders(response: Response): Response {
+  const headers = new Headers(response.headers);
+  
+  if (process.env.NODE_ENV === "development") {
+    // Prevent browser caching during local development
+    headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    headers.set("Pragma", "no-cache");
+    headers.set("Expires", "0");
+    
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  }
+  
+  headers.set("X-Frame-Options", "DENY");
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
+  
+  const csp = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com data:",
+    "img-src 'self' data: https: blob:",
+    "connect-src 'self' http://localhost:8000 http://127.0.0.1:8000 https:",
+    "frame-src 'self' https://www.google.com https://maps.google.com",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+  ].join("; ");
+  headers.set("Content-Security-Policy", csp);
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+// h3 swallows in-handler throws into a normal 500 Response with body
+// {"unhandled":true,"message":"HTTPError"} — try/catch alone never fires for those.
 async function normalizeCatastrophicSsrResponse(response: Response): Promise<Response> {
   if (response.status < 500) return response;
   const contentType = response.headers.get("content-type") ?? "";
@@ -40,15 +85,34 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      const url = new URL(request.url);
+      
+      // 1. Enforce HTTPS in production environments via proxy headers
+      const proto = request.headers.get("x-forwarded-proto");
+      if (proto === "http") {
+        url.protocol = "https:";
+        return Response.redirect(url.toString(), 301);
+      }
+
+      if (url.pathname === "/sitemap.xml") {
+        const modifiedRequest = new Request(new URL("/sitemap/xml", request.url).toString(), request);
+        const handler = await getServerEntry();
+        const response = await handler.fetch(modifiedRequest, env, ctx);
+        const normalized = await normalizeCatastrophicSsrResponse(response);
+        return injectSecurityHeaders(normalized);
+      }
+      
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      const normalized = await normalizeCatastrophicSsrResponse(response);
+      return injectSecurityHeaders(normalized);
     } catch (error) {
       console.error(error);
-      return new Response(renderErrorPage(), {
+      const errorResponse = new Response(renderErrorPage(), {
         status: 500,
         headers: { "content-type": "text/html; charset=utf-8" },
       });
+      return injectSecurityHeaders(errorResponse);
     }
   },
 };

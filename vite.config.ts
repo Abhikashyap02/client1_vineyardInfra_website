@@ -12,4 +12,14 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    server: {
+      host: true, // Listen on all network interfaces (enables LAN access)
+      strictPort: true,
+      hmr: {
+        protocol: "ws", // Use standard ws protocol
+        clientPort: 8080, // Explicitly bind HMR client websocket to port 8080
+      },
+    },
+  },
 });

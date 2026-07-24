@@ -357,6 +357,7 @@ export interface DetailProject {
   investment: { label: string; value: string; desc: string }[];
   faqs: { q: string; a: string }[];
   similar: { slug: string; name: string; location: string; price: string; img: string }[];
+  brochureUrl: string | null;
 }
 
 /**
@@ -463,5 +464,6 @@ export function mapToProjectDetail(property: PropertyDetail): DetailProject {
     investment: getInvestmentFeatures(property.features),
     faqs: mapFaqs(property.faqs),
     similar: [], // safely empty (loaded dynamically or left to UI fallback)
+    brochureUrl: property.brochure_url || null,
   };
 }

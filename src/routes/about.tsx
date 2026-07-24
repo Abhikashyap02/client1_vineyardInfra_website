@@ -25,6 +25,7 @@ import {
   Youtube,
 } from "lucide-react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -37,22 +38,48 @@ import heroImg from "@/assets/hero-property.jpg";
 import interiorImg from "@/assets/interior-living.jpg";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About Vineyard Infra — Trusted Real Estate Advisors in Dehradun" },
-      {
-        name: "description",
-        content:
-          "Meet the team behind Vineyard Infra. 12+ years of real estate expertise in Dehradun, helping families and investors make better property decisions.",
-      },
-      { property: "og:title", content: "About Vineyard Infra — Trusted Real Estate Advisors" },
-      {
-        property: "og:description",
-        content:
-          "More than property. We help people make better real estate decisions through transparency, expertise, and long-term relationships.",
-      },
-    ],
-  }),
+  head: () => {
+    const title = "Real Estate Builders & Consultants in Dehradun | About Vineyard";
+    const desc = "Meet Vineyard Infra, the leading real estate agents & consultants in Dehradun. Get trusted property advisory and construction services on Sahastradhara Road.";
+
+    const breadcrumbSchema = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://vineyardinfra.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "About Us",
+          "item": "https://vineyardinfra.com/about"
+        }
+      ]
+    };
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "website" },
+      ],
+      links: [
+        { rel: "canonical", href: "https://vineyardinfra.com/about" }
+      ],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(breadcrumbSchema),
+        }
+      ]
+    };
+  },
   component: AboutPage,
 });
 
@@ -110,11 +137,11 @@ function HeroStory() {
             <Sparkles className="h-3.5 w-3.5" /> About Vineyard Infra
           </div>
           <h1 className="font-display text-4xl md:text-6xl lg:text-7xl leading-[1.05] font-semibold">
-            More Than Property.
+            Real Estate Experts &
+
+            <span className="font-italic-serif text-gold">  Property Consultants</span>
             <br />
-            <span className="font-italic-serif text-gold">We help people make</span>
-            <br />
-            better real estate decisions.
+            in Dehradun.
           </h1>
           <p className="mt-6 text-lg md:text-xl text-white/75 max-w-2xl">
             Building trust through market expertise, transparency, and long-term
@@ -796,6 +823,7 @@ function AboutPage() {
       <TeamSection />
       <FAQSection />
       <FinalCTA />
+      <Footer />
     </main>
   );
 }

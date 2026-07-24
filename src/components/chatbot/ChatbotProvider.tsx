@@ -9,6 +9,7 @@ import {
 } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { BACKEND_URL, apiFetch } from "@/api/client";
+import { submitLead as apiSubmitLead } from "@/api/leads";
 
 const COMPANY_PHONE = "6397688989";
 
@@ -25,7 +26,7 @@ function generateUUID() {
 }
 
 export interface PropertyItem {
-  id: number;
+  id: string;
   name: string;
   location: string;
   property_type: string;
@@ -37,6 +38,7 @@ export interface PropertyItem {
   description: string;
   image_url: string;
   amenities: string | null;
+  brochure_url: string | null;
   matchScore?: number;
   matchReason?: string;
 }
@@ -395,7 +397,10 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
   const downloadBrochureForProperty = useCallback((prop: PropertyItem) => {
     setActiveProperty(prop);
     if (memory.name && memory.phone && memory.email) {
-      appendMessage("assistant", `Thank you for your interest! Here is the brochure link for *${prop.name}*: [Download Brochure PDF](https://vineyardinfra.com/brochure.pdf).\n\nFor immediate assistance, call ${COMPANY_PHONE}.`, {
+      const brochureLink = prop.brochure_url
+        ? `[Download Brochure PDF](${prop.brochure_url})`
+        : `[Download Brochure PDF](https://ik.imagekit.io/vineyard/Vineyard%20Infra/General%20Brochure.pdf)`;
+      appendMessage("assistant", `Thank you for your interest! Here is the brochure link for *${prop.name}*: ${brochureLink}.\n\nFor immediate assistance, call ${COMPANY_PHONE}.`, {
         suggestions: CLOSING_SUGGESTIONS,
       });
       const updated = { ...memory, purpose: `Brochure: ${prop.name}` };
@@ -529,7 +534,10 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     if (lowerInput.includes("download brochure") || lowerInput.includes("get brochure")) {
       const targetName = activeProperty?.name || "our properties";
       if (memory.name && memory.phone && memory.email) {
-        appendMessage("assistant", `Thank you for your interest! Here is the brochure link for *${targetName}*: [Download Brochure PDF](https://vineyardinfra.com/brochure.pdf).\n\nFor immediate assistance, call ${COMPANY_PHONE}.`, {
+        const brochureLink = activeProperty?.brochure_url
+          ? `[Download Brochure PDF](${activeProperty.brochure_url})`
+          : `[Download Brochure PDF](https://ik.imagekit.io/vineyard/Vineyard%20Infra/General%20Brochure.pdf)`;
+        appendMessage("assistant", `Thank you for your interest! Here is the brochure link for *${targetName}*: ${brochureLink}.\n\nFor immediate assistance, call ${COMPANY_PHONE}.`, {
           suggestions: CLOSING_SUGGESTIONS,
         });
         const updated = { ...memory, purpose: `Brochure: ${targetName}` };
@@ -867,7 +875,10 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
                 setMemory(prev => ({ ...prev, brochurePending: false }));
                 await submitLead(updated);
                 const targetName = activeProperty?.name || "our properties";
-                appendMessage("assistant", `Thank you for registering! Here is your download link for *${targetName}*: [Download Brochure PDF](https://vineyardinfra.com/brochure.pdf).\n\nFor immediate assistance, call ${COMPANY_PHONE}.`, {
+                const brochureLink = activeProperty?.brochure_url
+                  ? `[Download Brochure PDF](${activeProperty.brochure_url})`
+                  : `[Download Brochure PDF](https://ik.imagekit.io/vineyard/Vineyard%20Infra/General%20Brochure.pdf)`;
+                appendMessage("assistant", `Thank you for registering! Here is your download link for *${targetName}*: ${brochureLink}.\n\nFor immediate assistance, call ${COMPANY_PHONE}.`, {
                   suggestions: CLOSING_SUGGESTIONS,
                 });
                 setChatState("HOME");
@@ -893,7 +904,10 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
               setMemory(prev => ({ ...prev, brochurePending: false }));
               await submitLead(updated);
               const targetName = activeProperty?.name || "our properties";
-              appendMessage("assistant", `Thank you for registering! Here is your download link for *${targetName}*: [Download Brochure PDF](https://vineyardinfra.com/brochure.pdf).\n\nFor immediate assistance, call ${COMPANY_PHONE}.`, {
+              const brochureLink = activeProperty?.brochure_url
+                ? `[Download Brochure PDF](${activeProperty.brochure_url})`
+                : `[Download Brochure PDF](https://ik.imagekit.io/vineyard/Vineyard%20Infra/General%20Brochure.pdf)`;
+              appendMessage("assistant", `Thank you for registering! Here is your download link for *${targetName}*: ${brochureLink}.\n\nFor immediate assistance, call ${COMPANY_PHONE}.`, {
                 suggestions: CLOSING_SUGGESTIONS,
               });
               setChatState("HOME");
@@ -1159,7 +1173,42 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
         queryParams["bhk"] = currentMemory.bhk;
       }
 
-      const properties = await apiFetch<PropertyItem[]>("/search-properties", { params: queryParams });
+      const rawProperties = await apiFetch<any[]>("/search-properties", { params: queryParams });
+
+      const properties: PropertyItem[] = rawProperties.map((p) => {
+        const bhk = p.variants && p.variants.length > 0
+          ? Math.max(...p.variants.map((v: any) => v.bedrooms || 0))
+          : null;
+        
+        const areas = p.variants && p.variants.length > 0
+          ? p.variants.map((v: any) => v.area).filter(Boolean)
+          : [];
+        const areaStr = areas.length > 0 ? areas[0] : "";
+
+        const heroMedia = p.media && p.media.length > 0
+          ? p.media.find((m: any) => m.is_hero)?.media_url || p.media[0].media_url
+          : "";
+
+        const amenitiesStr = p.features && p.features.length > 0
+          ? p.features.filter((f: any) => f.feature_type?.toUpperCase() === "AMENITY").map((f: any) => f.feature_name).join(", ")
+          : null;
+
+        return {
+          id: p.id,
+          name: p.name,
+          location: p.location,
+          property_type: p.sub_type || "Property",
+          price: String(p.starting_price || "0"),
+          bhk: bhk || null,
+          ready_to_move: p.possession_status?.toLowerCase().includes("ready") || false,
+          under_construction: p.possession_status?.toLowerCase().includes("construction") || false,
+          area: areaStr,
+          description: p.short_description || "",
+          image_url: heroMedia,
+          amenities: amenitiesStr,
+          brochure_url: p.brochure_url || null,
+        };
+      });
 
       const scoredProperties = properties.map((prop) => {
         let score = 0;
@@ -1246,21 +1295,21 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       updated.agentSummary = summary;
       setMemory(updated);
 
-      await apiFetch("/create-lead", {
-        method: "POST",
-        body: JSON.stringify({
-          full_name: updated.name,
-          phone: updated.phone,
-          email: updated.email,
-          budget: updated.budget || "Any",
-          preferred_location: updated.location || "Any",
-          purpose: updated.purpose || "Self Use",
-          priority: updated.leadScore === "Hot" ? "high" : "normal",
-          lead_score: updated.leadScore,
-          investment_horizon: updated.investmentHorizon,
-          investment_goal: updated.investmentGoal,
-          agent_summary: updated.agentSummary,
-        }),
+      await apiSubmitLead({
+        full_name: updated.name || "Visitor",
+        phone: updated.phone || "0000000000",
+        email: updated.email || null,
+        budget: updated.budget || "Any",
+        preferred_location: updated.location || "Any",
+        interested_in: activeProperty?.name || updated.selectedProperty || null,
+        property_id: activeProperty?.id || null,
+        source: "Chatbot",
+        purpose: updated.purpose || "Self Use",
+        priority: updated.leadScore === "Hot" ? "high" : "normal",
+        lead_score: updated.leadScore,
+        investment_horizon: updated.investmentHorizon,
+        investment_goal: updated.investmentGoal,
+        agent_summary: updated.agentSummary,
       });
     } catch (e) {
       console.error("Failed to register lead", e);
@@ -1279,15 +1328,34 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
           },
         });
       } else {
-        bookingData = await apiFetch<Booking>("/book-visit", {
-          method: "POST",
-          body: JSON.stringify({
-            property_name: currentMemory.selectedProperty || PROPERTY_OPTIONS[0],
-            preferred_date: currentMemory.visitDate,
-            preferred_time: currentMemory.visitTime,
-            contact_details: currentMemory.phone || currentMemory.email || "Details on file",
-          }),
+        const leadResponse = await apiSubmitLead({
+          full_name: currentMemory.name || "Visitor",
+          phone: currentMemory.phone || currentMemory.email || "0000000000",
+          email: currentMemory.email || null,
+          interested_in: currentMemory.selectedProperty || PROPERTY_OPTIONS[0],
+          property_id: activeProperty?.id || null,
+          source: "Chatbot",
+          visit_date: currentMemory.visitDate,
+          visit_time: currentMemory.visitTime,
+          purpose: currentMemory.purpose || "Self Use",
+          lead_score: currentMemory.leadScore,
+          agent_summary: currentMemory.agentSummary,
         });
+
+        if (leadResponse?.site_visits && leadResponse.site_visits.length > 0) {
+          bookingData = leadResponse.site_visits[leadResponse.site_visits.length - 1];
+        } else {
+          bookingData = {
+            id: generateUUID(),
+            property_name: currentMemory.selectedProperty || PROPERTY_OPTIONS[0],
+            preferred_date: currentMemory.visitDate || "",
+            preferred_time: currentMemory.visitTime || "",
+            contact_details: currentMemory.phone || "Details on file",
+            status: "ACTIVE",
+            booking_ref: leadResponse?.booking_ref || `VIN-TEMP-${Math.floor(Math.random() * 10000)}`,
+            created_at: new Date().toISOString(),
+          } as any;
+        }
       }
 
       let updatedBookings = currentMemory.activeBookings ? [...currentMemory.activeBookings] : [];

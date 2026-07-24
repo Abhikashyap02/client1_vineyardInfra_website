@@ -1,15 +1,54 @@
-from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi import FastAPI, Depends, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List, Optional, Any
 from decimal import Decimal
 from datetime import datetime
+import logging
+import time
+from collections import defaultdict
 
 from app.database import get_db, Base, engine
 from app.config import settings
 from app import crud, schemas, models
+from app.services.google_sheets import append_lead_to_sheet
+
+logger = logging.getLogger("app.main")
 
 app = FastAPI(title=settings.PROJECT_NAME)
+
+# Centralized IP extraction supporting reverse proxies
+def get_client_ip(request: Request) -> str:
+    x_forwarded_for = request.headers.get("x-forwarded-for")
+    if x_forwarded_for:
+        return x_forwarded_for.split(",")[0].strip()
+    
+    cf_connecting_ip = request.headers.get("cf-connecting-ip")
+    if cf_connecting_ip:
+        return cf_connecting_ip.strip()
+    
+    return request.client.host if request.client else "unknown"
+
+# Memory-based rate limiter dependency
+def rate_limit(max_requests: int, window_seconds: int):
+    records = defaultdict(list)
+    
+    def dependency(request: Request):
+        ip = get_client_ip(request)
+        now = time.time()
+        
+        # Filter old timestamps
+        records[ip] = [t for t in records[ip] if now - t < window_seconds]
+        
+        if len(records[ip]) >= max_requests:
+            raise HTTPException(
+                status_code=429,
+                detail="Too many requests. Please try again later."
+            )
+        
+        records[ip].append(now)
+        
+    return dependency
 
 # Set up CORS
 app.add_middleware(
@@ -20,6 +59,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Set up Security Headers Middleware
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains; preload"
+    response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
+    return response
 # Root endpoint
 @app.get("/")
 def read_root():
@@ -54,49 +103,80 @@ def get_property_by_slug(slug: str, db: Session = Depends(get_db)):
     return db_property
 
 # 2. Lead Qualification Flow
-@app.post("/create-lead", response_model=schemas.LeadResponse)
+@app.post("/create-lead", response_model=schemas.LeadResponse, dependencies=[Depends(rate_limit(5, 60))])
 def create_lead(lead: schemas.LeadCreate, db: Session = Depends(get_db)):
-    return crud.create_lead(db, lead)
+    try:
+        db_lead = crud.create_lead(db, lead)
+    except Exception as e:
+        logger.error(f"Error creating lead: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=400, detail="Failed to create lead. Please check the input data and try again.")
+    
+    try:
+        append_lead_to_sheet(db_lead)
+    except Exception as sheet_err:
+        logger.error(f"Unexpected error when calling append_lead_to_sheet: {str(sheet_err)}", exc_info=True)
+        
+    return db_lead
 
 # 3. Site Visit Booking
-@app.post("/book-visit", response_model=schemas.AppointmentResponse)
+@app.post("/book-visit", response_model=schemas.AppointmentResponse, dependencies=[Depends(rate_limit(5, 60))])
 def book_visit(appointment: schemas.AppointmentCreate, db: Session = Depends(get_db)):
-    return crud.book_visit(db, appointment)
+    try:
+        return crud.book_visit(db, appointment)
+    except Exception as e:
+        logger.error(f"Error booking visit: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=400, detail="Failed to book site visit. Please try again.")
 
-@app.get("/appointments", response_model=List[schemas.AppointmentResponse])
+@app.get("/appointments", response_model=List[schemas.AppointmentResponse], dependencies=[Depends(rate_limit(5, 60))])
 def get_appointments(contact: str = Query(..., description="Contact details (phone or email)"), db: Session = Depends(get_db)):
-    return crud.get_appointments_by_contact(db, contact)
+    try:
+        return crud.get_appointments_by_contact(db, contact)
+    except Exception as e:
+        logger.error(f"Error retrieving appointments: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=400, detail="Failed to retrieve appointments. Please try again.")
 
-@app.patch("/appointments/{appointment_id}/status", response_model=schemas.AppointmentResponse)
-def update_appointment_status(appointment_id: int, status: str = Query(..., description="New status"), db: Session = Depends(get_db)):
-    updated = crud.update_appointment_status(db, appointment_id, status)
-    if not updated:
-        raise HTTPException(status_code=404, detail="Appointment not found")
-    return updated
+@app.patch("/appointments/{appointment_id}/status", response_model=schemas.AppointmentResponse, dependencies=[Depends(rate_limit(5, 60))])
+def update_appointment_status(appointment_id: Any, status: str = Query(..., description="New status"), db: Session = Depends(get_db)):
+    try:
+        updated = crud.update_appointment_status(db, appointment_id, status)
+        if not updated:
+            raise HTTPException(status_code=404, detail="Appointment not found")
+        return updated
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating appointment status: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=400, detail="Failed to update appointment status.")
 
-@app.patch("/appointments/{appointment_id}", response_model=schemas.AppointmentResponse)
+@app.patch("/appointments/{appointment_id}", response_model=schemas.AppointmentResponse, dependencies=[Depends(rate_limit(5, 60))])
 def update_appointment_details(
     appointment_id: Any,
     preferred_date: Optional[str] = Query(None),
     preferred_time: Optional[str] = Query(None),
     db: Session = Depends(get_db)
 ):
-    db_appointment = db.query(models.SiteVisit).filter(models.SiteVisit.id == appointment_id).first()
-    if not db_appointment:
-        raise HTTPException(status_code=404, detail="Appointment not found")
-    if preferred_date:
-        try:
-            db_appointment.visit_date = datetime.strptime(preferred_date, "%Y-%m-%d").date()
-        except Exception:
-            pass
-    if preferred_time:
-        try:
-            db_appointment.visit_time = datetime.strptime(preferred_time, "%H:%M").time()
-        except Exception:
-            pass
-    db.commit()
-    db.refresh(db_appointment)
-    return db_appointment
+    try:
+        db_appointment = db.query(models.SiteVisit).filter(models.SiteVisit.id == appointment_id).first()
+        if not db_appointment:
+            raise HTTPException(status_code=404, detail="Appointment not found")
+        if preferred_date:
+            try:
+                db_appointment.visit_date = datetime.strptime(preferred_date, "%Y-%m-%d").date()
+            except Exception:
+                pass
+        if preferred_time:
+            try:
+                db_appointment.visit_time = datetime.strptime(preferred_time, "%H:%M").time()
+            except Exception:
+                pass
+        db.commit()
+        db.refresh(db_appointment)
+        return db_appointment
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating appointment details: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=400, detail="Failed to update appointment details.")
 
 # 4. FAQ System
 @app.get("/faqs", response_model=List[schemas.FAQResponse])

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   Phone, Mail, MapPin, Calendar, Search, ArrowRight, MessageCircle,
@@ -8,6 +8,7 @@ import {
   Award, Clock, Heart,
 } from "lucide-react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { VideoTestimonialsSection } from "@/components/VideoTestimonialsSection";
 import heroProperty from "@/assets/hero-property.jpg";
 import heroVideo from "@/assets/up1.mp4";
@@ -15,6 +16,10 @@ import founder from "@/assets/founder.jpg";
 import expertConsultation from "@/assets/expert-consultation.jpg";
 import { searchProperties } from "@/api/properties";
 import { mapToHomepageProject } from "@/mappers/propertyMapper";
+import { getAvailableLocations } from "@/lib/locationUtils";
+import { apiFetch } from "@/api/client";
+import { toast } from "sonner";
+import { submitLead } from "@/api/leads";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -26,20 +31,89 @@ export const Route = createFileRoute("/")({
         featured = dbProperties.slice(0, 3);
       }
       const homepageProjects = featured.map(mapToHomepageProject);
-      return { projects: homepageProjects };
+      return { projects: homepageProjects, allProperties: dbProperties };
     } catch (error) {
       console.error("Failed to load featured properties for homepage", error);
-      return { projects: [] };
+      return { projects: [], allProperties: [] };
     }
   },
-  head: () => ({
-    meta: [
-      { title: "Vineyard Infra — Premium Real Estate in Dehradun" },
-      { name: "description", content: "Curated luxury homes, plots and investment properties in Dehradun. Trusted guidance, transparent deals and end-to-end support from Vineyard Infra." },
-      { property: "og:title", content: "Vineyard Infra — Premium Real Estate in Dehradun" },
-      { property: "og:description", content: "Find, invest and grow with confidence. Premium properties backed by market expertise." },
-    ],
-  }),
+  head: () => {
+    const title = "Real Estate & Plots for Sale in Dehradun | Vineyard Infra";
+    const desc = "Looking for premium property in Sahastradhara Road or Dehradun? Explore luxury apartments, residential plots, and villas for sale with Vineyard Infra today.";
+    
+    const orgSchema = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Vineyard Infra",
+      "legalName": "Vineyard Infra Realcon LLP",
+      "url": "https://vineyardinfra.com",
+      "logo": "https://vineyardinfra.com/logo-horizontal.svg",
+      "sameAs": [
+        "https://www.facebook.com/vineyardinfra",
+        "https://www.instagram.com/vineyardinfra/",
+        "https://www.youtube.com/@vineyardinfra1900"
+      ]
+    };
+
+    const agentSchema = {
+      "@context": "https://schema.org",
+      "@type": "RealEstateAgent",
+      "name": "Vineyard Infra",
+      "image": "https://vineyardinfra.com/logo-horizontal.svg",
+      "telephone": "+916397688989",
+      "email": "vineyardinfra005@gmail.com",
+      "url": "https://vineyardinfra.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Aman Vihar, Sahastradhara Road",
+        "addressLocality": "Dehradun",
+        "addressRegion": "Uttarakhand",
+        "postalCode": "248001",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 30.350669,
+        "longitude": 78.0773398
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "opens": "09:00",
+        "closes": "18:00"
+      }
+    };
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "website" },
+      ],
+      links: [
+        { rel: "canonical", href: "https://vineyardinfra.com" }
+      ],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(orgSchema),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(agentSchema),
+        }
+      ]
+    };
+  },
   component: Home,
 });
 
@@ -60,12 +134,14 @@ const stats = [
 
 
 const typeOptions = ["Any Type", "Flat / Apartment", "Villa", "Independent House", "Plot", "Commercial Space", "Office Space", "Retail Shop"];
-const locationOptions = ["Any Location", "Rajpur Road", "Sahastradhara Road", "Mussoorie Road", "Haridwar Road", "Harrawala", "Clement Town"];
 const budgetOptions = ["Any Budget", "Under 50 Lakhs", "50L - 1Cr", "1Cr - 2Cr", "2Cr+"];
 const statusOptions = ["Any Status", "Ongoing", "Ready to Move", "Under Construction", "Upcoming"];
 
 function Home() {
-  const { projects } = Route.useLoaderData();
+  const { projects, allProperties } = Route.useLoaderData();
+  const locationOptions = useMemo(() => {
+    return ["Any Location", ...getAvailableLocations(allProperties)];
+  }, [allProperties]);
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
 
@@ -83,7 +159,7 @@ function Home() {
 
   const [search, setSearch] = useState({
     type: typeOptions[0],
-    location: locationOptions[0],
+    location: "Any Location",
     budget: budgetOptions[0],
     status: statusOptions[0]
   });
@@ -96,6 +172,38 @@ function Home() {
       status: search.status
     });
     navigate({ to: `/properties?${params.toString()}` as any });
+  };
+
+  const [footerSent, setFooterSent] = useState(false);
+  const [footerLoading, setFooterLoading] = useState(false);
+
+  const handleFooterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setFooterLoading(true);
+    const formData = new FormData(e.currentTarget);
+    const fullName = formData.get("full_name") as string;
+    const phone = formData.get("phone") as string;
+    const email = formData.get("email") as string;
+    const interestedIn = formData.get("interested_in") as string;
+    const message = formData.get("message") as string;
+
+    try {
+      await submitLead({
+        full_name: fullName,
+        phone: phone,
+        email: email || null,
+        interested_in: interestedIn !== "I am interested in" ? interestedIn : "Any",
+        source: "Contact Page",
+        message: message || "",
+      });
+      setFooterSent(true);
+      toast.success("Enquiry submitted successfully!");
+    } catch (err: any) {
+      console.error("Footer enquiry failed:", err);
+      toast.error(err.message || "Failed to submit enquiry.");
+    } finally {
+      setFooterLoading(false);
+    }
   };
 
   return (
@@ -140,8 +248,8 @@ function Home() {
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}
               className="font-display text-3xl md:text-5xl lg:text-6xl font-light tracking-wide text-white leading-[1.3] drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]"
             >
-              Where Luxury<br />
-              <span className="font-italic-serif text-gold font-normal italic">Meets Timeless Living</span>
+              Premium Properties & Plots<br />
+              <span className="font-italic-serif text-gold font-normal italic">For Sale in Dehradun</span>
             </motion.h1>
             
             {/* Primary & Secondary CTA Buttons */}
@@ -716,90 +824,8 @@ function Home() {
       </motion.section>
 
 
-      {/* CONTACT & FOOTER */}
-      <footer id="contact" className="bg-navy-deep text-white">
-        <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 md:grid-cols-4">
-          <div className="md:col-span-1">
-            <h3 className="font-display text-2xl font-bold leading-tight">
-              Let's Find the Right<br />Property for You
-            </h3>
-            <p className="mt-4 text-sm text-white/60">
-              Connect with us today and take the first step towards your dream investment.
-            </p>
-            <div className="mt-6 space-y-3 text-sm text-white/80">
-              <p className="flex items-center gap-3"><a href="tel:+916397688989" className="hover:text-gold flex items-center gap-3"><Phone className="size-4 text-gold" /> +91 63976 88989</a></p>
-              <p className="flex items-center gap-3"><a href="mailto:vineyardinfra005@gmail.com" className="hover:text-gold flex items-center gap-3"><Mail className="size-4 text-gold" /> vineyardinfra005@gmail.com</a></p>
-              <p className="flex items-start gap-3">
-                <a href="https://www.google.com/maps/place/Vineyard+Infra+%7C+Construction+Company+in+Dehradun/@30.350669,78.0747649,17z/data=!4m14!1m7!3m6!1s0x3908d713b0382577:0xb00ba938afbc2032!2sVineyard+Infra+%7C+Construction+Company+in+Dehradun!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq!3m5!1s0x3908d713b0382577:0xb00ba938afbc2032!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq?entry=ttu&g_ep=EgoyMDI2MDYxMy4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noreferrer" className="hover:text-gold flex items-start gap-3">
-                  <MapPin className="mt-0.5 size-4 text-gold shrink-0" />
-                  <span>AMAN VIHAR SAHASTRADHARA ROAD,<br />Dehradun 248001</span>
-                </a>
-              </p>
-            </div>
-            <div className="mt-8">
-              <p className="text-[10px] font-semibold tracking-[0.2em] text-gold uppercase mb-3">FOLLOW OUR JOURNEY</p>
-              <div className="flex gap-3">
-                <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="grid size-9 place-items-center rounded-sm bg-white/5 text-gold border border-white/10 hover:bg-gold hover:text-navy-deep hover:border-gold transition-all duration-300" aria-label="Facebook"><Facebook className="size-4" /></a>
-                <a href="https://www.instagram.com/vineyardinfra/" target="_blank" rel="noopener noreferrer" className="grid size-9 place-items-center rounded-sm bg-white/5 text-gold border border-white/10 hover:bg-gold hover:text-navy-deep hover:border-gold transition-all duration-300" aria-label="Instagram"><Instagram className="size-4" /></a>
-                <a href="https://www.youtube.com/@vineyardinfra1900" target="_blank" rel="noopener noreferrer" className="grid size-9 place-items-center rounded-sm bg-white/5 text-gold border border-white/10 hover:bg-gold hover:text-navy-deep hover:border-gold transition-all duration-300" aria-label="YouTube"><Youtube className="size-4" /></a>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="mb-5 text-sm font-semibold tracking-[0.2em] text-gold">QUICK LINKS</h4>
-            <ul className="space-y-3 text-sm text-white/70">
-              {navLinks.map((l) => <li key={l.label}><Link to={l.to} className="hover:text-gold">{l.label}</Link></li>)}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="mb-5 text-sm font-semibold tracking-[0.2em] text-gold">POPULAR LOCATIONS</h4>
-            <ul className="space-y-3 text-sm text-white/70">
-              {["Rajpur Road", "Mussoorie Road", "Sahastradhara Road", "Haridwar Road", "Clement Town"].map((l) => (
-                <li key={l}>
-                  <Link to={`/properties?location=${encodeURIComponent(l)}`} className="hover:text-gold">
-                    {l}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
-            <h4 className="mb-5 text-sm font-semibold tracking-[0.2em] text-gold">ENQUIRE NOW</h4>
-            <div className="grid grid-cols-2 gap-3">
-              <input placeholder="Your Name" className="h-11 rounded-sm border border-white/15 bg-white/5 px-3 text-sm placeholder:text-white/40 focus:border-gold focus:outline-none" />
-              <input placeholder="Phone Number" className="h-11 rounded-sm border border-white/15 bg-white/5 px-3 text-sm placeholder:text-white/40 focus:border-gold focus:outline-none" />
-              <input placeholder="Email Address" className="h-11 rounded-sm border border-white/15 bg-white/5 px-3 text-sm placeholder:text-white/40 focus:border-gold focus:outline-none" />
-              <select className="h-11 rounded-sm border border-white/15 bg-white/5 px-3 text-sm text-white/60 focus:border-gold focus:outline-none">
-                <option>I am interested in</option>
-                <option>Villas</option><option>Apartments</option><option>Plots</option>
-              </select>
-            </div>
-            <textarea placeholder="Your Message" rows={3} className="w-full rounded-sm border border-white/15 bg-white/5 px-3 py-2 text-sm placeholder:text-white/40 focus:border-gold focus:outline-none" />
-            <button className="inline-flex w-full items-center justify-center gap-2 rounded-sm px-6 py-3.5 text-sm font-semibold text-navy-deep" style={{ background: "var(--gradient-gold)" }}>
-              SUBMIT ENQUIRY <ArrowRight className="size-4" />
-            </button>
-          </form>
-        </div>
-        <div className="border-t border-white/10">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-5 text-xs text-white/50">
-            <div className="flex items-center gap-4 flex-wrap">
-              <p>© {new Date().getFullYear()} Vineyard Infra Realcon LLP. All Rights Reserved.</p>
-              <div className="flex gap-3 border-l border-white/10 pl-4">
-                <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors" aria-label="Facebook"><Facebook className="size-3.5" /></a>
-                <a href="https://www.instagram.com/vineyardinfra/" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors" aria-label="Instagram"><Instagram className="size-3.5" /></a>
-                <a href="https://www.youtube.com/@vineyardinfra1900" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors" aria-label="YouTube"><Youtube className="size-3.5" /></a>
-              </div>
-            </div>
-            <div className="flex gap-5">
-              <a href="#" className="hover:text-gold">Privacy Policy</a>
-              <a href="#" className="hover:text-gold">Terms</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* FOOTER */}
+      <Footer />
 
 
 

@@ -20,6 +20,9 @@ import {
   Instagram,
   Youtube,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { searchProperties } from "@/api/properties";
+import { getDynamicPopularLocations } from "@/lib/locationUtils";
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
@@ -40,14 +43,6 @@ const services = [
   { icon: Eye, title: "Site Visit Assistance", desc: "Guided tours with comparison reports." },
 ];
 
-const locations = [
-  { name: "Rajpur Road", desc: "Premium residential corridor." },
-  { name: "Mussoorie Road", desc: "Luxury villas with hill views." },
-  { name: "Sahastradhara Road", desc: "Modern apartments corridor." },
-  { name: "Haridwar Road", desc: "Commercial hub with connectivity." },
-  { name: "Clement Town", desc: "Peaceful residential area." },
-];
-
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
@@ -63,6 +58,13 @@ export function MobileNav({ trigger = "light", hideAt = "md" }: Props) {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [locationsOpen, setLocationsOpen] = useState(false);
   const hideClass = hideAt === "lg" ? "lg:hidden" : "md:hidden";
+
+  const { data: dbProperties = [] } = useQuery({
+    queryKey: ["properties"],
+    queryFn: () => searchProperties(),
+  });
+
+  const locations = getDynamicPopularLocations(dbProperties);
 
   return (
     <>
@@ -177,7 +179,8 @@ export function MobileNav({ trigger = "light", hideAt = "md" }: Props) {
                     {locations.map((loc) => (
                       <Link
                         key={loc.name}
-                        to={`/properties?location=${encodeURIComponent(loc.name)}`}
+                        to={loc.to ? (loc.to as any) : "/properties"}
+                        search={loc.to ? undefined : ({ location: loc.name } as any)}
                         onClick={() => setOpen(false)}
                         className="flex items-center justify-between rounded-lg px-3 py-2.5 transition-colors hover:bg-white/5 group"
                       >

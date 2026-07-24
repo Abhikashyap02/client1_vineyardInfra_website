@@ -6,10 +6,15 @@ import {
   Maximize, Tag, CheckCircle2, Filter, Facebook, Instagram, Youtube,
 } from "lucide-react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import heroProperty from "@/assets/hero-property.jpg";
 import interiorLiving from "@/assets/interior-living.jpg";
 import { searchProperties } from "@/api/properties";
 import { mapToListingProperty } from "@/mappers/propertyMapper";
+import { getAvailableLocations, getPrimaryLocation } from "@/lib/locationUtils";
+import { apiFetch } from "@/api/client";
+import { toast } from "sonner";
+import { submitLead } from "@/api/leads";
 
 export const Route = createFileRoute("/properties")({
   loader: async () => {
@@ -22,14 +27,48 @@ export const Route = createFileRoute("/properties")({
       return { properties: [] };
     }
   },
-  head: () => ({
-    meta: [
-      { title: "Premium Properties in Dehradun — Vineyard Infra" },
-      { name: "description", content: "Browse villas, apartments, plots and commercial properties across Dehradun. Filter by location, budget and status. Verified listings with expert guidance." },
-      { property: "og:title", content: "Premium Properties in Dehradun — Vineyard Infra" },
-      { property: "og:description", content: "Discover residential, commercial and investment properties curated by experienced advisors." },
-    ],
-  }),
+  head: () => {
+    const title = "Properties & Plots for Sale in Dehradun | Vineyard Infra";
+    const desc = "Search verified residential plots, 2/3 BHK flats, and luxury villas for sale on Sahastradhara Road, Dehradun. Filter by budget, BHK, and ready-to-move status.";
+    
+    const breadcrumbSchema = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://vineyardinfra.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Properties",
+          "item": "https://vineyardinfra.com/properties"
+        }
+      ]
+    };
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "website" },
+      ],
+      links: [
+        { rel: "canonical", href: "https://vineyardinfra.com/properties" }
+      ],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(breadcrumbSchema),
+        }
+      ]
+    };
+  },
   component: PropertiesPage,
 });
 
@@ -61,7 +100,6 @@ const quickFilters = [
 type QuickFilter = typeof quickFilters[number];
 
 const typeOptions = ["Any Type", "Flat / Apartment", "Villa", "Independent House", "Plot", "Commercial Space", "Office Space", "Retail Shop"];
-const locationOptions = ["Any Location", "Rajpur Road", "Sahastradhara Road", "Mussoorie Road", "Haridwar Road", "Harrawala", "Clement Town"];
 const budgetOptions = ["Any Budget", "Under 50 Lakhs", "50L - 1Cr", "1Cr - 2Cr", "2Cr+"];
 const statusOptions = ["Any Status", "Ongoing", "Ready to Move", "Under Construction", "Upcoming"];
 
@@ -92,8 +130,11 @@ function matchesQuickFilter(p: Property, f: QuickFilter) {
 
 function PropertiesPage() {
   const { properties } = Route.useLoaderData();
+  const locationOptions = useMemo(() => {
+    return ["Any Location", ...getAvailableLocations(properties)];
+  }, [properties]);
   const [quick, setQuick] = useState<QuickFilter>("All Properties");
-  const [search, setSearch] = useState({ type: typeOptions[0], location: locationOptions[0], budget: budgetOptions[0], status: statusOptions[0] });
+  const [search, setSearch] = useState({ type: typeOptions[0], location: "Any Location", budget: budgetOptions[0], status: statusOptions[0] });
   const routerLocation = useLocation();
 
   useEffect(() => {
@@ -104,7 +145,7 @@ function PropertiesPage() {
       const budget = params.get("budget");
       const status = params.get("status");
 
-      let matchedLocation = locationOptions[0];
+      let matchedLocation = "Any Location";
       if (location) {
         const normalizedParam = location.toLowerCase().replace(/[^a-z0-9]/g, "");
         const found = locationOptions.find(opt =>
@@ -122,11 +163,11 @@ function PropertiesPage() {
         status: status || statusOptions[0]
       });
     }
-  }, [routerLocation.searchStr]);
+  }, [routerLocation.searchStr, locationOptions]);
 
   const filtered = useMemo(() => properties.filter((p) => {
     if (!matchesQuickFilter(p, quick)) return false;
-    if (search.location !== "Any Location" && !p.location.includes(search.location)) return false;
+    if (search.location !== "Any Location" && getPrimaryLocation(p.location) !== search.location) return false;
     if (search.status !== "Any Status" && p.status !== search.status) return false;
     if (search.type !== "Any Type") {
       const t = search.type.toLowerCase();
@@ -160,7 +201,7 @@ function PropertiesPage() {
             <Sparkles className="w-3.5 h-3.5" /> Property Discovery
           </span>
           <h1 className="font-display text-4xl md:text-6xl font-semibold leading-tight max-w-3xl animate-fade-up">
-            Explore Premium <span className="font-italic-serif text-gold">Properties</span> Across Dehradun
+            Properties & <span className="font-italic-serif text-gold">Plots for Sale</span> in Dehradun
           </h1>
           <p className="mt-5 max-w-2xl text-base md:text-lg text-white/80">
             Discover residential, commercial, plots, villas, and investment opportunities — curated by experienced real estate advisors.
@@ -275,7 +316,7 @@ function PropertiesPage() {
               Didn't Find the <span className="font-italic-serif text-gold">Right Property?</span>
             </h2>
             <p className="text-muted-foreground mt-3">Tell us your requirements and our advisors will hand-pick suitable options — often before they hit the market.</p>
-            <RequirementForm />
+            <RequirementForm locationOptions={locationOptions} />
           </div>
         </div>
       </section>
@@ -325,17 +366,8 @@ function PropertiesPage() {
         </div>
       </section>
 
-      <footer className="bg-navy-deep text-white/70 text-sm py-8 border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-5 flex flex-wrap items-center justify-between gap-3">
-          <p>© {new Date().getFullYear()} Vineyard Infra Realcon LLP. All rights reserved.</p>
-          <div className="flex gap-4">
-            <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors text-white/50" aria-label="Facebook"><Facebook className="size-4" /></a>
-            <a href="https://www.instagram.com/vineyardinfra/" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors text-white/50" aria-label="Instagram"><Instagram className="size-4" /></a>
-            <a href="https://www.youtube.com/@vineyardinfra1900" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors text-white/50" aria-label="YouTube"><Youtube className="size-4" /></a>
-          </div>
-          <p className="text-white/50">Verified Listings</p>
-        </div>
-      </footer>
+      {/* FOOTER */}
+      <Footer />
 
       {/* Mobile sticky bar */}
       <div id="mobile-sticky-nav" className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-background border-t border-border grid grid-cols-3 text-xs font-medium">
@@ -457,32 +489,69 @@ function FeaturedCard({ p }: { p: Property }) {
   );
 }
 
-function RequirementForm() {
+function RequirementForm({ locationOptions }: { locationOptions: string[] }) {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    const formData = new FormData(e.currentTarget);
+    const fullName = formData.get("full_name") as string;
+    const phone = formData.get("phone") as string;
+    const email = formData.get("email") as string;
+    const type = formData.get("type") as string;
+    const location = formData.get("location") as string;
+    const budget = formData.get("budget") as string;
+    const message = formData.get("message") as string;
+    const callback = formData.get("callback") === "on";
+
+    try {
+      await submitLead({
+        full_name: fullName,
+        phone: phone,
+        email: email || null,
+        budget: budget || "Any",
+        preferred_location: location || "Any",
+        interested_in: type || "Any",
+        source: "Properties Page",
+        message: message || "",
+        priority: callback ? "high" : "normal",
+      });
+      setSent(true);
+      toast.success("Enquiry submitted successfully!");
+    } catch (err: any) {
+      console.error("Submission failed:", err);
+      toast.error(err.message || "Failed to submit enquiry.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <form
       className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3"
-      onSubmit={(e) => { e.preventDefault(); setSent(true); }}
+      onSubmit={handleSubmit}
     >
-      <input required placeholder="Full Name" className="h-11 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:border-gold" />
-      <input required type="tel" placeholder="Phone Number" className="h-11 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:border-gold" />
-      <input type="email" placeholder="Email Address" className="h-11 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:border-gold sm:col-span-2" />
-      <select className="h-11 px-3 rounded-lg border border-border bg-background text-sm cursor-pointer">
+      <input required name="full_name" placeholder="Full Name" className="h-11 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:border-gold" />
+      <input required name="phone" type="tel" placeholder="Phone Number" className="h-11 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:border-gold" />
+      <input name="email" type="email" placeholder="Email Address" className="h-11 px-3 rounded-lg border border-border bg-background text-sm focus:outline-none focus:border-gold sm:col-span-2" />
+      <select name="type" className="h-11 px-3 rounded-lg border border-border bg-background text-sm cursor-pointer">
         {typeOptions.map((o) => <option key={o}>{o}</option>)}
       </select>
-      <select className="h-11 px-3 rounded-lg border border-border bg-background text-sm cursor-pointer">
+      <select name="location" className="h-11 px-3 rounded-lg border border-border bg-background text-sm cursor-pointer">
         {locationOptions.map((o) => <option key={o}>{o}</option>)}
       </select>
-      <select className="h-11 px-3 rounded-lg border border-border bg-background text-sm cursor-pointer sm:col-span-2">
+      <select name="budget" className="h-11 px-3 rounded-lg border border-border bg-background text-sm cursor-pointer sm:col-span-2">
         {budgetOptions.map((o) => <option key={o}>{o}</option>)}
       </select>
-      <textarea placeholder="Special Requirements (optional)" rows={3} className="px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:border-gold sm:col-span-2" />
+      <textarea name="message" placeholder="Special Requirements (optional)" rows={3} className="px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:border-gold sm:col-span-2" />
       <label className="flex items-center gap-2 text-sm text-muted-foreground sm:col-span-2">
-        <input type="checkbox" defaultChecked className="accent-[var(--gold)]" />
+        <input type="checkbox" name="callback" defaultChecked className="accent-[var(--gold)]" />
         Request a Call Back
       </label>
-      <button type="submit" className="sm:col-span-2 mt-1 inline-flex items-center justify-center gap-2 h-12 rounded-lg bg-navy-deep text-primary-foreground font-medium hover:opacity-95">
-        {sent ? "Thank you — we'll be in touch shortly" : (<>Find My Property <ArrowRight className="w-4 h-4" /></>)}
+      <button type="submit" disabled={loading} className="sm:col-span-2 mt-1 inline-flex items-center justify-center gap-2 h-12 rounded-lg bg-navy-deep text-primary-foreground font-medium hover:opacity-95">
+        {sent ? "Thank you — we'll be in touch shortly" : loading ? "Submitting..." : (<>Find My Property <ArrowRight className="w-4 h-4" /></>)}
       </button>
     </form>
   );

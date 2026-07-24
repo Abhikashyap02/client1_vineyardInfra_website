@@ -7,6 +7,7 @@ import {
   Sparkles, ShieldCheck, Star, Headset, Facebook, Instagram, Youtube,
 } from "lucide-react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,9 @@ import contactHero from "@/assets/contact-hero.jpg";
 import founderImg from "@/assets/founder.jpg";
 
 import { searchProperties } from "@/api/properties";
+import { apiFetch } from "@/api/client";
+import { toast } from "sonner";
+import { submitLead } from "@/api/leads";
 
 export const Route = createFileRoute("/contact")({
   loader: async () => {
@@ -41,14 +45,52 @@ export const Route = createFileRoute("/contact")({
       return { propertyNames: [] };
     }
   },
-  head: () => ({
-    meta: [
-      { title: "Contact Vineyard Infra — Book a Consultation or Site Visit" },
-      { name: "description", content: "Get in touch with Vineyard Infra for personalized real estate guidance in Dehradun. Book a consultation, site visit or WhatsApp chat with our advisors." },
-      { property: "og:title", content: "Contact Vineyard Infra — Book a Consultation or Site Visit" },
-      { property: "og:description", content: "Speak with trusted property advisors. Book site visits, consultations, and explore curated real estate opportunities in Dehradun." },
-    ],
-  }),
+  head: () => {
+    const title = "Talk to Dehradun's Trusted Property Consultants | Vineyard";
+    const desc = "Contact Vineyard Infra to book a free site visit or consultation. Find the best residential plots, luxury villas, and apartments on Sahastradhara Road.";
+
+    const contactSchema = {
+      "@context": "https://schema.org",
+      "@type": "RealEstateAgent",
+      "name": "Vineyard Infra",
+      "image": "https://vineyardinfra.com/logo-horizontal.svg",
+      "telephone": "+916397688989",
+      "email": "vineyardinfra005@gmail.com",
+      "url": "https://vineyardinfra.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Aman Vihar, Sahastradhara Road",
+        "addressLocality": "Dehradun",
+        "addressRegion": "Uttarakhand",
+        "postalCode": "248001",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 30.350669,
+        "longitude": 78.0773398
+      }
+    };
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "website" },
+      ],
+      links: [
+        { rel: "canonical", href: "https://vineyardinfra.com/contact" }
+      ],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(contactSchema),
+        }
+      ]
+    };
+  },
   component: ContactPage,
 });
 
@@ -120,11 +162,11 @@ function HeroSection() {
             <Sparkles className="h-3.5 w-3.5" /> Get in Touch
           </div>
           <h1 className="font-display text-4xl font-semibold leading-[1.08] text-white md:text-6xl lg:text-7xl">
-            Let's Find The Right<br />
-            Property <span className="font-italic-serif text-gold">For You</span>
+            Talk to Dehradun's Trusted <br />
+            <span className="font-italic-serif text-gold">Property Consultants</span>
           </h1>
           <p className="mt-6 max-w-lg text-lg text-white/75">
-            Whether you're buying your first home, investing for the future, or exploring commercial opportunities, our team is ready to help.
+            Buying your first plot, investing from outside Dehradun, or exploring villas and apartments — our team responds within minutes on WhatsApp.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button size="lg" className="h-12 gap-2 bg-gold px-7 text-sm font-semibold text-navy-deep hover:bg-gold-soft" asChild>
@@ -190,12 +232,34 @@ function RequirementForm() {
     callback: false,
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const update = (key: string, value: string | boolean) => setForm((f) => ({ ...f, [key]: value }));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      await submitLead({
+        full_name: form.name,
+        phone: form.phone,
+        email: form.email || null,
+        budget: form.budget || "Any",
+        preferred_location: form.location || "Any",
+        interested_in: form.propertyType || "Any",
+        source: "Contact Page",
+        message: form.message || "",
+        purpose: form.purpose || "Self Use",
+        priority: form.callback ? "high" : "normal",
+      });
+      setSubmitted(true);
+      toast.success("Property requirements submitted successfully!");
+    } catch (error: any) {
+      console.error("Failed to submit contact requirements:", error);
+      toast.error(error.message || "Failed to submit. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -318,8 +382,8 @@ function RequirementForm() {
                   <Checkbox id="callback" checked={form.callback} onCheckedChange={(c) => update("callback", c === true)} />
                   <Label htmlFor="callback" className="text-sm text-slate-soft">Request a callback from our advisor</Label>
                 </div>
-                <Button type="submit" size="lg" className="mt-6 h-12 gap-2 bg-navy-deep px-8 text-sm font-semibold text-white hover:bg-navy">
-                  <Send className="h-4 w-4" /> Find Suitable Properties
+                <Button type="submit" disabled={loading} size="lg" className="mt-6 h-12 gap-2 bg-navy-deep px-8 text-sm font-semibold text-white hover:bg-navy">
+                  <Send className="h-4 w-4" /> {loading ? "Submitting..." : "Find Suitable Properties"}
                 </Button>
               </form>
             )}
@@ -335,19 +399,21 @@ function SiteVisitSection() {
   const { propertyNames } = Route.useLoaderData();
   const [form, setForm] = useState({ name: "", phone: "", property: "", date: "", time: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const update = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
 
   const properties = propertyNames && propertyNames.length > 0
     ? [...propertyNames, "Other / Not Sure"]
     : [
-        "Vineyard Signature Villas",
-        "Vineyard High Grove",
-        "Vineyard Green County",
-        "Vineyard Crown Residences",
-        "Vineyard Pine Estate",
-        "Vineyard Trade Centre",
-        "Other / Not Sure",
-      ];
+      "Vineyard Signature Villas",
+      "Vineyard High Grove",
+      "Vineyard Green County",
+      "Vineyard Crown Residences",
+      "Vineyard Pine Estate",
+      "Vineyard Trade Centre",
+      "Other / Not Sure",
+      "Other",
+    ];
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -363,9 +429,26 @@ function SiteVisitSection() {
     }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    try {
+      await submitLead({
+        full_name: form.name,
+        phone: form.phone,
+        interested_in: form.property || properties[0],
+        source: "Book Site Visit",
+        visit_date: form.date,
+        visit_time: form.time || "12:00 PM",
+      });
+      setSubmitted(true);
+      toast.success("Site visit booked successfully!");
+    } catch (error: any) {
+      console.error("Failed to book site visit:", error);
+      toast.error(error.message || "Failed to book site visit. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -443,8 +526,8 @@ function SiteVisitSection() {
                   </Select>
                 </div>
               </div>
-              <Button type="submit" size="lg" className="mt-2 h-12 w-full gap-2 bg-gold text-sm font-semibold text-navy-deep hover:bg-gold-soft">
-                <Calendar className="h-4 w-4" /> Schedule Site Visit
+              <Button type="submit" disabled={loading} size="lg" className="mt-2 h-12 w-full gap-2 bg-gold text-sm font-semibold text-navy-deep hover:bg-gold-soft">
+                <Calendar className="h-4 w-4" /> {loading ? "Booking..." : "Schedule Site Visit"}
               </Button>
             </form>
           )}
@@ -627,50 +710,6 @@ function FinalCTA() {
   );
 }
 
-/* ---------- Footer ---------- */
-function Footer() {
-  return (
-    <footer className="border-t border-border bg-navy-deep py-12 text-white/70">
-      <div className="mx-auto max-w-7xl px-5 md:px-10">
-        <div className="grid gap-10 md:grid-cols-4">
-          <div className="md:col-span-2">
-            <Logo variant="horizontal" />
-            <p className="mt-4 max-w-sm text-sm leading-relaxed">
-              Premium real estate advisory in Dehradun. Helping families and investors discover properties worth owning.
-            </p>
-            <div className="mt-6 flex gap-3">
-              <a href="https://www.facebook.com/vineyardinfra" target="_blank" rel="noopener noreferrer" className="grid size-10 place-items-center rounded-sm bg-white/5 text-gold border border-white/10 hover:bg-gold hover:text-navy-deep hover:border-gold transition-all duration-300" aria-label="Facebook"><Facebook className="size-4" /></a>
-              <a href="https://www.instagram.com/vineyardinfra/" target="_blank" rel="noopener noreferrer" className="grid size-10 place-items-center rounded-sm bg-white/5 text-gold border border-white/10 hover:bg-gold hover:text-navy-deep hover:border-gold transition-all duration-300" aria-label="Instagram"><Instagram className="size-4" /></a>
-              <a href="https://www.youtube.com/@vineyardinfra1900" target="_blank" rel="noopener noreferrer" className="grid size-10 place-items-center rounded-sm bg-white/5 text-gold border border-white/10 hover:bg-gold hover:text-navy-deep hover:border-gold transition-all duration-300" aria-label="YouTube"><Youtube className="size-4" /></a>
-            </div>
-          </div>
-          <div>
-            <h4 className="font-display text-sm font-semibold text-white">Quick Links</h4>
-            <div className="mt-4 flex flex-col gap-2 text-sm">
-              <Link to="/" className="transition-colors hover:text-gold">Home</Link>
-              <Link to="/properties" className="transition-colors hover:text-gold">Properties</Link>
-              <Link to="/about" className="transition-colors hover:text-gold">About Us</Link>
-              <span className="text-gold">Contact</span>
-            </div>
-          </div>
-          <div>
-            <h4 className="font-display text-sm font-semibold text-white">Contact</h4>
-            <div className="mt-4 flex flex-col gap-2 text-sm">
-              <a href={PHONE} className="transition-colors hover:text-gold">+91 63976 88989</a>
-              <a href={EMAIL} className="transition-colors hover:text-gold">vineyardinfra005@gmail.com</a>
-              <a href="https://www.google.com/maps/place/Vineyard+Infra+%7C+Construction+Company+in+Dehradun/@30.350669,78.0747649,17z/data=!4m14!1m7!3m6!1s0x3908d713b0382577:0xb00ba938afbc2032!2sVineyard+Infra+%7C+Construction+Company+in+Dehradun!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq!3m5!1s0x3908d713b0382577:0xb00ba938afbc2032!8m2!3d30.350669!4d78.0773398!16s%2Fg%2F11h_wp3tsq?entry=ttu&g_ep=EgoyMDI2MDYxMy4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-gold">
-                AMAN VIHAR SAHASTRADHARA ROAD, Dehradun
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="mt-10 border-t border-white/10 pt-6 text-center text-xs">
-          © {new Date().getFullYear()} Vineyard Infra Realcon LLP. All rights reserved.
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 /* ---------- Mobile Sticky Bar ---------- */
 function MobileStickyBar() {
@@ -698,6 +737,23 @@ function MobileStickyBar() {
 
 /* ---------- Page ---------- */
 function ContactPage() {
+  useEffect(() => {
+    const handleHashScroll = () => {
+      if (window.location.hash) {
+        const id = window.location.hash.substring(1);
+        const element = document.getElementById(id);
+        if (element) {
+          setTimeout(() => {
+            element.scrollIntoView({ behavior: "smooth" });
+          }, 100);
+        }
+      }
+    };
+    handleHashScroll();
+    window.addEventListener("hashchange", handleHashScroll);
+    return () => window.removeEventListener("hashchange", handleHashScroll);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background pb-16 text-foreground md:pb-0">
       <HeroSection />

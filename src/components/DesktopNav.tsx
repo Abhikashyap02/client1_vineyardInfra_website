@@ -12,6 +12,9 @@ import {
   Briefcase,
   LandPlot,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { searchProperties } from "@/api/properties";
+import { getDynamicPopularLocations } from "@/lib/locationUtils";
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
@@ -45,14 +48,6 @@ const services = [
   },
 ];
 
-const locations = [
-  { name: "Rajpur Road", desc: "Premium residential corridor & high appreciation zone." },
-  { name: "Mussoorie Road", desc: "Luxury villas with scenic hill views and serenity." },
-  { name: "Sahastradhara Road", desc: "Fastest-growing corridor for modern apartments." },
-  { name: "Haridwar Road", desc: "Commercial hub with excellent connectivity." },
-  { name: "Clement Town", desc: "Peaceful residential area near defence establishments." },
-];
-
 /* ------------------------------------------------------------------ */
 /*  Types & helpers                                                    */
 /* ------------------------------------------------------------------ */
@@ -61,7 +56,7 @@ export type NavVariant = "light" | "dark";
 
 interface NavLinkItem {
   label: string;
-  to: "/" | "/properties" | "/about" | "/contact";
+  to: "/" | "/properties" | "/about" | "/contact" | "/blog";
 }
 
 export const NAV_LINKS: NavLinkItem[] = [
@@ -85,6 +80,13 @@ interface DesktopNavProps {
 export function DesktopNav({ variant = "light", activeLabel }: DesktopNavProps) {
   const [openMenu, setOpenMenu] = useState<"services" | "locations" | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const { data: dbProperties = [] } = useQuery({
+    queryKey: ["properties"],
+    queryFn: () => searchProperties(),
+  });
+
+  const locations = getDynamicPopularLocations(dbProperties);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -116,13 +118,13 @@ export function DesktopNav({ variant = "light", activeLabel }: DesktopNavProps) 
   }
 
   return (
-    <nav ref={containerRef} className="hidden items-center gap-6 lg:flex relative">
+    <nav ref={containerRef} className="hidden items-center gap-4 xl:gap-6 lg:flex relative">
       {/* Standard nav links — insert Services after "Projects" and Locations after "Services" */}
       {NAV_LINKS.map((l, i) => (
         <span key={l.label} className="contents">
           <Link
             to={l.to}
-            className={`relative py-1 font-serif text-xs tracking-[0.16em] uppercase transition-all duration-300 ${textHover} ${
+            className={`relative py-1 font-serif text-[10px] xl:text-xs tracking-[0.12em] xl:tracking-[0.16em] whitespace-nowrap uppercase transition-all duration-300 ${textHover} ${
               activeLabel === l.label ? textActive : textBase
             } after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:bg-gold after:transition-transform after:duration-300 ${
               activeLabel === l.label
@@ -241,7 +243,8 @@ export function DesktopNav({ variant = "light", activeLabel }: DesktopNavProps) 
             {locations.map((loc) => (
               <Link
                 key={loc.name}
-                to={`/properties?location=${encodeURIComponent(loc.name)}`}
+                to={loc.to ? (loc.to as any) : "/properties"}
+                search={loc.to ? undefined : ({ location: loc.name } as any)}
                 onClick={() => setOpenMenu(null)}
                 className="group/loc flex items-center justify-between rounded-lg px-4 py-3 transition-all duration-200 hover:bg-warm-bg"
               >
@@ -300,7 +303,7 @@ function DropdownTrigger({
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center gap-1 font-serif text-xs tracking-[0.16em] uppercase transition-colors ${textHover} ${isOpen ? "text-gold" : textBase}`}
+      className={`flex items-center gap-1 font-serif text-[10px] xl:text-xs tracking-[0.12em] xl:tracking-[0.16em] whitespace-nowrap uppercase transition-colors ${textHover} ${isOpen ? "text-gold" : textBase}`}
     >
       {label}
       <ChevronDown

@@ -1,4 +1,5 @@
 import uuid
+import builtins
 from sqlalchemy import Column, String, Boolean, DateTime, Text, Numeric, ForeignKey, Integer, Date, Time
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -94,13 +95,19 @@ class Lead(Base):
     property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="SET NULL"), nullable=True)
     full_name = Column(String, nullable=False)
     phone = Column(String, nullable=False)
-    email = Column(String, nullable=False)
+    email = Column(String, nullable=True)
     budget = Column(String, nullable=True)
     preferred_location = Column(String, nullable=True)
     interested_in = Column(String, nullable=True)
     source = Column(String, nullable=True)
     message = Column(Text, nullable=True)
     lead_status = Column(String, nullable=True)
+    purpose = Column(String, nullable=True)
+    priority = Column(String, nullable=True)
+    lead_score = Column(String, nullable=True)
+    investment_horizon = Column(String, nullable=True)
+    investment_goal = Column(String, nullable=True)
+    agent_summary = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -116,15 +123,39 @@ class SiteVisit(Base):
     lead_id = Column(UUID(as_uuid=True), ForeignKey("leads.id", ondelete="CASCADE"), nullable=False)
     property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="CASCADE"), nullable=False)
     visit_date = Column(Date, nullable=False)
-    visit_time = Column(Time, nullable=False)
+    visit_time = Column(Time, nullable=True)
     status = Column(String, nullable=True)
     notes = Column(Text, nullable=True)
+    booking_ref = Column(String, nullable=True, unique=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     property = relationship("Property", back_populates="site_visits")
     lead = relationship("Lead", back_populates="site_visits")
+
+    @builtins.property
+    def property_name(self) -> str:
+        return self.property.name if self.property else ""
+
+    @builtins.property
+    def contact_details(self) -> str:
+        if self.lead:
+            return self.lead.phone or self.lead.email or ""
+        return ""
+
+    @builtins.property
+    def full_name(self) -> str:
+        return self.lead.full_name if self.lead else ""
+
+    @builtins.property
+    def preferred_date(self) -> str:
+        return self.visit_date.strftime("%Y-%m-%d") if self.visit_date else ""
+
+    @builtins.property
+    def preferred_time(self) -> str:
+        return self.visit_time.strftime("%H:%M") if self.visit_time else ""
+
 
 
 class FAQ(Base):

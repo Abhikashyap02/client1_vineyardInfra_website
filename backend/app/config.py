@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 
@@ -18,6 +19,8 @@ class Settings(BaseSettings):
         "http://192.168.1.6:3000",
         "http://192.168.1.6:5173",
     ]
+    GOOGLE_SERVICE_ACCOUNT_FILE: Optional[str] = os.getenv("GOOGLE_SERVICE_ACCOUNT_FILE")
+    GOOGLE_SPREADSHEET_ID: Optional[str] = os.getenv("GOOGLE_SPREADSHEET_ID")
 
     class Config:
         case_sensitive = True

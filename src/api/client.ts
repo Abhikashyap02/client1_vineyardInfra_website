@@ -1,12 +1,20 @@
 // Centralized API client configured with environment variables
 const getBackendUrl = () => {
-  if (typeof window !== "undefined") {
-    // If running in browser, determine host dynamically for LAN/local testing
-    const hostname = window.location.hostname;
-    return `${window.location.protocol}//${hostname}:8000`;
+  let apiUrl = (import.meta.env.VITE_API_URL as string) || "";
+  
+  if (apiUrl) {
+    // Ensure the API URL has a protocol scheme
+    if (!apiUrl.startsWith("http://") && !apiUrl.startsWith("https://")) {
+      if (apiUrl.includes("localhost") || apiUrl.includes("127.0.0.1")) {
+        apiUrl = `http://${apiUrl}`;
+      } else {
+        apiUrl = `https://${apiUrl}`;
+      }
+    }
+    return apiUrl;
   }
-  // Server-side default
-  return (import.meta.env.VITE_API_URL as string) || "http://localhost:8000";
+  
+  return "http://localhost:8000";
 };
 
 export const BACKEND_URL = getBackendUrl();

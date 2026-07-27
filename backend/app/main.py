@@ -15,7 +15,12 @@ from app.services.google_sheets import append_lead_to_sheet
 
 logger = logging.getLogger("app.main")
 
-app = FastAPI(title=settings.PROJECT_NAME)
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    docs_url="/docs" if settings.SHOW_DOCS else None,
+    redoc_url="/redoc" if settings.SHOW_DOCS else None,
+    openapi_url="/openapi.json" if settings.SHOW_DOCS else None,
+)
 
 # Centralized IP extraction supporting reverse proxies
 def get_client_ip(request: Request) -> str:

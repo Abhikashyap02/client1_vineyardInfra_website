@@ -28,33 +28,50 @@ class GoogleSheetsService:
 
     def _init_client(self) -> Optional[Any]:
         """Initializes the Google Sheets client once using the configured service account."""
+        json_credentials = settings.GOOGLE_SERVICE_ACCOUNT_JSON
         credentials_file = settings.GOOGLE_SERVICE_ACCOUNT_FILE
         spreadsheet_id = settings.GOOGLE_SPREADSHEET_ID
+        scopes = ['https://www.googleapis.com/auth/spreadsheets']
+        creds = None
 
-        if not credentials_file:
-            logger.error("Google Sheets initialization failed: GOOGLE_SERVICE_ACCOUNT_FILE environment variable is not set.")
-            return None
+        if json_credentials:
+            try:
+                import json
+                info = json.loads(json_credentials)
+                creds = service_account.Credentials.from_service_account_info(info, scopes=scopes)
+                logger.info("Google Sheets API client initialized using service account JSON from environment variable.")
+            except Exception as e:
+                logger.error(f"Failed to initialize Google Sheets client using service account JSON: {e}")
 
-        # Resolve relative credentials file path
-        if not os.path.isabs(credentials_file):
-            # Calculate backend project root dynamically (3 levels up from this file)
-            backend_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            resolved_path = os.path.abspath(os.path.join(backend_root, credentials_file))
-            logger.info(f"Resolving Google Service Account relative path: '{credentials_file}' to absolute path: '{resolved_path}'")
-            credentials_file = resolved_path
+        if not creds:
+            if not credentials_file:
+                logger.error("Google Sheets initialization failed: neither GOOGLE_SERVICE_ACCOUNT_JSON nor GOOGLE_SERVICE_ACCOUNT_FILE is set.")
+                return None
 
-        if not os.path.exists(credentials_file):
-            logger.error(f"Google Sheets initialization failed: Service account file not found at {credentials_file}")
-            return None
+            # Resolve relative credentials file path
+            if not os.path.isabs(credentials_file):
+                # Calculate backend project root dynamically (3 levels up from this file)
+                backend_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                resolved_path = os.path.abspath(os.path.join(backend_root, credentials_file))
+                logger.info(f"Resolving Google Service Account relative path: '{credentials_file}' to absolute path: '{resolved_path}'")
+                credentials_file = resolved_path
 
+            if not os.path.exists(credentials_file):
+                logger.error(f"Google Sheets initialization failed: Service account file not found at {credentials_file}")
+                return None
+
+            try:
+                creds = service_account.Credentials.from_service_account_file(credentials_file, scopes=scopes)
+                logger.info("Google Sheets API client initialized using service account file.")
+            except Exception as e:
+                logger.error(f"Failed to initialize Google Sheets client using service account file: {e}")
+                return None
 
         if not spreadsheet_id:
             logger.error("Google Sheets initialization failed: GOOGLE_SPREADSHEET_ID environment variable is not set.")
             return None
 
         try:
-            scopes = ['https://www.googleapis.com/auth/spreadsheets']
-            creds = service_account.Credentials.from_service_account_file(credentials_file, scopes=scopes)
             service = build('sheets', 'v4', credentials=creds)
             logger.info("Google Sheets API client successfully initialized.")
             return service

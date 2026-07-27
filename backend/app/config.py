@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     ]
     GOOGLE_SERVICE_ACCOUNT_FILE: Optional[str] = os.getenv("GOOGLE_SERVICE_ACCOUNT_FILE")
     GOOGLE_SPREADSHEET_ID: Optional[str] = os.getenv("GOOGLE_SPREADSHEET_ID")
+    SHOW_DOCS: bool = os.getenv("SHOW_DOCS", "False").lower() == "true"
+    GOOGLE_SERVICE_ACCOUNT_JSON: Optional[str] = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
 
     class Config:
         case_sensitive = True

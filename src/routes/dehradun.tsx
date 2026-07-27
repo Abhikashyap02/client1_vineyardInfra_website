@@ -251,7 +251,7 @@ function PropertyCard({ p }: { p: ListingProperty }) {
         </div>
         <p className="text-sm text-muted-foreground mt-3 line-clamp-2">{p.desc}</p>
         <div className="mt-5 grid grid-cols-2 gap-2">
-          <Link to={`/contact?property=${encodeURIComponent(p.name)}`} hash="site-visit" className="inline-flex items-center justify-center gap-1.5 text-sm font-medium px-3 py-2.5 rounded-lg bg-navy-deep text-primary-foreground hover:opacity-90">
+          <Link to="/contact" search={{ property: p.name }} hash="site-visit" className="inline-flex items-center justify-center gap-1.5 text-sm font-medium px-3 py-2.5 rounded-lg bg-navy-deep text-primary-foreground hover:opacity-90">
             <Calendar className="w-4 h-4" /> Site Visit
           </Link>
           <a href={WHATSAPP} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-1.5 text-sm font-medium px-3 py-2.5 rounded-lg border border-border hover:border-gold text-navy-deep">

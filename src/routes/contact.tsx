@@ -36,6 +36,11 @@ import { toast } from "sonner";
 import { submitLead } from "@/api/leads";
 
 export const Route = createFileRoute("/contact")({
+  validateSearch: (search: Record<string, unknown>): { property?: string } => {
+    return {
+      property: search.property as string | undefined,
+    };
+  },
   loader: async () => {
     try {
       const dbProperties = await searchProperties();

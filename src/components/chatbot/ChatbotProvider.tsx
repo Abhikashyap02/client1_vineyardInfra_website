@@ -10,6 +10,7 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import { BACKEND_URL, apiFetch } from "@/api/client";
 import { submitLead as apiSubmitLead } from "@/api/leads";
+import { searchProperties } from "@/api/properties";
 
 const COMPANY_PHONE = "6397688989";
 
@@ -665,10 +666,15 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
     // State machine handlers
     switch (chatState) {
       case "HOME": {
-        const faqsData = await apiFetch<any[]>("/faqs");
-        const matchingFaq = faqsData.find((faq: any) =>
-          lowerInput.includes(faq.question.toLowerCase().replace("?", ""))
-        );
+        let matchingFaq = null;
+        try {
+          const faqsData = await apiFetch<any[]>("/faqs");
+          matchingFaq = faqsData.find((faq: any) =>
+            lowerInput.includes(faq.question.toLowerCase().replace("?", ""))
+          );
+        } catch (err) {
+          console.error("Failed to fetch FAQs:", err);
+        }
 
         if (matchingFaq) {
           appendMessage("assistant", matchingFaq.answer, {
@@ -1166,18 +1172,21 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
 
   const fetchAndShowProperties = async (currentMemory: SessionMemory) => {
     try {
-      const queryParams: Record<string, string> = {};
+      const filters: any = {};
       if (currentMemory.location && currentMemory.location !== "Any") {
-        queryParams["location"] = currentMemory.location;
+        filters.location = currentMemory.location;
       }
       if (currentMemory.propertyType && currentMemory.propertyType !== "Any") {
-        queryParams["property_type"] = currentMemory.propertyType;
+        filters.sub_type = currentMemory.propertyType;
       }
       if (currentMemory.bhk && currentMemory.bhk !== "Any") {
-        queryParams["bhk"] = currentMemory.bhk;
+        const bhkNum = parseInt(currentMemory.bhk, 10);
+        if (!isNaN(bhkNum)) {
+          filters.bedrooms = bhkNum;
+        }
       }
 
-      const rawProperties = await apiFetch<any[]>("/search-properties", { params: queryParams });
+      const rawProperties = await searchProperties(filters);
 
       const properties: PropertyItem[] = rawProperties.map((p) => {
         const bhk = p.variants && p.variants.length > 0

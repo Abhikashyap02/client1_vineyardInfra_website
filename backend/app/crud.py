@@ -292,3 +292,19 @@ def update_appointment_status(db: Session, appointment_id: Any, status: str) -> 
 
 def get_faqs(db: Session) -> List[models.FAQ]:
     return db.query(models.FAQ).order_by(models.FAQ.display_order.asc()).all()
+
+
+def create_chat_message(db: Session, chat: schemas.ChatHistoryCreate) -> models.ChatHistory:
+    db_chat = models.ChatHistory(
+        session_id=chat.session_id,
+        role=chat.role,
+        content=chat.content
+    )
+    db.add(db_chat)
+    db.commit()
+    db.refresh(db_chat)
+    return db_chat
+
+
+def get_chat_history(db: Session, session_id: str) -> List[models.ChatHistory]:
+    return db.query(models.ChatHistory).filter(models.ChatHistory.session_id == session_id).order_by(models.ChatHistory.timestamp.asc()).all()

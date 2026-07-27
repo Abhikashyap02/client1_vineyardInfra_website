@@ -4,7 +4,8 @@ import { getBlogPosts } from "@/data/blogData";
 import { getAvailableLocations } from "@/lib/locationUtils";
 
 export const Route = createFileRoute("/sitemap/xml")({
-  loader: async ({ request }) => {
+  loader: async (ctx: any) => {
+    const request = ctx.request;
     const origin = new URL(request.url).origin;
 
     // Fetch properties dynamically (with fallback for compilation/SSR runtime errors)

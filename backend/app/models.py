@@ -170,3 +170,13 @@ class FAQ(Base):
 
     # Relationships
     property = relationship("Property", back_populates="faqs")
+
+
+class ChatHistory(Base):
+    __tablename__ = "chat_history"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    session_id = Column(String(255), nullable=False, index=True)
+    role = Column(String(50), nullable=False)  # 'user' or 'assistant'
+    content = Column(Text, nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow)

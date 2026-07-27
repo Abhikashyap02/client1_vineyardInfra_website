@@ -15,6 +15,9 @@ from app.services.google_sheets import append_lead_to_sheet
 
 logger = logging.getLogger("app.main")
 
+# Auto-create tables on startup
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     docs_url="/docs" if settings.SHOW_DOCS else None,
@@ -176,7 +179,11 @@ def update_appointment_details(
                 pass
         if preferred_time:
             try:
-                db_appointment.visit_time = datetime.strptime(preferred_time, "%H:%M").time()
+                preferred_time_clean = preferred_time.strip()
+                if "AM" in preferred_time_clean or "PM" in preferred_time_clean:
+                    db_appointment.visit_time = datetime.strptime(preferred_time_clean, "%I:%M %p").time()
+                else:
+                    db_appointment.visit_time = datetime.strptime(preferred_time_clean, "%H:%M").time()
             except Exception:
                 pass
         db.commit()
@@ -192,3 +199,12 @@ def update_appointment_details(
 @app.get("/faqs", response_model=List[schemas.FAQResponse])
 def get_faqs(db: Session = Depends(get_db)):
     return crud.get_faqs(db)
+
+# 5. Chat History
+@app.post("/chat-history", response_model=schemas.ChatHistoryResponse)
+def create_chat_message(chat: schemas.ChatHistoryCreate, db: Session = Depends(get_db)):
+    return crud.create_chat_message(db, chat)
+
+@app.get("/chat-history/{session_id}", response_model=List[schemas.ChatHistoryResponse])
+def get_chat_history(session_id: str, db: Session = Depends(get_db)):
+    return crud.get_chat_history(db, session_id)

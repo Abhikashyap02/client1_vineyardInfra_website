@@ -68,6 +68,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Print startup values for Railway log auditing
+print(f"STARTUP: settings.CORS_ORIGINS = {settings.CORS_ORIGINS}", flush=True)
+print(f"STARTUP: settings.CORS_ORIGINS_REGEX = {settings.CORS_ORIGINS_REGEX}", flush=True)
+for m in app.user_middleware:
+    if m.cls.__name__ == "CORSMiddleware":
+        print(f"STARTUP: CORSMiddleware options = {m.kwargs}", flush=True)
+
+
 # Set up Security Headers Middleware
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):

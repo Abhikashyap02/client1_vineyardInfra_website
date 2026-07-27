@@ -21,8 +21,8 @@ class Settings(BaseSettings):
         "http://192.168.1.6:3000",
         "http://192.168.1.6:5173",
     ]
-    # Match any localhost (with port) and any Cloudflare Workers or Pages domain
-    CORS_ORIGINS_REGEX: Optional[str] = r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$|^https://[a-zA-Z0-9_-]+\.(pages|workers)\.dev$"
+    # Match any localhost (with port) and any Cloudflare Workers or Pages domain (allowing multi-level subdomains)
+    CORS_ORIGINS_REGEX: Optional[str] = r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$|^https://[a-zA-Z0-9_.-]+\.(pages|workers)\.dev$"
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod

@@ -113,6 +113,11 @@ def create_lead(lead: schemas.LeadCreate, db: Session = Depends(get_db)):
     try:
         db_lead = crud.create_lead(db, lead)
     except Exception as e:
+        import traceback
+        import sys
+        print(f"DEBUG: Exception type: {type(e)}", file=sys.stderr)
+        print(f"DEBUG: Exception message: {str(e)}", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
         logger.error(f"Error creating lead: {str(e)}", exc_info=True)
         raise HTTPException(status_code=400, detail="Failed to create lead. Please check the input data and try again.")
     

@@ -12,101 +12,69 @@ const topRowTestimonials: TestimonialItem[] = [
   {
     id: 1,
     quote:
-      "The team guided us throughout the buying process. Every document was explained clearly and the experience was smooth.",
-    name: "Rahul Sharma",
+      "great services giveny by vineet ji..He help me to find the best location property within my budget in Dehradun. Thank You Vineet ji",
+    name: "Abhishek",
     verified: true,
-    detail: "Purchased Residential Plot • Rajpur Road",
+    detail: "Property Buyer • Sangam Valley",
   },
   {
     id: 2,
     quote:
-      "We booked our villa after visiting several projects. Vineyard Infra gave us honest advice without any pressure.",
-    name: "Neha Verma",
+      "I am thrilled to express my sincere gratitude to Vine Yard Infra for their exceptional construction services. From inception to completion, their team demonstrated unmatched professionalism, keen attention to detail, and a commitment to quality that surpassed my expectations.",
+    name: "Naman",
     verified: true,
-    detail: "Luxury Villa Owner • Mussoorie Road",
+    detail: "Homeowner • Platinum Township",
   },
   {
     id: 3,
     quote:
-      "The site visit was well organized and the staff answered all our questions patiently. Happy with our investment.",
-    name: "Ankit Gupta",
+      "Excellent service from Vineet ji — helped me find the perfect property in Dehradun within my budget. Highly recommended!",
+    name: "Hemant",
     verified: true,
-    detail: "Investor • Sahastradhara Road",
+    detail: "Property Owner • Aviraj Apartments",
   },
   {
     id: 4,
     quote:
-      "I was buying property for the first time. Their team made the complete process easy to understand.",
-    name: "Pooja Singh",
+      "Vine Yard Infra delivered top-quality construction work on time. Professional team and great results.",
+    name: "Sudhir",
     verified: true,
-    detail: "Apartment Owner • Dehradun",
-  },
-  {
-    id: 5,
-    quote:
-      "Very transparent pricing and timely updates. I would definitely recommend Vineyard Infra to friends and family.",
-    name: "Vikas Aggarwal",
-    verified: true,
-    detail: "Commercial Property Buyer • Rajpur Road",
-  },
-  {
-    id: 6,
-    quote:
-      "Professional team and excellent project options. We found exactly what we were looking for.",
-    name: "Dr. Amit Joshi",
-    verified: true,
-    detail: "Villa Owner • Dehradun",
+    detail: "Homeowner • Mandakini Vihar",
   },
 ];
 
 const bottomRowTestimonials: TestimonialItem[] = [
   {
+    id: 5,
+    quote:
+      "Impressed with Vine Yard Infra’s workmanship and attention to detail. My new property looks fantastic.",
+    name: "Yash",
+    verified: true,
+    detail: "Plot Owner • Vivanta Greens Plot",
+  },
+  {
+    id: 6,
+    quote:
+      "I appreciate Vineet ji’s patience and market knowledge — he helped me secure a great property in a prime location without stretching my budget. Highly trustworthy service.",
+    name: "Vandana",
+    verified: true,
+    detail: "Property Owner • Sangam Valley",
+  },
+  {
     id: 7,
     quote:
-      "From registration to final possession, the Vineyard team handled every legal aspect seamlessly. Total peace of mind.",
-    name: "Sanjay & Meenakshi Rawat",
+      "The team at Vine Yard Infra showed great attention to detail and delivered a solid, beautiful building within the promised timeframe. Very satisfied with their work.",
+    name: "Rahul kumar",
     verified: true,
-    detail: "Homeowners • Vineyard Signature Villas",
+    detail: "Homeowner • Platinum Township",
   },
   {
     id: 8,
     quote:
-      "Finding clear-title land in Dehradun can be tricky, but Vineyard Infra proved to be completely trustworthy and transparent.",
-    name: "Rajeev Kapoor",
+      "Vine Yard Infra handled our construction project professionally from start to finish. They finished on schedule and the quality of work exceeded our expectations. Would use them again.",
+    name: "Bharat",
     verified: true,
-    detail: "Plot Owner • Harrawala",
-  },
-  {
-    id: 9,
-    quote:
-      "Extremely happy with the build quality and attention to detail. Delivered right on promised timelines.",
-    name: "Priya Nair",
-    verified: true,
-    detail: "Villa Owner • Mussoorie Road",
-  },
-  {
-    id: 10,
-    quote:
-      "Their market knowledge in Dehradun real estate is top-tier. Helped me choose a high-appreciation asset.",
-    name: "Rohan Bhatia",
-    verified: true,
-    detail: "Investor • High Grove",
-  },
-  {
-    id: 11,
-    quote:
-      "Courteous staff, zero hidden charges, and honest guidance. Truly an enjoyable home-buying experience.",
-    name: "Sunita & Alok Dobhal",
-    verified: true,
-    detail: "Independent House Owner • Clement Town",
-  },
-  {
-    id: 12,
-    quote:
-      "Clear communication from day one. They answered all legal and financial queries promptly.",
-    name: "Deepak Choudhary",
-    verified: true,
-    detail: "Residential Plot Buyer • Rajpur Road",
+    detail: "Client • Sahastradhara plot",
   },
 ];
 

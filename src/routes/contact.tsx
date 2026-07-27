@@ -405,12 +405,12 @@ function SiteVisitSection() {
   const properties = propertyNames && propertyNames.length > 0
     ? [...propertyNames, "Other / Not Sure"]
     : [
-      "Vineyard Signature Villas",
-      "Vineyard High Grove",
-      "Vineyard Green County",
-      "Vineyard Crown Residences",
-      "Vineyard Pine Estate",
-      "Vineyard Trade Centre",
+      "Sangam Valley",
+      "Platinum Township",
+      "Aviraj Apartments",
+      "Vivanta Greens",
+      "Orchid Park Plot",
+      "Shikhar Heights",
       "Other / Not Sure",
       "Other",
     ];

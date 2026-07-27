@@ -121,9 +121,10 @@ const getActiveBookingForProperty = (propertyName: string, bookings: Booking[] |
 
 const getAvailablePropertiesToBook = (bookings: Booking[] | undefined) => {
   const allProps = [
-    { num: "1", name: "Vineyard Signature Villas", desc: "1️⃣ *Vineyard Signature Villas* (Mussoorie Road)" },
-    { num: "2", name: "Vineyard High Grove", desc: "2️⃣ *Vineyard High Grove* (Sahastradhara Road)" },
-    { num: "3", name: "Vineyard Green County", desc: "3️⃣ *Vineyard Green County* (Harrawala)" }
+    { num: "1", name: "Sangam Valley", desc: "1️⃣ *Sangam Valley* (Sahastradhara Road)" },
+    { num: "2", name: "Platinum Township", desc: "2️⃣ *Platinum Township* (Sahaspur Road)" },
+    { num: "3", name: "Vivanta Greens", desc: "3️⃣ *Vivanta Greens* (Mandakini Vihar)" },
+    { num: "4", name: "Aviraj Apartments", desc: "4️⃣ *Aviraj Apartments* (Sahastradhara Road)" }
   ];
   return allProps.filter(p => !getActiveBookingForProperty(p.name, bookings));
 };
@@ -280,9 +281,10 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
   };
 
   const PROPERTY_OPTIONS = [
-    "Vineyard Signature Villas",
-    "Vineyard High Grove",
-    "Vineyard Green County",
+    "Sangam Valley",
+    "Platinum Township",
+    "Vivanta Greens",
+    "Aviraj Apartments",
   ];
   const TIME_SLOTS = ["10:00 AM", "12:00 PM", "2:00 PM", "4:00 PM"];
   const CLOSING_SUGGESTIONS = ["Call Now", "Chat on WhatsApp", "Explore More Properties"];
@@ -337,10 +339,12 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
 
     if (lower.includes("mussoorie")) {
       result.location = "Mussoorie Road";
-    } else if (lower.includes("sahastradhara")) {
+    } else if (lower.includes("sahastradhara") || lower.includes("mandakini")) {
       result.location = "Sahastradhara Road";
     } else if (lower.includes("harrawala")) {
       result.location = "Harrawala";
+    } else if (lower.includes("sahaspur") || lower.includes("chandpur")) {
+      result.location = "Sahaspur Road";
     }
 
     return result;

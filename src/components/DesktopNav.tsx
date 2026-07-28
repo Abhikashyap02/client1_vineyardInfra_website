@@ -13,7 +13,7 @@ import {
   LandPlot,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { searchProperties } from "@/api/properties";
+import { getLocations } from "@/api/properties";
 import { getDynamicPopularLocations } from "@/lib/locationUtils";
 
 /* ------------------------------------------------------------------ */
@@ -81,12 +81,12 @@ export function DesktopNav({ variant = "light", activeLabel }: DesktopNavProps) 
   const [openMenu, setOpenMenu] = useState<"services" | "locations" | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { data: dbProperties = [] } = useQuery({
-    queryKey: ["properties"],
-    queryFn: () => searchProperties(),
+  const { data: dbLocations = [] } = useQuery({
+    queryKey: ["locations"],
+    queryFn: () => getLocations(),
   });
 
-  const locations = getDynamicPopularLocations(dbProperties);
+  const locations = getDynamicPopularLocations(dbLocations);
 
   // Close dropdown on outside click
   useEffect(() => {

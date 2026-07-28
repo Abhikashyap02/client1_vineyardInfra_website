@@ -21,7 +21,7 @@ import {
   Youtube,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { searchProperties } from "@/api/properties";
+import { getLocations } from "@/api/properties";
 import { getDynamicPopularLocations } from "@/lib/locationUtils";
 
 /* ------------------------------------------------------------------ */
@@ -59,12 +59,12 @@ export function MobileNav({ trigger = "light", hideAt = "md" }: Props) {
   const [locationsOpen, setLocationsOpen] = useState(false);
   const hideClass = hideAt === "lg" ? "lg:hidden" : "md:hidden";
 
-  const { data: dbProperties = [] } = useQuery({
-    queryKey: ["properties"],
-    queryFn: () => searchProperties(),
+  const { data: dbLocations = [] } = useQuery({
+    queryKey: ["locations"],
+    queryFn: () => getLocations(),
   });
 
-  const locations = getDynamicPopularLocations(dbProperties);
+  const locations = getDynamicPopularLocations(dbLocations);
 
   return (
     <>

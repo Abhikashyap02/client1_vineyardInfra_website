@@ -17,15 +17,13 @@ import { toast } from "sonner";
 const WHATSAPP = "https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I'm%20interested%20in%20exploring%20properties%20on%20Sahastradhara%20Road.";
 
 export const Route = createFileRoute("/sahastradhara-road")({
-  loader: async () => {
-    try {
-      const dbProperties = await searchProperties();
-      const listingProperties = dbProperties.map(mapToListingProperty);
-      return { properties: listingProperties };
-    } catch (error) {
-      console.error("Failed to load listing properties for Sahastradhara Road", error);
-      return { properties: [] };
-    }
+  loader: async ({ context }) => {
+    const dbProperties = await context.queryClient.ensureQueryData({
+      queryKey: ["property-list"],
+      queryFn: () => searchProperties(),
+    });
+    const listingProperties = dbProperties.map(mapToListingProperty);
+    return { properties: listingProperties };
   },
   head: () => {
     const title = "Property & Plots in Sahastradhara Road Dehradun | Vineyard";

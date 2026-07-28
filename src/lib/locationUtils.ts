@@ -92,13 +92,12 @@ export const LOCATION_METADATA: Record<string, { desc: string; to?: string }> = 
  * If dedicated route exists (e.g. for Sahastradhara Road or Dehradun), links to it.
  * Otherwise links to fallback properties search query.
  */
-export function getDynamicPopularLocations(properties: { location: string }[]): PopularLocationItem[] {
-  const availableSet = new Set(getAvailableLocations(properties));
+export function getDynamicPopularLocations(locations: string[]): PopularLocationItem[] {
+  const availableSet = new Set(locations.map(loc => getPrimaryLocation(loc)).filter(Boolean));
   
   const results: PopularLocationItem[] = [];
   
-  // Always evaluate Dehradun (if there is any property at all, it's in Dehradun)
-  if (properties.length > 0) {
+  if (locations.length > 0) {
     results.push({
       name: "Dehradun (Overall)",
       desc: LOCATION_METADATA["Dehradun"].desc,
@@ -106,9 +105,7 @@ export function getDynamicPopularLocations(properties: { location: string }[]): 
     });
   }
   
-  // For other available locations, build the menu items
   for (const loc of availableSet) {
-    // Avoid duplicating Dehradun under standard list
     if (loc.toLowerCase() === "dehradun") continue;
     
     const meta = LOCATION_METADATA[loc] || {
@@ -122,7 +119,6 @@ export function getDynamicPopularLocations(properties: { location: string }[]): 
     });
   }
   
-  // Sort by whether they have custom pages first, then alphabetically
   return results.sort((a, b) => {
     if (a.to && !b.to) return -1;
     if (!a.to && b.to) return 1;

@@ -119,6 +119,16 @@ def get_property_by_slug(slug: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Property not found")
     return db_property
 
+
+@app.get("/property-options", response_model=List[schemas.PropertyOptionResponse])
+def get_property_options(db: Session = Depends(get_db)):
+    return crud.get_property_options(db)
+
+
+@app.get("/locations", response_model=List[str])
+def get_locations(db: Session = Depends(get_db)):
+    return crud.get_unique_locations(db)
+
 # 2. Lead Qualification Flow
 @app.post("/create-lead", response_model=schemas.LeadResponse, dependencies=[Depends(rate_limit(5, 60))])
 def create_lead(lead: schemas.LeadCreate, db: Session = Depends(get_db)):

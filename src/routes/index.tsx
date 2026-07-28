@@ -14,7 +14,7 @@ import heroProperty from "@/assets/hero-property.jpg";
 import heroVideo from "@/assets/up1.mp4";
 import founder from "@/assets/founder.jpg";
 import expertConsultation from "@/assets/expert-consultation.jpg";
-import { searchProperties } from "@/api/properties";
+import { getFeaturedProperties, getLocations } from "@/api/properties";
 import { mapToHomepageProject } from "@/mappers/propertyMapper";
 import { getAvailableLocations } from "@/lib/locationUtils";
 import { apiFetch } from "@/api/client";
@@ -22,20 +22,19 @@ import { toast } from "sonner";
 import { submitLead } from "@/api/leads";
 
 export const Route = createFileRoute("/")({
-  loader: async () => {
-    try {
-      const dbProperties = await searchProperties();
-      // Filter for featured properties, or fallback to first 3 if none are marked featured
-      let featured = dbProperties.filter((p) => p.featured);
-      if (featured.length === 0) {
-        featured = dbProperties.slice(0, 3);
-      }
-      const homepageProjects = featured.map(mapToHomepageProject);
-      return { projects: homepageProjects, allProperties: dbProperties };
-    } catch (error) {
-      console.error("Failed to load featured properties for homepage", error);
-      return { projects: [], allProperties: [] };
-    }
+  loader: async ({ context }) => {
+    const [featured, locations] = await Promise.all([
+      context.queryClient.ensureQueryData({
+        queryKey: ["featured-properties"],
+        queryFn: () => getFeaturedProperties(),
+      }),
+      context.queryClient.ensureQueryData({
+        queryKey: ["locations"],
+        queryFn: () => getLocations(),
+      }),
+    ]);
+    const homepageProjects = featured.map(mapToHomepageProject);
+    return { projects: homepageProjects, locations };
   },
   head: () => {
     const title = "Real Estate & Plots for Sale in Dehradun | Vineyard Infra";
@@ -138,10 +137,10 @@ const budgetOptions = ["Any Budget", "Under 50 Lakhs", "50L - 1Cr", "1Cr - 2Cr",
 const statusOptions = ["Any Status", "Ongoing", "Ready to Move", "Under Construction", "Upcoming"];
 
 function Home() {
-  const { projects, allProperties } = Route.useLoaderData();
+  const { projects, locations } = Route.useLoaderData();
   const locationOptions = useMemo(() => {
-    return ["Any Location", ...getAvailableLocations(allProperties)];
-  }, [allProperties]);
+    return ["Any Location", ...locations];
+  }, [locations]);
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
 

@@ -2,18 +2,16 @@ import { Link } from "@tanstack/react-router";
 import { Phone, Mail, MapPin, Facebook, Instagram, Youtube, ChevronUp, ArrowRight, ExternalLink } from "lucide-react";
 import { Logo } from "./Logo";
 import { useQuery } from "@tanstack/react-query";
-import { searchProperties } from "@/api/properties";
-import { getAvailableLocations } from "@/lib/locationUtils";
+import { getLocations } from "@/api/properties";
 
 export function Footer() {
-  const { data: dbProperties = [] } = useQuery({
-    queryKey: ["properties"],
-    queryFn: () => searchProperties(),
+  const { data: dbLocations = [] } = useQuery({
+    queryKey: ["locations"],
+    queryFn: () => getLocations(),
   });
 
-  const availableLocations = getAvailableLocations(dbProperties);
-  const hasSahastradhara = availableLocations.includes("Sahastradhara Road");
-  const hasDehradun = dbProperties.length > 0;
+  const hasSahastradhara = dbLocations.includes("Sahastradhara Road");
+  const hasDehradun = dbLocations.length > 0;
 
   const handleBackToTop = () => {
     window.scrollTo({

@@ -308,3 +308,12 @@ def create_chat_message(db: Session, chat: schemas.ChatHistoryCreate) -> models.
 
 def get_chat_history(db: Session, session_id: str) -> List[models.ChatHistory]:
     return db.query(models.ChatHistory).filter(models.ChatHistory.session_id == session_id).order_by(models.ChatHistory.timestamp.asc()).all()
+
+
+def get_property_options(db: Session) -> List[models.Property]:
+    return db.query(models.Property).order_by(models.Property.name.asc()).all()
+
+
+def get_unique_locations(db: Session) -> List[str]:
+    results = db.query(models.Property.location).distinct().all()
+    return sorted(list(set([r[0].strip() for r in results if r[0]])))

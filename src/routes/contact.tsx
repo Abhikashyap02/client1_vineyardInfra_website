@@ -30,7 +30,7 @@ import {
 import contactHero from "@/assets/contact-hero.jpg";
 import founderImg from "@/assets/founder.jpg";
 
-import { searchProperties } from "@/api/properties";
+import { getPropertyOptions } from "@/api/properties";
 import { apiFetch } from "@/api/client";
 import { toast } from "sonner";
 import { submitLead } from "@/api/leads";
@@ -41,14 +41,12 @@ export const Route = createFileRoute("/contact")({
       property: search.property as string | undefined,
     };
   },
-  loader: async () => {
-    try {
-      const dbProperties = await searchProperties();
-      return { propertyNames: dbProperties.map((p) => p.name) };
-    } catch (error) {
-      console.error("Failed to load property names for contact form", error);
-      return { propertyNames: [] };
-    }
+  loader: async ({ context }) => {
+    const options = await context.queryClient.ensureQueryData({
+      queryKey: ["contact-dropdown"],
+      queryFn: () => getPropertyOptions(),
+    });
+    return { propertyNames: options.map((p) => p.name) };
   },
   head: () => {
     const title = "Talk to Dehradun's Trusted Property Consultants | Vineyard";

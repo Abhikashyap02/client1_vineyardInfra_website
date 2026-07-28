@@ -17,15 +17,13 @@ import { toast } from "sonner";
 import { submitLead } from "@/api/leads";
 
 export const Route = createFileRoute("/properties")({
-  loader: async () => {
-    try {
-      const dbProperties = await searchProperties();
-      const listingProperties = dbProperties.map(mapToListingProperty);
-      return { properties: listingProperties };
-    } catch (error) {
-      console.error("Failed to load listing properties", error);
-      return { properties: [] };
-    }
+  loader: async ({ context }) => {
+    const dbProperties = await context.queryClient.ensureQueryData({
+      queryKey: ["property-list"],
+      queryFn: () => searchProperties(),
+    });
+    const listingProperties = dbProperties.map(mapToListingProperty);
+    return { properties: listingProperties };
   },
   head: () => {
     const title = "Properties & Plots for Sale in Dehradun | Vineyard Infra";

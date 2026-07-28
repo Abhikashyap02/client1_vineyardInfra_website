@@ -75,6 +75,14 @@ class PropertyResponse(PropertyBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+class PropertyOptionResponse(BaseModel):
+    id: UUID
+    name: str
+    slug: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 # Appointment Schemas
 class AppointmentCreate(BaseModel):
     property_name: str

@@ -17,15 +17,13 @@ import { toast } from "sonner";
 const WHATSAPP = "https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I'm%20interested%20in%20exploring%20properties%20in%20Dehradun.";
 
 export const Route = createFileRoute("/dehradun")({
-  loader: async () => {
-    try {
-      const dbProperties = await searchProperties();
-      const listingProperties = dbProperties.map(mapToListingProperty);
-      return { properties: listingProperties };
-    } catch (error) {
-      console.error("Failed to load listing properties for Dehradun Page", error);
-      return { properties: [] };
-    }
+  loader: async ({ context }) => {
+    const dbProperties = await context.queryClient.ensureQueryData({
+      queryKey: ["property-list"],
+      queryFn: () => searchProperties(),
+    });
+    const listingProperties = dbProperties.map(mapToListingProperty);
+    return { properties: listingProperties };
   },
   head: () => {
     const title = "Real Estate & Land for Sale in Dehradun | Vineyard Infra";

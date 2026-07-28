@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Logo } from "@/components/Logo";
-import { getPropertyBySlug } from "@/api/properties";
+import { getPropertyBySlug, getLocations } from "@/api/properties";
 import type { PropertyDetail, PropertyMedia } from "@/api/properties";
 import { apiFetch } from "@/api/client";
 import { toast } from "sonner";
@@ -52,9 +52,18 @@ export const Route = createFileRoute("/projects/$slug")({
   validateSearch: (search: Record<string, unknown>) => ({
     landing: search.landing === "true" || search.landing === true,
   }),
-  loader: async ({ params }) => {
+  loader: async ({ context, params }) => {
     try {
-      const dbProperty = await getPropertyBySlug(params.slug);
+      const [dbProperty] = await Promise.all([
+        context.queryClient.ensureQueryData({
+          queryKey: ["property", params.slug],
+          queryFn: () => getPropertyBySlug(params.slug),
+        }),
+        context.queryClient.ensureQueryData({
+          queryKey: ["locations"],
+          queryFn: () => getLocations(),
+        }),
+      ]);
       if (!dbProperty) throw notFound();
       const project = mapToProjectDetail(dbProperty);
       return { project, raw: dbProperty };

@@ -128,3 +128,51 @@ export async function getPropertyBySlug(slug: string): Promise<PropertyDetail> {
     throw error;
   }
 }
+
+export interface PropertyOption {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+/**
+ * Fetches lightweight property name options for dropdowns
+ * Calls: GET /property-options
+ */
+export async function getPropertyOptions(): Promise<PropertyOption[]> {
+  try {
+    return await apiFetch<PropertyOption[]>("/property-options", {
+      method: "GET",
+    });
+  } catch (error) {
+    console.error("API Error in getPropertyOptions:", error);
+    throw error;
+  }
+}
+
+/**
+ * Fetches unique list of location names for nav/footer
+ * Calls: GET /locations
+ */
+export async function getLocations(): Promise<string[]> {
+  try {
+    return await apiFetch<string[]>("/locations", {
+      method: "GET",
+    });
+  } catch (error) {
+    console.error("API Error in getLocations:", error);
+    throw error;
+  }
+}
+
+/**
+ * Fetches properties and filters them on the client for featured items
+ */
+export async function getFeaturedProperties(): Promise<Property[]> {
+  const dbProperties = await searchProperties();
+  let featured = dbProperties.filter((p) => p.featured);
+  if (featured.length === 0) {
+    featured = dbProperties.slice(0, 3);
+  }
+  return featured;
+}

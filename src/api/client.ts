@@ -47,15 +47,21 @@ export async function apiFetch<T>(path: string, options: FetchOptions = {}): Pro
     ...headers,
   };
 
-  // Set default cache bypass in development mode to avoid caching fetch results
-  const isDev = import.meta.env.DEV;
-  const defaultCache: RequestCache = isDev ? "no-store" : "default";
+  // Determine if executing in a server environment (SSR / Cloudflare Workers)
+  const isServer = typeof window === "undefined" || Boolean(import.meta.env.SSR);
 
-  const response = await fetch(url, {
-    cache: defaultCache,
+  const fetchOptions: RequestInit = {
     ...restOptions,
     headers: defaultHeaders,
-  });
+  };
+
+  // Only set browser cache options when running in the client browser
+  if (!isServer) {
+    const isDev = import.meta.env.DEV;
+    fetchOptions.cache = isDev ? "no-store" : "default";
+  }
+
+  const response = await fetch(url, fetchOptions);
 
   if (!response.ok) {
     let errorMessage = `HTTP error! status: ${response.status}`;

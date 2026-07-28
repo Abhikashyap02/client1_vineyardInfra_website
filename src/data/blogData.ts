@@ -1,7 +1,7 @@
 import heroProperty from "@/assets/hero-property.jpg";
 import interiorLiving from "@/assets/interior-living.jpg";
 import contactHero from "@/assets/contact-hero.jpg";
-import founder from "@/assets/founder.jpg";
+import founder from "@/assets/founder.jpeg";
 import expertConsultation from "@/assets/expert-consultation.jpg";
 
 export type ContentBlock =

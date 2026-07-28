@@ -33,9 +33,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import founderImg from "@/assets/founder.jpg";
+import founderImg from "@/assets/founder.jpeg";
 import heroImg from "@/assets/hero-property.jpg";
 import interiorImg from "@/assets/interior-living.jpg";
+import sumitiImg from "@/assets/sumiti.jpeg";
+import poojaImg from "@/assets/pooja.jpeg";
 
 export const Route = createFileRoute("/about")({
   head: () => {
@@ -667,9 +669,8 @@ function OurPromise() {
 /* ---------- 10. Team ---------- */
 const TEAM = [
   { name: "RUDRA THAKUR", role: "MD", img: founderImg },
-  { name: "Ananya Sharma", role: "Senior Relationship Manager" },
-  { name: "Vikram Negi", role: "Property Consultant — Premium" },
-  { name: "Priya Bhatt", role: "Operations & Documentation" },
+  { name: "Sumiti", role: "Telecaller Executive", img: sumitiImg },
+  { name: "Pooja", role: "Telecaller Executive", img: poojaImg },
 ];
 
 function TeamSection() {

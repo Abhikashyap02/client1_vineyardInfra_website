@@ -12,7 +12,7 @@ import { Footer } from "@/components/Footer";
 import { VideoTestimonialsSection } from "@/components/VideoTestimonialsSection";
 import heroProperty from "@/assets/hero-property.jpg";
 import heroVideo from "@/assets/up1.mp4";
-import founder from "@/assets/founder.jpg";
+import founder from "@/assets/founder.jpeg";
 import expertConsultation from "@/assets/expert-consultation.jpg";
 import { getFeaturedProperties, getLocations } from "@/api/properties";
 import { mapToHomepageProject } from "@/mappers/propertyMapper";

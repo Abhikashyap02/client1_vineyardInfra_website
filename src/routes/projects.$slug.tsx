@@ -54,16 +54,10 @@ export const Route = createFileRoute("/projects/$slug")({
   }),
   loader: async ({ context, params }) => {
     try {
-      const [dbProperty] = await Promise.all([
-        context.queryClient.ensureQueryData({
-          queryKey: ["property", params.slug],
-          queryFn: () => getPropertyBySlug(params.slug),
-        }),
-        context.queryClient.ensureQueryData({
-          queryKey: ["locations"],
-          queryFn: () => getLocations(),
-        }),
-      ]);
+      const dbProperty = await context.queryClient.ensureQueryData({
+        queryKey: ["property", params.slug],
+        queryFn: () => getPropertyBySlug(params.slug),
+      });
       if (!dbProperty) throw notFound();
       const project = mapToProjectDetail(dbProperty);
       return { project, raw: dbProperty };

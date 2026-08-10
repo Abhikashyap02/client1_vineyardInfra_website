@@ -12,10 +12,10 @@ class Property(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     slug = Column(String, unique=True, nullable=False)
     name = Column(String, nullable=False)
-    category = Column(String, nullable=True)
-    sub_type = Column(String, nullable=True)
-    location = Column(String, nullable=False)
-    city = Column(String, nullable=True)
+    category = Column(String, nullable=True, index=True)
+    sub_type = Column(String, nullable=True, index=True)
+    location = Column(String, nullable=False, index=True)
+    city = Column(String, nullable=True, index=True)
     state = Column(String, nullable=True)
     starting_price = Column(Numeric, nullable=True)
     possession_status = Column(String, nullable=True)
@@ -24,7 +24,7 @@ class Property(Base):
     why_choose = Column(Text, nullable=True)
     brochure_url = Column(String, nullable=True)
     google_map_url = Column(String, nullable=True)
-    featured = Column(Boolean, default=False)
+    featured = Column(Boolean, default=False, index=True)
     status = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -42,12 +42,12 @@ class PropertyVariant(Base):
     __tablename__ = "property_variants"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="CASCADE"), nullable=False)
+    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="CASCADE"), nullable=False, index=True)
     variant_name = Column(String, nullable=True)
     area = Column(String, nullable=True)
-    bedrooms = Column(Integer, nullable=True)
+    bedrooms = Column(Integer, nullable=True, index=True)
     bathrooms = Column(Integer, nullable=True)
-    price = Column(Numeric, nullable=True)
+    price = Column(Numeric, nullable=True, index=True)
     facing = Column(String, nullable=True)
     front_road = Column(String, nullable=True)
     availability = Column(String, nullable=True)
@@ -62,7 +62,7 @@ class PropertyMedia(Base):
     __tablename__ = "property_media"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="CASCADE"), nullable=False)
+    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="CASCADE"), nullable=False, index=True)
     media_type = Column(String, nullable=True)
     media_url = Column(String, nullable=False)
     title = Column(String, nullable=True)
@@ -78,7 +78,7 @@ class PropertyFeature(Base):
     __tablename__ = "property_features"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="CASCADE"), nullable=False)
+    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="CASCADE"), nullable=False, index=True)
     feature_type = Column(String, nullable=True)
     feature_name = Column(String, nullable=False)
     display_order = Column(Integer, nullable=True)
@@ -92,10 +92,10 @@ class Lead(Base):
     __tablename__ = "leads"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="SET NULL"), nullable=True)
+    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="SET NULL"), nullable=True, index=True)
     full_name = Column(String, nullable=False)
-    phone = Column(String, nullable=False)
-    email = Column(String, nullable=True)
+    phone = Column(String, nullable=False, index=True)
+    email = Column(String, nullable=True, index=True)
     budget = Column(String, nullable=True)
     preferred_location = Column(String, nullable=True)
     interested_in = Column(String, nullable=True)
@@ -120,8 +120,8 @@ class SiteVisit(Base):
     __tablename__ = "site_visits"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    lead_id = Column(UUID(as_uuid=True), ForeignKey("leads.id", ondelete="CASCADE"), nullable=False)
-    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="CASCADE"), nullable=False)
+    lead_id = Column(UUID(as_uuid=True), ForeignKey("leads.id", ondelete="CASCADE"), nullable=False, index=True)
+    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="CASCADE"), nullable=False, index=True)
     visit_date = Column(Date, nullable=False)
     visit_time = Column(Time, nullable=True)
     status = Column(String, nullable=True)
@@ -162,7 +162,7 @@ class FAQ(Base):
     __tablename__ = "faqs"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="CASCADE"), nullable=False)
+    property_id = Column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="CASCADE"), nullable=False, index=True)
     question = Column(Text, nullable=False)
     answer = Column(Text, nullable=False)
     display_order = Column(Integer, nullable=True)
@@ -180,3 +180,16 @@ class ChatHistory(Base):
     role = Column(String(50), nullable=False)  # 'user' or 'assistant'
     content = Column(Text, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
+
+
+class Banner(Base):
+    __tablename__ = "banners"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    title = Column(String, nullable=False)
+    image = Column(String, nullable=False)
+    link = Column(String, nullable=False)
+    display_order = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+

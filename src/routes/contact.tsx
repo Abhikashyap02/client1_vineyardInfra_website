@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import contactHero from "@/assets/contact-hero.jpg";
-import founderImg from "@/assets/founder.jpeg";
+import founderImg from "@/assets/founder.jpg";
 
 import { getPropertyOptions } from "@/api/properties";
 import { apiFetch } from "@/api/client";

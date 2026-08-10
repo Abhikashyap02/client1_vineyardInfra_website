@@ -33,7 +33,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import founderImg from "@/assets/founder.jpeg";
+import founderImg from "@/assets/founder.jpg";
 import heroImg from "@/assets/hero-property.jpg";
 import interiorImg from "@/assets/interior-living.jpg";
 import sumitiImg from "@/assets/sumiti.jpeg";

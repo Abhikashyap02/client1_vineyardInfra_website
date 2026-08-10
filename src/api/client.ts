@@ -1,5 +1,14 @@
 // Centralized API client configured with environment variables
 const getBackendUrl = () => {
+  // In development, default to local backend to allow testing local DB changes
+  if (import.meta.env.DEV) {
+    const apiUrl = (import.meta.env.VITE_API_URL as string) || "";
+    if (apiUrl && !apiUrl.includes("up.railway.app")) {
+      return apiUrl;
+    }
+    return "http://localhost:8000";
+  }
+
   let apiUrl = (import.meta.env.VITE_API_URL as string) || "";
   
   if (apiUrl) {

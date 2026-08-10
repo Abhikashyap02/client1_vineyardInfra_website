@@ -28,21 +28,19 @@ export function Header({ activeLabel }: HeaderProps) {
 
   return (
     <div
-      className={`fixed z-40 transition-all duration-500 ease-in-out left-0 right-0 flex justify-center ${
-        scrolled ? "top-0 px-0" : "top-4 px-4 md:px-8"
-      }`}
+      className="fixed z-40 top-0 left-0 right-0 transition-all duration-500 ease-in-out"
     >
       <motion.header
         initial={{ y: -8, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
-        className={`w-full transition-all duration-500 ease-in-out ${
+        className={`w-full transition-all duration-500 ease-in-out px-6 md:px-12 ${
           scrolled
-            ? "bg-navy-deep/95 backdrop-blur-md shadow-2xl py-2 px-6 md:px-12 border-b border-white/10 rounded-none"
-            : "max-w-7xl bg-navy-deep/35 backdrop-blur-lg border border-gold/20 rounded-full shadow-lg py-2.5 px-6 md:px-8"
+            ? "bg-navy-deep/95 backdrop-blur-md shadow-2xl py-2 border-b border-white/10"
+            : "bg-navy-deep py-2.5 border-b border-white/10"
         }`}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
           {/* Logo */}
           <Link
             to="/"

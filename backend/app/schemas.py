@@ -75,6 +75,26 @@ class PropertyResponse(PropertyBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+class PropertyCardResponse(BaseModel):
+    id: UUID
+    slug: str
+    name: str
+    location: str
+    category: Optional[str] = None
+    sub_type: Optional[str] = None
+    starting_price: Optional[Decimal] = None
+    possession_status: Optional[str] = None
+    short_description: Optional[str] = None
+    featured: bool = False
+    primary_image_url: Optional[str] = None
+    bedrooms_summary: Optional[str] = None
+    bathrooms_summary: Optional[str] = None
+    area_summary: Optional[str] = None
+    amenities: List[str] = []
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class PropertyOptionResponse(BaseModel):
     id: UUID
     name: str
@@ -231,3 +251,22 @@ class ChatHistoryResponse(ChatHistoryCreate):
     timestamp: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# Banner Schemas
+class BannerBase(BaseModel):
+    title: str
+    image: str
+    link: str
+    display_order: Optional[int] = 0
+    is_active: Optional[bool] = True
+
+class BannerCreate(BannerBase):
+    pass
+
+class BannerResponse(BannerBase):
+    id: UUID
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+

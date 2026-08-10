@@ -1,26 +1,123 @@
-import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState, useEffect } from "react";
 import {
   Search, MapPin, Building2, ShieldCheck, Sparkles, Headset,
   TrendingUp, HandCoins, MessageCircle, Phone, Calendar, ArrowRight,
   Maximize, Tag, CheckCircle2, Filter, Facebook, Instagram, Youtube,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import heroProperty from "@/assets/hero-property.jpg";
 import interiorLiving from "@/assets/interior-living.jpg";
-import { searchProperties } from "@/api/properties";
+import { searchProperties, getLocations, getFeaturedProperties } from "@/api/properties";
 import { mapToListingProperty } from "@/mappers/propertyMapper";
-import { getAvailableLocations, getPrimaryLocation } from "@/lib/locationUtils";
-import { apiFetch } from "@/api/client";
+import { getPrimaryLocation } from "@/lib/locationUtils";
 import { toast } from "sonner";
 import { submitLead } from "@/api/leads";
 
+function mapUrlParamsToFilters(search: any) {
+  const filters: any = {};
+  if (!search) return filters;
+  
+  // 1. Quick filters mapping
+  if (search.quick && search.quick !== "All Properties") {
+    if (search.quick === "Residential") {
+      filters.category = "Residential";
+    } else if (search.quick === "Commercial") {
+      filters.category = "Commercial";
+    } else if (search.quick === "Villas") {
+      filters.sub_type = "Villa";
+    } else if (search.quick === "Apartments") {
+      filters.sub_type = "Apartment";
+    } else if (search.quick === "Plots") {
+      filters.sub_type = "Plot";
+    } else if (search.quick === "Luxury Homes") {
+      filters.category = "Luxury";
+    } else if (search.quick === "Ready to Move") {
+      filters.possession_status = "Ready to Move";
+    } else if (search.quick === "Investment Opportunities") {
+      filters.category = "Investment";
+    }
+  }
+
+  // 2. Dropdown type mapping
+  if (search.type && search.type !== "Any Type") {
+    if (search.type === "Flat / Apartment") {
+      filters.sub_type = "Apartment";
+    } else if (search.type === "Villa") {
+      filters.sub_type = "Villa";
+    } else if (search.type === "Independent House") {
+      filters.sub_type = "Independent House";
+    } else if (search.type === "Plot") {
+      filters.sub_type = "Plot";
+    } else if (search.type === "Commercial Space") {
+      filters.sub_type = "Commercial";
+    } else if (search.type === "Office Space") {
+      filters.sub_type = "Office";
+    } else if (search.type === "Retail Shop") {
+      filters.sub_type = "Retail";
+    }
+  }
+
+  // 3. Dropdown location mapping
+  if (search.location && search.location !== "Any Location") {
+    filters.location = search.location;
+  }
+
+  // 4. Dropdown status mapping
+  if (search.status && search.status !== "Any Status") {
+    filters.possession_status = search.status;
+  }
+
+  // 5. Dropdown budget mapping
+  if (search.budget && search.budget !== "Any Budget") {
+    if (search.budget === "Under 50 Lakhs") {
+      filters.max_budget = 5000000;
+    } else if (search.budget === "50L - 1Cr") {
+      filters.min_budget = 5000000;
+      filters.max_budget = 10000000;
+    } else if (search.budget === "1Cr - 2Cr") {
+      filters.min_budget = 10000000;
+      filters.max_budget = 20000000;
+    } else if (search.budget === "2Cr+") {
+      filters.min_budget = 20000000;
+    }
+  }
+
+  return filters;
+}
+
+export interface PropertiesSearch {
+  type?: string;
+  location?: string;
+  budget?: string;
+  status?: string;
+  quick?: string;
+}
+
 export const Route = createFileRoute("/properties")({
-  loader: async ({ context }) => {
+  validateSearch: (search: Record<string, unknown>): PropertiesSearch => {
+    return {
+      type: (search.type as string) || undefined,
+      location: (search.location as string) || undefined,
+      budget: (search.budget as string) || undefined,
+      status: (search.status as string) || undefined,
+      quick: (search.quick as string) || undefined,
+    };
+  },
+  loaderDeps: ({ search }) => ({
+    type: search.type,
+    location: search.location,
+    budget: search.budget,
+    status: search.status,
+    quick: search.quick,
+  }),
+  loader: async ({ context, deps }) => {
+    const filters = mapUrlParamsToFilters(deps);
     const dbProperties = await context.queryClient.ensureQueryData({
-      queryKey: ["property-list"],
-      queryFn: () => searchProperties(),
+      queryKey: ["properties", filters],
+      queryFn: () => searchProperties(filters),
     });
     const listingProperties = dbProperties.map(mapToListingProperty);
     return { properties: listingProperties };
@@ -128,60 +225,58 @@ function matchesQuickFilter(p: Property, f: QuickFilter) {
 
 function PropertiesPage() {
   const { properties } = Route.useLoaderData();
+  const { data: locations = [] } = useQuery({
+    queryKey: ["locations"],
+    queryFn: getLocations,
+  });
+  const { data: featuredRaw = [], isLoading: isFeaturedLoading } = useQuery({
+    queryKey: ["properties", { featured: true }],
+    queryFn: () => searchProperties({ featured: true }),
+  });
+  const featured = useMemo(() => {
+    return featuredRaw.map(mapToListingProperty);
+  }, [featuredRaw]);
+
+  const searchParams = Route.useSearch();
+  const navigate = useNavigate();
+
   const locationOptions = useMemo(() => {
-    return ["Any Location", ...getAvailableLocations(properties)];
-  }, [properties]);
-  const [quick, setQuick] = useState<QuickFilter>("All Properties");
-  const [search, setSearch] = useState({ type: typeOptions[0], location: "Any Location", budget: budgetOptions[0], status: statusOptions[0] });
-  const routerLocation = useLocation();
+    const primaries = locations.map(loc => getPrimaryLocation(loc)).filter(Boolean);
+    return ["Any Location", ...Array.from(new Set(primaries))];
+  }, [locations]);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(routerLocation.searchStr);
-      const type = params.get("type");
-      const location = params.get("location");
-      const budget = params.get("budget");
-      const status = params.get("status");
-
-      let matchedLocation = "Any Location";
-      if (location) {
-        const normalizedParam = location.toLowerCase().replace(/[^a-z0-9]/g, "");
-        const found = locationOptions.find(opt =>
-          opt.toLowerCase().replace(/[^a-z0-9]/g, "") === normalizedParam
-        );
-        if (found) {
-          matchedLocation = found;
-        }
+  const quick = (searchParams.quick as QuickFilter) || "All Properties";
+  
+  const search = useMemo(() => {
+    const location = searchParams.location;
+    let matchedLocation = "Any Location";
+    if (location) {
+      const normalizedParam = location.toLowerCase().replace(/[^a-z0-9]/g, "");
+      const found = locationOptions.find(opt =>
+        opt.toLowerCase().replace(/[^a-z0-9]/g, "") === normalizedParam
+      );
+      if (found) {
+        matchedLocation = found;
       }
-
-      setSearch({
-        type: type || typeOptions[0],
-        location: matchedLocation,
-        budget: budget || budgetOptions[0],
-        status: status || statusOptions[0]
-      });
     }
-  }, [routerLocation.searchStr, locationOptions]);
+    return {
+      type: searchParams.type || typeOptions[0],
+      location: matchedLocation,
+      budget: searchParams.budget || budgetOptions[0],
+      status: searchParams.status || statusOptions[0]
+    };
+  }, [searchParams, locationOptions]);
 
-  const filtered = useMemo(() => properties.filter((p) => {
-    if (!matchesQuickFilter(p, quick)) return false;
-    if (search.location !== "Any Location" && getPrimaryLocation(p.location) !== search.location) return false;
-    if (search.status !== "Any Status" && p.status !== search.status) return false;
-    if (search.type !== "Any Type") {
-      const t = search.type.toLowerCase();
-      if (!t.includes(p.type.toLowerCase()) && !p.type.toLowerCase().includes(t.split(" ")[0])) return false;
-    }
-    if (search.budget !== "Any Budget") {
-      const v = p.priceMin;
-      if (search.budget === "Under 50 Lakhs" && v >= 50) return false;
-      if (search.budget === "50L - 1Cr" && (v < 50 || v >= 100)) return false;
-      if (search.budget === "1Cr - 2Cr" && (v < 100 || v >= 200)) return false;
-      if (search.budget === "2Cr+" && v < 200) return false;
-    }
-    return true;
-  }), [quick, search]);
+  const updateSearch = (newParams: Partial<typeof searchParams>) => {
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        ...newParams
+      })
+    });
+  };
 
-  const featured = properties.filter((p) => p.featured);
+  const filtered = properties;
 
   return (
     <div className="bg-warm-bg text-foreground">
@@ -225,10 +320,10 @@ function PropertiesPage() {
         <div className="relative max-w-6xl mx-auto px-5 -mt-20 md:-mt-24">
           <div className="bg-background rounded-2xl shadow-[var(--shadow-elevated)] border border-border p-5 md:p-7">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-              <SelectField label="Property Type" value={search.type} options={typeOptions} onChange={(v) => setSearch((s) => ({ ...s, type: v }))} />
-              <SelectField label="Location" value={search.location} options={locationOptions} onChange={(v) => setSearch((s) => ({ ...s, location: v }))} />
-              <SelectField label="Budget" value={search.budget} options={budgetOptions} onChange={(v) => setSearch((s) => ({ ...s, budget: v }))} />
-              <SelectField label="Status" value={search.status} options={statusOptions} onChange={(v) => setSearch((s) => ({ ...s, status: v }))} />
+              <SelectField label="Property Type" value={search.type} options={typeOptions} onChange={(v) => updateSearch({ type: v })} />
+              <SelectField label="Location" value={search.location} options={locationOptions} onChange={(v) => updateSearch({ location: v })} />
+              <SelectField label="Budget" value={search.budget} options={budgetOptions} onChange={(v) => updateSearch({ budget: v })} />
+              <SelectField label="Status" value={search.status} options={statusOptions} onChange={(v) => updateSearch({ status: v })} />
               <a href="#listings" className="inline-flex items-center justify-center gap-2 px-6 rounded-xl bg-navy-deep text-primary-foreground font-medium hover:opacity-95 h-[58px] mt-auto">
                 <Search className="w-4 h-4" /> Search
               </a>
@@ -248,7 +343,7 @@ function PropertiesPage() {
             return (
               <button
                 key={f}
-                onClick={() => setQuick(f)}
+                onClick={() => updateSearch({ quick: f })}
                 className={`whitespace-nowrap px-4 py-2 rounded-full text-sm border transition ${active
                     ? "bg-navy-deep text-primary-foreground border-navy-deep"
                     : "bg-background text-foreground border-border hover:border-gold hover:text-navy-deep"
@@ -278,7 +373,7 @@ function PropertiesPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((p) => <PropertyCard key={p.id} p={p} />)}
+            {filtered.map((p, idx) => <PropertyCard key={p.id} p={p} index={idx} />)}
           </div>
         )}
       </section>
@@ -295,9 +390,17 @@ function PropertiesPage() {
             </div>
             <p className="text-white/70 max-w-md text-sm">Premium projects shortlisted by our advisors for value, location and long-term appreciation.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featured.map((p) => <FeaturedCard key={p.id} p={p} />)}
-          </div>
+          {isFeaturedLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="rounded-2xl border border-white/10 bg-white/5 h-[300px]" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featured.map((p) => <FeaturedCard key={p.id} p={p} />)}
+            </div>
+          )}
         </div>
       </section>
 
@@ -399,11 +502,12 @@ function SelectField({ label, value, options, onChange }: { label: string; value
   );
 }
 
-function PropertyCard({ p }: { p: Property }) {
+function PropertyCard({ p, index }: { p: Property; index?: number }) {
+  const isEager = index !== undefined && index < 3;
   return (
     <article className="group bg-background rounded-2xl overflow-hidden border border-border hover:shadow-[var(--shadow-elevated)] transition-all duration-500 flex flex-col">
       <div className="relative aspect-[4/3] overflow-hidden">
-        <img src={p.img} alt={p.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+        <img src={p.img} alt={p.name} loading={isEager ? "eager" : "lazy"} decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
         <div className="absolute top-3 left-3 flex flex-wrap gap-2">
           {p.tags.map((t) => (
             <span key={t} className="text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-full bg-gold text-navy-deep font-semibold">{t}</span>

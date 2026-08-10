@@ -21,7 +21,7 @@ export const getRouter = () => {
     dehydrate: () => {
       return {
         dehydratedState: dehydrate(queryClient),
-      };
+      } as any;
     },
     hydrate: (data: any) => {
       hydrate(queryClient, data.dehydratedState);

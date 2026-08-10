@@ -7,7 +7,6 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
-  nitro: { compatibilityDate: "2026-07-27" },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
@@ -24,4 +23,4 @@ export default defineConfig({
     },
   },
 });
-
+// Force reload trigger for VITE_API_URL env update

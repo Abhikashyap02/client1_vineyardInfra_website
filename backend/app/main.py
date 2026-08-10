@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Depends, HTTPException, Query, Request
+from fastapi import FastAPI, Depends, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from sqlalchemy.orm import Session
 from typing import List, Optional, Any
 from decimal import Decimal
@@ -68,6 +69,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Set up GZip compression middleware (for responses >= 1000 bytes)
+app.add_middleware(
+    GZipMiddleware,
+    minimum_size=1000
+)
+
 # Print startup values for Railway log auditing
 print(f"STARTUP: settings.CORS_ORIGINS = {settings.CORS_ORIGINS}", flush=True)
 print(f"STARTUP: settings.CORS_ORIGINS_REGEX = {settings.CORS_ORIGINS_REGEX}", flush=True)
@@ -91,42 +98,136 @@ async def add_security_headers(request: Request, call_next):
 def read_root():
     return {"status": "ok", "message": "Vineyard Infra Chatbot API is online"}
 
+def map_property_to_card(p: models.Property) -> schemas.PropertyCardResponse:
+    import re
+    
+    # 1. Resolve primary/hero image
+    primary_image_url = None
+    if p.media:
+        hero = next((m for m in p.media if m.is_hero), None)
+        if hero:
+            primary_image_url = hero.media_url
+        else:
+            img_media = next((m for m in p.media if m.media_type == "image" or not m.media_type), None)
+            primary_image_url = img_media.media_url if img_media else p.media[0].media_url
+
+    # 2. Get bedroom (BHK) summary (e.g. "2, 3 BHK")
+    bedrooms_summary = None
+    if p.variants:
+        bd_list = sorted(list(set(v.bedrooms for v in p.variants if v.bedrooms and v.bedrooms > 0)))
+        if bd_list:
+            bedrooms_summary = f"{', '.join(str(b) for b in bd_list)} BHK"
+        elif p.sub_type == "Plot":
+            first_var = next((v.variant_name for v in p.variants if v.variant_name), None)
+            bedrooms_summary = first_var or "Residential Plots"
+    elif p.sub_type == "Plot":
+        bedrooms_summary = "Residential Plots"
+
+    # 3. Get bathroom summary (e.g. "2-3" or "2")
+    bathrooms_summary = None
+    if p.variants:
+        bt_list = sorted(list(set(v.bathrooms for v in p.variants if v.bathrooms and v.bathrooms > 0)))
+        if bt_list:
+            if len(bt_list) == 1:
+                bathrooms_summary = str(bt_list[0])
+            else:
+                bathrooms_summary = f"{bt_list[0]}-{bt_list[-1]}"
+
+    # 4. Get area summary (e.g. "1200 - 1950 Sq.Ft.")
+    area_summary = None
+    if p.variants:
+        areas = [v.area for v in p.variants if v.area]
+        if areas:
+            parsed = []
+            for a in areas:
+                nums = re.findall(r'\d+', a)
+                if nums:
+                    parsed.append((a, int(nums[0])))
+            if parsed:
+                parsed.sort(key=lambda x: x[1])
+                min_a = parsed[0]
+                max_a = parsed[-1]
+                suffix = "Sq.Yd." if ("yd" in min_a[0].lower() or "yard" in min_a[0].lower()) else "Sq.Ft."
+                if min_a[1] == max_a[1]:
+                    area_summary = f"{min_a[1]} {suffix}"
+                else:
+                    area_summary = f"{min_a[1]} – {max_a[1]} {suffix}"
+            else:
+                area_summary = areas[0]
+
+    # 5. Get amenities
+    amenities = []
+    if p.features:
+        amenities = [f.feature_name for f in p.features if f.feature_type and f.feature_type.upper() == "AMENITY"]
+
+    return schemas.PropertyCardResponse(
+        id=p.id,
+        slug=p.slug,
+        name=p.name,
+        location=p.location,
+        category=p.category,
+        sub_type=p.sub_type,
+        starting_price=p.starting_price,
+        possession_status=p.possession_status,
+        short_description=p.short_description,
+        featured=p.featured,
+        primary_image_url=primary_image_url,
+        bedrooms_summary=bedrooms_summary,
+        bathrooms_summary=bathrooms_summary,
+        area_summary=area_summary,
+        amenities=amenities
+    )
+
 # 1. Property Search
-@app.get("/search-properties", response_model=List[schemas.PropertyResponse])
+@app.get("/search-properties", response_model=List[schemas.PropertyCardResponse])
 def search_properties(
-    category: Optional[str] = Query(None, description="Category (e.g. Luxury, Residential, Investment)"),
-    sub_type: Optional[str] = Query(None, description="Property type (e.g. Villa, Apartment, Plot)"),
+    response: Response,
+    category: Optional[str] = Query(None, description="Category filter"),
+    sub_type: Optional[str] = Query(None, description="Property sub-type filter"),
     city: Optional[str] = Query(None, description="City filter"),
     location: Optional[str] = Query(None, description="Location filter"),
-    max_budget: Optional[Decimal] = Query(None, description="Max budget in INR (Rupees)"),
+    min_budget: Optional[Decimal] = Query(None, description="Min budget in INR"),
+    max_budget: Optional[Decimal] = Query(None, description="Max budget in INR"),
     bedrooms: Optional[int] = Query(None, description="Bedrooms (BHK) filter"),
+    possession_status: Optional[str] = Query(None, description="Possession status"),
+    featured: Optional[bool] = Query(None, description="Featured status"),
+    search_query: Optional[str] = Query(None, description="Search query in text fields"),
     db: Session = Depends(get_db),
 ):
-    return crud.search_properties(
+    properties = crud.search_properties(
         db,
+        min_budget=min_budget,
         max_budget=max_budget,
         location=location,
         property_type=sub_type,
         bhk=bedrooms,
         category=category,
         city=city,
+        featured=featured,
+        possession_status=possession_status,
+        search_query=search_query,
     )
+    response.headers["Cache-Control"] = "public, max-age=600, s-maxage=3600"
+    return [map_property_to_card(p) for p in properties]
 
 @app.get("/properties/{slug}", response_model=schemas.PropertyDetailResponse)
-def get_property_by_slug(slug: str, db: Session = Depends(get_db)):
+def get_property_by_slug(slug: str, response: Response, db: Session = Depends(get_db)):
     db_property = crud.get_property_by_slug(db, slug=slug)
     if not db_property:
         raise HTTPException(status_code=404, detail="Property not found")
+    response.headers["Cache-Control"] = "public, max-age=600, s-maxage=3600"
     return db_property
 
 
 @app.get("/property-options", response_model=List[schemas.PropertyOptionResponse])
-def get_property_options(db: Session = Depends(get_db)):
+def get_property_options(response: Response, db: Session = Depends(get_db)):
+    response.headers["Cache-Control"] = "public, max-age=600, s-maxage=3600"
     return crud.get_property_options(db)
 
 
 @app.get("/locations", response_model=List[str])
-def get_locations(db: Session = Depends(get_db)):
+def get_locations(response: Response, db: Session = Depends(get_db)):
+    response.headers["Cache-Control"] = "public, max-age=600, s-maxage=3600"
     return crud.get_unique_locations(db)
 
 # 2. Lead Qualification Flow
@@ -216,7 +317,8 @@ def update_appointment_details(
 
 # 4. FAQ System
 @app.get("/faqs", response_model=List[schemas.FAQResponse])
-def get_faqs(db: Session = Depends(get_db)):
+def get_faqs(response: Response, db: Session = Depends(get_db)):
+    response.headers["Cache-Control"] = "public, max-age=600, s-maxage=3600"
     return crud.get_faqs(db)
 
 # 5. Chat History
@@ -227,3 +329,11 @@ def create_chat_message(chat: schemas.ChatHistoryCreate, db: Session = Depends(g
 @app.get("/chat-history/{session_id}", response_model=List[schemas.ChatHistoryResponse])
 def get_chat_history(session_id: str, db: Session = Depends(get_db)):
     return crud.get_chat_history(db, session_id)
+
+
+# 6. Banner Carousel Management
+@app.get("/banners", response_model=List[schemas.BannerResponse])
+def get_banners(response: Response, db: Session = Depends(get_db)):
+    response.headers["Cache-Control"] = "public, max-age=600, s-maxage=3600"
+    return crud.get_active_banners(db)
+

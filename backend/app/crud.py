@@ -7,14 +7,18 @@ from datetime import datetime, date
 
 def search_properties(
     db: Session,
+    min_budget: Optional[Decimal] = None,
     max_budget: Optional[Decimal] = None,
     location: Optional[str] = None,
-    property_type: Optional[str] = None,  # maps to sub_type
+    property_type: Optional[str] = None,  # maps to sub_type (comma-separated support)
     bhk: Optional[int] = None,            # maps to bedrooms
     ready_to_move: Optional[bool] = None,
     under_construction: Optional[bool] = None,
-    category: Optional[str] = None,
+    category: Optional[str] = None,       # comma-separated support
     city: Optional[str] = None,
+    featured: Optional[bool] = None,
+    possession_status: Optional[str] = None,
+    search_query: Optional[str] = None,
 ) -> List[models.Property]:
     # Query with selectinload to eagerly load the relationship tables
     query = db.query(models.Property).options(
@@ -23,35 +27,68 @@ def search_properties(
         selectinload(models.Property.features)
     )
 
-    # Join variants table if filtering by variant-level parameters
-    has_variant_filter = (max_budget is not None and max_budget > 0) or (bhk is not None)
-    if has_variant_filter:
-        query = query.join(models.Property.variants)
+    from sqlalchemy import or_
 
     # Apply base table filters
+    if featured is not None:
+        query = query.filter(models.Property.featured == featured)
+
     if category:
-        query = query.filter(models.Property.category.ilike(f"%{category}%"))
+        if "," in category:
+            categories = [c.strip() for c in category.split(",")]
+            query = query.filter(or_(*(models.Property.category.ilike(f"%{c}%") for c in categories)))
+        else:
+            query = query.filter(models.Property.category.ilike(f"%{category}%"))
+
     if city:
         query = query.filter(models.Property.city.ilike(f"%{city}%"))
+
     if location:
         query = query.filter(models.Property.location.ilike(f"%{location}%"))
+
     if property_type:
-        query = query.filter(models.Property.sub_type.ilike(f"%{property_type}%"))
-    
-    # Possession status mapped from boolean criteria
+        if "," in property_type:
+            types = [t.strip() for t in property_type.split(",")]
+            query = query.filter(or_(*(models.Property.sub_type.ilike(f"%{t}%") for t in types)))
+        else:
+            query = query.filter(models.Property.sub_type.ilike(f"%{property_type}%"))
+
+    # Possession status mapping
     if ready_to_move is not None and ready_to_move:
         query = query.filter(models.Property.possession_status.ilike("%ready%"))
-    if under_construction is not None and under_construction:
+    elif under_construction is not None and under_construction:
         query = query.filter(models.Property.possession_status.ilike("%construction%"))
+    elif possession_status:
+        if possession_status.lower() in ("ready to move", "ready"):
+            query = query.filter(models.Property.possession_status.ilike("%ready%"))
+        elif possession_status.lower() in ("under construction", "construction"):
+            query = query.filter(models.Property.possession_status.ilike("%construction%"))
+        elif possession_status.lower() in ("ongoing",):
+            query = query.filter(models.Property.possession_status.ilike("%ongoing%"))
+        elif possession_status.lower() in ("upcoming",):
+            query = query.filter(models.Property.possession_status.ilike("%upcoming%"))
+        else:
+            query = query.filter(models.Property.possession_status.ilike(f"%{possession_status}%"))
 
-    # Apply variant filters
-    if max_budget is not None and max_budget > 0:
-        query = query.filter(models.PropertyVariant.price <= max_budget)
-    if bhk is not None:
-        query = query.filter(models.PropertyVariant.bedrooms == bhk)
+    if search_query:
+        query = query.filter(
+            or_(
+                models.Property.name.ilike(f"%{search_query}%"),
+                models.Property.location.ilike(f"%{search_query}%"),
+                models.Property.short_description.ilike(f"%{search_query}%"),
+            )
+        )
 
-    # Prevent duplicate Property rows if variants were joined
+    # Join variants table if filtering by variant-level parameters
+    has_variant_filter = (min_budget is not None and min_budget > 0) or (max_budget is not None and max_budget > 0) or (bhk is not None)
     if has_variant_filter:
+        query = query.join(models.Property.variants)
+        if min_budget is not None and min_budget > 0:
+            query = query.filter(models.PropertyVariant.price >= min_budget)
+        if max_budget is not None and max_budget > 0:
+            query = query.filter(models.PropertyVariant.price <= max_budget)
+        if bhk is not None:
+            query = query.filter(models.PropertyVariant.bedrooms == bhk)
         query = query.distinct()
 
     return query.all()
@@ -317,3 +354,27 @@ def get_property_options(db: Session) -> List[models.Property]:
 def get_unique_locations(db: Session) -> List[str]:
     results = db.query(models.Property.location).distinct().all()
     return sorted(list(set([r[0].strip() for r in results if r[0]])))
+
+
+def get_active_banners(db: Session) -> List[models.Banner]:
+    return (
+        db.query(models.Banner)
+        .filter(models.Banner.is_active == True)
+        .order_by(models.Banner.display_order.asc(), models.Banner.created_at.asc())
+        .all()
+    )
+
+
+def create_banner(db: Session, banner: schemas.BannerCreate) -> models.Banner:
+    db_banner = models.Banner(
+        title=banner.title,
+        image=banner.image,
+        link=banner.link,
+        display_order=banner.display_order,
+        is_active=banner.is_active,
+    )
+    db.add(db_banner)
+    db.commit()
+    db.refresh(db_banner)
+    return db_banner
+

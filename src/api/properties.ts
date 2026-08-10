@@ -68,9 +68,14 @@ export interface Property {
   status: string | null;
   created_at: string;
   updated_at: string;
-  variants: PropertyVariant[];
-  media: PropertyMedia[];
-  features: PropertyFeature[];
+  variants?: PropertyVariant[];
+  media?: PropertyMedia[];
+  features?: PropertyFeature[];
+  primary_image_url?: string;
+  bedrooms_summary?: string;
+  bathrooms_summary?: string;
+  area_summary?: string;
+  amenities?: string[];
 }
 
 export interface PropertyDetail extends Property {
@@ -86,8 +91,12 @@ export interface SearchFilters {
   sub_type?: string;
   city?: string;
   location?: string;
+  min_budget?: number;
   max_budget?: number;
   bedrooms?: number;
+  possession_status?: string;
+  featured?: boolean;
+  search_query?: string;
   [key: string]: string | number | boolean | undefined; // index signature for client query builder compatibility
 }
 
@@ -169,10 +178,10 @@ export async function getLocations(): Promise<string[]> {
  * Fetches properties and filters them on the client for featured items
  */
 export async function getFeaturedProperties(): Promise<Property[]> {
-  const dbProperties = await searchProperties();
-  let featured = dbProperties.filter((p) => p.featured);
-  if (featured.length === 0) {
-    featured = dbProperties.slice(0, 3);
+  try {
+    return await searchProperties({ featured: true });
+  } catch (error) {
+    console.error("API Error in getFeaturedProperties:", error);
+    return [];
   }
-  return featured;
 }

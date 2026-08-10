@@ -32,18 +32,38 @@ export function formatPriceToLabel(priceRaw: number | null): string {
   return `₹${priceRaw.toLocaleString("en-IN")}*`;
 }
 
+export function optimizeImageKitUrl(url: string | null | undefined, width: number, quality: number = 80): string {
+  if (!url || typeof url !== "string") return "";
+  if (!url.includes("ik.imagekit.io")) return url;
+  
+  const trValue = `w-${width},f-auto,q-${quality}`;
+  
+  if (url.includes("?")) {
+    const [base, query] = url.split("?");
+    const searchParams = new URLSearchParams(query);
+    searchParams.set("tr", trValue);
+    
+    // Decode `%2C` to `,` and `%3D` to `=` for standard ImageKit transformations URL readability
+    const queryString = searchParams.toString().replace(/%2C/g, ",").replace(/%3D/g, "=");
+    return `${base}?${queryString}`;
+  } else {
+    return `${url}?tr=${trValue}`;
+  }
+}
+
 /**
  * Selects the hero image URL from media array.
  * Prioritizes is_hero === true. Fallbacks to first image.
  */
-export function getHeroImage(media: PropertyMedia[]): string {
+export function getHeroImage(media: PropertyMedia[], width: number = 600): string {
   if (!media || media.length === 0) return "";
   const heroItem = media.find((m) => m.is_hero);
-  if (heroItem) return heroItem.media_url;
+  if (heroItem) return optimizeImageKitUrl(heroItem.media_url, width);
   
   // Fallback to first image item
   const imageItem = media.find((m) => m.media_type === "image" || !m.media_type);
-  return imageItem ? imageItem.media_url : media[0].media_url;
+  const url = imageItem ? imageItem.media_url : media[0].media_url;
+  return optimizeImageKitUrl(url, width);
 }
 
 /**
@@ -52,7 +72,7 @@ export function getHeroImage(media: PropertyMedia[]): string {
 export function getGallery(media: PropertyMedia[]): { src: string; label: string }[] {
   if (!media) return [];
   return media.map((m) => ({
-    src: m.media_url,
+    src: optimizeImageKitUrl(m.media_url, 1200), // optimized for detail gallery
     label: m.title || "",
   }));
 }
@@ -371,10 +391,12 @@ export function mapToHomepageProject(property: Property): HomepageProject {
     name: property.name,
     location: property.location,
     price: formatPriceToLabel(property.starting_price),
-    bhk: getBhkLabel(property.variants, property.sub_type),
-    bath: getBathroomsLabel(property.variants),
-    area: getAreaLabel(property.variants),
-    img: getHeroImage(property.media),
+    bhk: property.bedrooms_summary || getBhkLabel(property.variants || [], property.sub_type),
+    bath: property.bathrooms_summary || getBathroomsLabel(property.variants || []),
+    area: property.area_summary || getAreaLabel(property.variants || []),
+    img: property.primary_image_url
+      ? optimizeImageKitUrl(property.primary_image_url, 600)
+      : getHeroImage(property.media || [], 600),
   };
 }
 
@@ -410,14 +432,16 @@ export function mapToListingProperty(property: Property): ListingProperty {
     status,
     priceMin: property.starting_price ? (property.starting_price / 100_000) : 0,
     priceLabel: formatPriceToLabel(property.starting_price),
-    area: getAreaLabel(property.variants),
-    bhk: getBhkLabel(property.variants, property.sub_type),
-    amenities: property.features
+    area: property.area_summary || getAreaLabel(property.variants || []),
+    bhk: property.bedrooms_summary || getBhkLabel(property.variants || [], property.sub_type),
+    amenities: property.amenities || (property.features || [])
       .filter((f) => f.feature_type?.toUpperCase() === "AMENITY")
       .map((f) => f.feature_name),
     desc: property.short_description || "",
     tags: property.featured ? ["Featured"] : [],
-    img: getHeroImage(property.media),
+    img: property.primary_image_url
+      ? optimizeImageKitUrl(property.primary_image_url, 600)
+      : getHeroImage(property.media || [], 600),
     featured: property.featured,
   };
 }
@@ -441,17 +465,21 @@ export function mapToProjectDetail(property: PropertyDetail): DetailProject {
     type: property.sub_type || "",
     startingPrice: formatPriceToLabel(property.starting_price),
     possession: property.possession_status || "",
-    rera: extractRera(property.features),
+    rera: extractRera(property.features || []),
     badge,
     summary: property.about || "",
-    hero: getHeroImage(property.media),
-    gallery: getGallery(property.media),
-    videoThumb: getHeroImage(property.media), // fallback
+    hero: property.primary_image_url
+      ? optimizeImageKitUrl(property.primary_image_url, 1200)
+      : getHeroImage(property.media || [], 1200),
+    gallery: getGallery(property.media || []),
+    videoThumb: property.primary_image_url
+      ? optimizeImageKitUrl(property.primary_image_url, 1200)
+      : getHeroImage(property.media || [], 1200), // fallback
     highlights: getHighlightsFromProperty(property),
-    usps: property.features
+    usps: (property.features || [])
       .filter((f) => f.feature_type?.toUpperCase() === "USP")
       .map((f) => f.feature_name),
-    configurations: getConfigurations(property.variants),
+    configurations: getConfigurations(property.variants || []),
     description: {
       vision: property.about || "",
       lifestyle: property.why_choose || "",
@@ -459,10 +487,10 @@ export function mapToProjectDetail(property: PropertyDetail): DetailProject {
       quality: "", // safe empty value
       investment: "", // safe empty value
     },
-    amenities: getDetailAmenities(property.features),
-    nearby: getNearbyPlaces(property.features),
-    investment: getInvestmentFeatures(property.features),
-    faqs: mapFaqs(property.faqs),
+    amenities: getDetailAmenities(property.features || []),
+    nearby: getNearbyPlaces(property.features || []),
+    investment: getInvestmentFeatures(property.features || []),
+    faqs: mapFaqs(property.faqs || []),
     similar: [], // safely empty (loaded dynamically or left to UI fallback)
     brochureUrl: property.brochure_url || null,
   };

@@ -19,7 +19,7 @@ const WHATSAPP = "https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I'm
 export const Route = createFileRoute("/sahastradhara-road")({
   loader: async ({ context }) => {
     const dbProperties = await context.queryClient.ensureQueryData({
-      queryKey: ["property-list"],
+      queryKey: ["properties", {}],
       queryFn: () => searchProperties(),
     });
     const listingProperties = dbProperties.map(mapToListingProperty);

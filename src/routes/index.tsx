@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
-  Phone, Mail, MapPin, Calendar, Search, ArrowRight, MessageCircle,
+  Phone, Mail, MapPin, Search, ArrowRight, MessageCircle,
   Bed, Maximize, Building2, ShieldCheck, Sparkles, HandCoins, Headset,
   TrendingUp, ChevronLeft, ChevronRight, Quote, Facebook, Instagram, Youtube,
   Award, Clock, Heart,
@@ -10,11 +11,12 @@ import {
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { VideoTestimonialsSection } from "@/components/VideoTestimonialsSection";
-import heroProperty from "@/assets/hero-property.jpg";
-import heroVideo from "@/assets/up1.mp4";
-import founder from "@/assets/founder.jpeg";
+import { HeroCarousel } from "@/components/HeroCarousel/HeroCarousel";
+import founder from "@/assets/founder.jpg";
 import expertConsultation from "@/assets/expert-consultation.jpg";
 import { getFeaturedProperties, getLocations } from "@/api/properties";
+import sangamValleyDesktop from "@/assets/banners/sangam_valley_desktop.webp";
+import sangamValleyMobile from "@/assets/banners/sangam_valley_mobile.webp";
 import { mapToHomepageProject } from "@/mappers/propertyMapper";
 import { getAvailableLocations } from "@/lib/locationUtils";
 import { apiFetch } from "@/api/client";
@@ -22,20 +24,7 @@ import { toast } from "sonner";
 import { submitLead } from "@/api/leads";
 
 export const Route = createFileRoute("/")({
-  loader: async ({ context }) => {
-    const [featured, locations] = await Promise.all([
-      context.queryClient.ensureQueryData({
-        queryKey: ["featured-properties"],
-        queryFn: () => getFeaturedProperties(),
-      }),
-      context.queryClient.ensureQueryData({
-        queryKey: ["locations"],
-        queryFn: () => getLocations(),
-      }),
-    ]);
-    const homepageProjects = featured.map(mapToHomepageProject);
-    return { projects: homepageProjects, locations };
-  },
+  loader: () => {},
   head: () => {
     const title = "Real Estate & Plots for Sale in Dehradun | Vineyard Infra";
     const desc = "Looking for premium property in Sahastradhara Road or Dehradun? Explore luxury apartments, residential plots, and villas for sale with Vineyard Infra today.";
@@ -99,7 +88,9 @@ export const Route = createFileRoute("/")({
         { property: "og:type", content: "website" },
       ],
       links: [
-        { rel: "canonical", href: "https://vineyardinfra.com" }
+        { rel: "canonical", href: "https://vineyardinfra.com" },
+        { rel: "preload", as: "image", href: sangamValleyDesktop, media: "(min-width: 768px)" },
+        { rel: "preload", as: "image", href: sangamValleyMobile, media: "(max-width: 767px)" }
       ],
       scripts: [
         {
@@ -137,7 +128,18 @@ const budgetOptions = ["Any Budget", "Under 50 Lakhs", "50L - 1Cr", "1Cr - 2Cr",
 const statusOptions = ["Any Status", "Ongoing", "Ready to Move", "Under Construction", "Upcoming"];
 
 function Home() {
-  const { projects, locations } = Route.useLoaderData();
+  const { data: featured = [], isLoading: isFeaturedLoading } = useQuery({
+    queryKey: ["properties", { featured: true }],
+    queryFn: getFeaturedProperties,
+  });
+  const { data: locations = [] } = useQuery({
+    queryKey: ["locations"],
+    queryFn: getLocations,
+  });
+  const projects = useMemo(() => {
+    return featured.map(mapToHomepageProject);
+  }, [featured]);
+
   const locationOptions = useMemo(() => {
     return ["Any Location", ...locations];
   }, [locations]);
@@ -207,176 +209,80 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* HERO with header */}
-      <section className="relative h-screen min-h-[650px] md:min-h-[800px] overflow-hidden flex flex-col justify-between">
-        {/* Fallback poster — renders instantly, avoids layout shift */}
-        <img
-          src={heroProperty}
-          alt=""
-          width={1920}
-          height={1280}
-          className="absolute inset-0 size-full object-cover z-0"
-          aria-hidden="true"
-        />
-        {/* Background video — auto plays silently over the poster */}
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster={heroProperty}
-          className="absolute inset-0 size-full object-cover z-0 brightness-[0.92] contrast-[1.03]"
-        >
-          <source src="/up1.webm" type="video/webm" />
-          <source src={heroVideo} type="video/mp4" />
-        </video>
-        
-        {/* Subtle black overlay with 10% opacity for text readability without filters */}
-        <div className="absolute inset-0 bg-black/10 z-10" />
+      {/* Fixed Navbar */}
+      <Header activeLabel="Home" />
 
-        {/* Header */}
-        <Header activeLabel="Home" />
+      {/* Spacer for fixed navbar height + small gap */}
+      <div className="h-[58px]" />
 
-        {/* Hero content */}
-        <div className="relative z-20 mx-auto max-w-7xl px-6 md:px-12 lg:px-16 w-full flex-1 flex flex-col justify-end pb-36 md:pb-44">
-          <div className="max-w-4xl text-center md:text-left">
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.18 }}
-              className="font-display text-3xl md:text-5xl lg:text-6xl font-light tracking-wide text-white leading-[1.3] drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]"
-            >
-              Premium Properties & Plots<br />
-              <span className="font-italic-serif text-gold font-normal italic">For Sale in Dehradun</span>
-            </motion.h1>
-            
-            {/* Primary & Secondary CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
-              className="mt-10 flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4"
-            >
-              <Link
-                to="/properties"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-[14px] bg-gradient-to-r from-[#C9A45C] via-[#E6C587] to-[#B08A3E] px-8 py-3.5 md:py-4 text-xs md:text-sm font-semibold tracking-[0.14em] text-navy-deep shadow-[0_4px_15px_rgba(201,164,92,0.2)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(201,164,92,0.35)] active:translate-y-0 text-center uppercase select-none"
-              >
-                Explore Projects <ArrowRight className="size-4" />
-              </Link>
-              <Link
-                to="/contact"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-[14px] border border-gold/45 bg-white/5 backdrop-blur-md px-8 py-3.5 md:py-4 text-xs md:text-sm font-semibold text-white transition-all duration-200 hover:bg-gold hover:text-navy-deep hover:border-gold hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(212,175,55,0.15)] active:translate-y-0 text-center uppercase tracking-[0.14em] select-none"
-              >
-                <Calendar className="size-4" /> Book Site Visit
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Floating action sidebar (Desktop only) */}
-        <motion.aside
-          initial={{ opacity: 0, x: 8 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.42 }}
-          className="absolute right-4 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-2.5 md:flex"
-        >
-          <a
-            href="tel:+916397688989"
-            title="Call Us"
-            className="grid size-14 place-items-center rounded-full bg-navy-deep/80 text-gold backdrop-blur-md border border-white/10 transition-all duration-300 hover:bg-gold hover:text-navy-deep hover:scale-110 shadow-lg"
-          >
-            <Phone className="size-5" />
-          </a>
-          <a
-            href="https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I'm%20interested%20in%20exploring%20properties%20in%20Dehradun."
-            target="_blank"
-            rel="noopener noreferrer"
-            title="WhatsApp Us"
-            className="grid size-14 place-items-center rounded-full bg-navy-deep/80 text-gold backdrop-blur-md border border-white/10 transition-all duration-300 hover:bg-gold hover:text-navy-deep hover:scale-110 shadow-lg"
-          >
-            <MessageCircle className="size-5" />
-          </a>
-          <a
-            href="mailto:vineyardinfra005@gmail.com"
-            title="Email Us"
-            className="grid size-14 place-items-center rounded-full bg-navy-deep/80 text-gold backdrop-blur-md border border-white/10 transition-all duration-300 hover:bg-gold hover:text-navy-deep hover:scale-110 shadow-lg"
-          >
-            <Mail className="size-5" />
-          </a>
-        </motion.aside>
-
-        {/* Mobile floating WhatsApp button */}
-        <motion.a
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.45 }}
-          href="https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I'm%20interested%20in%20exploring%20properties%20in%20Dehradun."
-          target="_blank"
-          rel="noopener noreferrer"
-          className="fixed bottom-6 left-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-110 active:scale-95 md:hidden"
-          aria-label="Chat on WhatsApp"
-        >
-          <MessageCircle className="h-6 w-6 fill-white text-[#25D366]" />
-        </motion.a>
+      {/* HERO BANNER */}
+      <section className="relative w-full aspect-[9/16] md:aspect-[1920/700] max-h-[85vh] md:max-h-none overflow-hidden">
+        {/* Banner Carousel */}
+        <HeroCarousel />
       </section>
 
+
       {/* PROPERTY SEARCH (overlapping) */}
-      <section className="relative -mt-24 z-30 mx-auto max-w-7xl px-6">
-        <div className="rounded-sm bg-white p-6 shadow-elevated md:p-8" style={{ boxShadow: "var(--shadow-elevated)" }}>
-          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-            <h3 className="font-display text-2xl font-semibold text-navy-deep md:text-3xl">
-              Find Your <span className="font-italic-serif text-gold">Perfect</span> Property
-            </h3>
-            <Link to="/properties" className="text-sm font-semibold text-gold hover:underline">View All Projects →</Link>
-          </div>
-          <div className="grid gap-4 md:grid-cols-5">
-            <div className="md:col-span-1">
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-soft">Property Type</label>
+      <section className="relative mt-6 z-20 mx-auto max-w-6xl w-[85%] px-4 md:px-0">
+        <div className="rounded-[24px] bg-white/95 backdrop-blur-md p-3 lg:p-4 border border-slate-100/80 shadow-[0_20px_50px_rgba(15,23,42,0.12)]">
+          <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-5 items-stretch lg:items-center">
+            {/* Property Type */}
+            <div className="flex flex-col justify-center bg-slate-50/50 lg:bg-transparent border border-slate-100 lg:border-0 lg:border-r lg:border-slate-200/80 rounded-xl lg:rounded-none px-4 lg:px-6 py-2">
+              <label className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-slate-soft/80">Property Type</label>
               <select
                 value={search.type}
                 onChange={(e) => setSearch(s => ({ ...s, type: e.target.value }))}
-                className="h-12 w-full rounded-sm border border-border bg-white px-3 text-sm text-foreground focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                className="h-8 w-full border-0 bg-transparent p-0 text-sm font-semibold text-navy-deep focus:ring-0 focus:outline-none cursor-pointer"
               >
                 {typeOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
               </select>
             </div>
-            <div className="md:col-span-1">
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-soft">Location</label>
+
+            {/* Location */}
+            <div className="flex flex-col justify-center bg-slate-50/50 lg:bg-transparent border border-slate-100 lg:border-0 lg:border-r lg:border-slate-200/80 rounded-xl lg:rounded-none px-4 lg:px-6 py-2">
+              <label className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-slate-soft/80">Location</label>
               <select
                 value={search.location}
                 onChange={(e) => setSearch(s => ({ ...s, location: e.target.value }))}
-                className="h-12 w-full rounded-sm border border-border bg-white px-3 text-sm text-foreground focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                className="h-8 w-full border-0 bg-transparent p-0 text-sm font-semibold text-navy-deep focus:ring-0 focus:outline-none cursor-pointer"
               >
                 {locationOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
               </select>
             </div>
-            <div className="md:col-span-1">
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-soft">Budget</label>
+
+            {/* Budget */}
+            <div className="flex flex-col justify-center bg-slate-50/50 lg:bg-transparent border border-slate-100 lg:border-0 lg:border-r lg:border-slate-200/80 rounded-xl lg:rounded-none px-4 lg:px-6 py-2">
+              <label className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-slate-soft/80">Budget</label>
               <select
                 value={search.budget}
                 onChange={(e) => setSearch(s => ({ ...s, budget: e.target.value }))}
-                className="h-12 w-full rounded-sm border border-border bg-white px-3 text-sm text-foreground focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                className="h-8 w-full border-0 bg-transparent p-0 text-sm font-semibold text-navy-deep focus:ring-0 focus:outline-none cursor-pointer"
               >
                 {budgetOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
               </select>
             </div>
-            <div className="md:col-span-1">
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-soft">Project Status</label>
+
+            {/* Project Status */}
+            <div className="flex flex-col justify-center bg-slate-50/50 lg:bg-transparent border border-slate-100 lg:border-0 lg:border-r lg:border-slate-200/80 rounded-xl lg:rounded-none px-4 lg:px-6 py-2">
+              <label className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-slate-soft/80">Project Status</label>
               <select
                 value={search.status}
                 onChange={(e) => setSearch(s => ({ ...s, status: e.target.value }))}
-                className="h-12 w-full rounded-sm border border-border bg-white px-3 text-sm text-foreground focus:border-gold focus:outline-none focus:ring-1 focus:ring-gold"
+                className="h-8 w-full border-0 bg-transparent p-0 text-sm font-semibold text-navy-deep focus:ring-0 focus:outline-none cursor-pointer"
               >
                 {statusOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
               </select>
             </div>
-            <button
-              onClick={handleSearch}
-              className="flex h-12 items-center justify-center gap-2 self-end rounded-sm bg-navy-deep px-5 text-sm font-semibold text-white transition hover:bg-navy cursor-pointer"
-            >
-              <Search className="size-4" /> SEARCH PROPERTIES
-            </button>
+
+            {/* Search Button */}
+            <div className="flex items-center justify-center p-0.5 md:col-span-2 lg:col-span-1 lg:pl-4">
+              <button
+                onClick={handleSearch}
+                className="w-full h-12 lg:h-14 bg-gold hover:bg-gold-soft text-navy-deep font-semibold text-xs tracking-wider uppercase rounded-xl lg:rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.03] active:scale-[0.97] hover:shadow-[0_4px_20px_rgba(201,164,92,0.3)] shadow-md cursor-pointer"
+              >
+                <Search className="size-4 stroke-[2.5]" /> SEARCH PROPERTIES
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -397,16 +303,29 @@ function Home() {
           </div>
         </div>
 
-        {projects.length === 0 ? (
+        {isFeaturedLoading ? (
+          <div className="grid gap-6 md:grid-cols-3">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="animate-pulse rounded-sm bg-card border border-slate-100 shadow-card h-[450px]">
+                <div className="aspect-[4/3] w-full bg-slate-200" />
+                <div className="p-6 space-y-4">
+                  <div className="h-6 w-2/3 bg-slate-200 rounded" />
+                  <div className="h-4 w-1/2 bg-slate-200 rounded" />
+                  <div className="h-10 w-full bg-slate-200 rounded mt-4" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : projects.length === 0 ? (
           <div className="text-center py-12 text-slate-soft col-span-full">
             No featured properties available at the moment.
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-3">
-            {projects.map((p) => (
+            {projects.map((p, index) => (
               <article key={p.name} className="group overflow-hidden rounded-sm bg-card shadow-card transition hover:-translate-y-1 hover:shadow-elevated" style={{ boxShadow: "var(--shadow-card)" }}>
                 <div className="relative overflow-hidden">
-                  <img src={p.img} alt={p.name} width={1024} height={768} loading="lazy" className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-105" />
+                  <img src={p.img} alt={p.name} width={1024} height={768} loading={index < 3 ? "eager" : "lazy"} decoding="async" className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-105" />
                   <span className="absolute left-4 top-4 rounded-sm px-3 py-1.5 text-[10px] font-bold tracking-wider text-navy-deep" style={{ background: "var(--gradient-gold)" }}>
                     {p.tag}
                   </span>

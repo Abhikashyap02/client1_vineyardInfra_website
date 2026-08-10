@@ -12,6 +12,8 @@ import sangamValleyDesktop from "@/assets/banners/sangam_valley_desktop.webp";
 import sangamValleyMobile from "@/assets/banners/sangam_valley_mobile.webp";
 import platinumTownshipDesktop from "@/assets/banners/platinum_township_desktop.webp";
 import platinumTownshipMobile from "@/assets/banners/platinum_township_mobile.webp";
+import shikharHeightsDesktop from "@/assets/banners/shikhar_desktop.webp";
+import shikharHeightsMobile from "@/assets/banners/shikhar_mobile.webp";
 import { optimizeImageKitUrl } from "@/mappers/propertyMapper";
 
 /**
@@ -49,6 +51,7 @@ export function HeroCarousel({
       return apiBanners.map((b) => {
         const isSangam = b.link?.includes("sangam-valley") || b.title?.toLowerCase().includes("sangam");
         const isPlatinum = b.link?.includes("platinum-township") || b.title?.toLowerCase().includes("platinum");
+        const isShikhar = b.link?.includes("shikhar-heights") || b.title?.toLowerCase().includes("shikhar");
         
         let image = b.image;
         let mobileImage = undefined;
@@ -59,6 +62,9 @@ export function HeroCarousel({
         } else if (isPlatinum) {
           image = platinumTownshipDesktop;
           mobileImage = platinumTownshipMobile;
+        } else if (isShikhar) {
+          image = shikharHeightsDesktop;
+          mobileImage = shikharHeightsMobile;
         } else {
           // Optimize custom API banners on the fly if they are ImageKit URLs
           if (b.image && b.image.includes("ik.imagekit.io")) {

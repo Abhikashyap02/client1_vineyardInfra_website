@@ -4,6 +4,8 @@ import sangamValleyDesktop from "@/assets/banners/sangam_valley_desktop.webp";
 import sangamValleyMobile from "@/assets/banners/sangam_valley_mobile.webp";
 import platinumTownshipDesktop from "@/assets/banners/platinum_township_desktop.webp";
 import platinumTownshipMobile from "@/assets/banners/platinum_township_mobile.webp";
+import shikharHeightsDesktop from "@/assets/banners/shikhar_desktop.webp";
+import shikharHeightsMobile from "@/assets/banners/shikhar_mobile.webp";
 
 /**
  * Static banner configuration for the hero carousel.
@@ -29,6 +31,16 @@ export const heroBanners: BannerSlide[] = [
     displayOrder: 2,
     isActive: true,
     alt: "Platinum Township – Premium Plots on Chandpur-Sahaspur Road, Dehradun. Starting from ₹40K per Sq. Yard.",
+  },
+  {
+    id: 3,
+    title: "Shikhar Heights",
+    image: shikharHeightsDesktop,
+    mobileImage: shikharHeightsMobile,
+    link: "/projects/shikhar-heights",
+    displayOrder: 3,
+    isActive: true,
+    alt: "Shikhar Heights – Ultra-premium 3 BHK apartments at Dhoran Road, near Ghati, River Valley, Dehradun. MDDA Approved, starting from ₹1.05 Cr*.",
   },
 ];
 

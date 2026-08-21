@@ -38,8 +38,8 @@ const services = [
   },
   {
     icon: ShieldCheck,
-    title: "Property Advisory",
-    desc: "End-to-end guidance — legal, financial and market due diligence.",
+    title: "Construction Services",
+    desc: "We help you get your dream home constructed from the ground up.",
   },
   {
     icon: Eye,
@@ -124,13 +124,11 @@ export function DesktopNav({ variant = "light", activeLabel }: DesktopNavProps) 
         <span key={l.label} className="contents">
           <Link
             to={l.to}
-            className={`relative py-1 font-serif text-[10px] xl:text-xs tracking-[0.12em] xl:tracking-[0.16em] whitespace-nowrap uppercase transition-all duration-300 ${textHover} ${
-              activeLabel === l.label ? textActive : textBase
-            } after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:bg-gold after:transition-transform after:duration-300 ${
-              activeLabel === l.label
+            className={`relative py-1 font-serif text-[10px] xl:text-xs tracking-[0.12em] xl:tracking-[0.16em] whitespace-nowrap uppercase transition-all duration-300 ${textHover} ${activeLabel === l.label ? textActive : textBase
+              } after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:w-full after:bg-gold after:transition-transform after:duration-300 ${activeLabel === l.label
                 ? "after:scale-x-100 after:origin-left"
                 : "after:scale-x-0 after:origin-right hover:after:scale-x-100 hover:after:origin-left"
-            }`}
+              }`}
             activeProps={{ className: `transition-all ${textActive} after:scale-x-100 after:origin-left` }}
             activeOptions={{ exact: l.to === "/" }}
             onClick={() => setOpenMenu(null)}
@@ -164,11 +162,10 @@ export function DesktopNav({ variant = "light", activeLabel }: DesktopNavProps) 
 
       {/* ---- SERVICES MEGA MENU ---- */}
       <div
-        className={`absolute left-1/2 -translate-x-1/2 top-full pt-4 z-50 transition-all duration-300 ${
-          openMenu === "services"
+        className={`absolute left-1/2 -translate-x-1/2 top-full pt-4 z-50 transition-all duration-300 ${openMenu === "services"
             ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 -translate-y-2 pointer-events-none"
-        }`}
+          }`}
       >
         <div className="w-[740px] rounded-xl border border-border bg-white p-6 shadow-[var(--shadow-elevated)]">
           <div className="mb-4 flex items-center justify-between">
@@ -222,11 +219,10 @@ export function DesktopNav({ variant = "light", activeLabel }: DesktopNavProps) 
 
       {/* ---- POPULAR LOCATIONS DROPDOWN ---- */}
       <div
-        className={`absolute left-1/2 -translate-x-1/2 top-full pt-4 z-50 transition-all duration-300 ${
-          openMenu === "locations"
+        className={`absolute left-1/2 -translate-x-1/2 top-full pt-4 z-50 transition-all duration-300 ${openMenu === "locations"
             ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 -translate-y-2 pointer-events-none"
-        }`}
+          }`}
       >
         <div className="w-[420px] rounded-xl border border-border bg-white p-5 shadow-[var(--shadow-elevated)]">
           <div className="mb-3 flex items-center justify-between">

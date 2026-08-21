@@ -262,7 +262,7 @@ export function getHighlightsFromProperty(property: Property): { icon: string; l
   }
 
   // RERA Highlight
-  const rera = extractRera(property.features);
+  const rera = extractRera(property.features || []);
   if (rera) {
     highlights.push({ icon: "BadgeCheck", label: "RERA", value: rera });
   }

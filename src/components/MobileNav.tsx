@@ -39,7 +39,7 @@ const services = [
   { icon: Home, title: "Residential Properties", desc: "Premium villas, apartments and homes." },
   { icon: Building2, title: "Commercial Properties", desc: "Offices, retail spaces and investments." },
   { icon: TrendingUp, title: "Investment Consulting", desc: "Data-driven advice to maximise ROI." },
-  { icon: ShieldCheck, title: "Property Advisory", desc: "Legal, financial and market guidance." },
+  { icon: ShieldCheck, title: "Construction services", desc: "We help you get your dream home constructed from the ground up." },
   { icon: Eye, title: "Site Visit Assistance", desc: "Guided tours with comparison reports." },
 ];
 
@@ -73,8 +73,8 @@ export function MobileNav({ trigger = "light", hideAt = "md" }: Props) {
         aria-label="Open menu"
         onClick={() => setOpen(true)}
         className={`${hideClass} grid size-11 place-items-center rounded-sm border ${trigger === "light"
-            ? "border-white/25 text-white"
-            : "border-border text-foreground"
+          ? "border-white/25 text-white"
+          : "border-border text-foreground"
           }`}
       >
         <Menu className="size-5" />

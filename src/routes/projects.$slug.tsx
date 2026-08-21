@@ -187,10 +187,10 @@ function ProjectDetail() {
   }, []);
 
   // Derived data for conditional rendering
-  const hasVideo = raw.media.some((m) => m.media_type === "video");
-  const hasFloorPlans = raw.media.some((m) => m.media_type === "floor_plan");
-  const floorPlanMedia = raw.media.filter((m) => m.media_type === "floor_plan");
-  const videoMedia = raw.media.filter((m) => m.media_type === "video");
+  const hasVideo = (raw.media || []).some((m) => m.media_type === "video");
+  const hasFloorPlans = (raw.media || []).some((m) => m.media_type === "floor_plan");
+  const floorPlanMedia = (raw.media || []).filter((m) => m.media_type === "floor_plan");
+  const videoMedia = (raw.media || []).filter((m) => m.media_type === "video");
   const hasAmenities = project.amenities.length > 0;
   const hasUSPs = project.usps.length > 0 || !!raw.why_choose;
   const hasAbout = !!raw.about;
@@ -201,7 +201,7 @@ function ProjectDetail() {
   const hasBrochure = !!project.brochureUrl;
   const hasInvestment = project.investment.length > 0;
   const hasFaqs = project.faqs.length > 0;
-  const reraNumber = extractRera(raw.features);
+  const reraNumber = extractRera(raw.features || []);
   const isPlot = raw.sub_type?.toLowerCase() === "plot";
 
   // SEO: noindex for landing mode
@@ -385,18 +385,18 @@ function HeroGallery({
 }) {
   /* ── Media classification ── */
   const imageMedia = useMemo(
-    () => raw.media.filter((m) => {
+    () => (raw.media || []).filter((m) => {
       const t = (m.media_type || "").toLowerCase();
       return !t.includes("video") && !t.includes("floor");
     }),
     [raw.media],
   );
   const videoMedia = useMemo(
-    () => raw.media.filter((m) => (m.media_type || "").toLowerCase().includes("video")),
+    () => (raw.media || []).filter((m) => (m.media_type || "").toLowerCase().includes("video")),
     [raw.media],
   );
   const floorPlanMedia = useMemo(
-    () => raw.media.filter((m) => (m.media_type || "").toLowerCase().includes("floor")),
+    () => (raw.media || []).filter((m) => (m.media_type || "").toLowerCase().includes("floor")),
     [raw.media],
   );
 

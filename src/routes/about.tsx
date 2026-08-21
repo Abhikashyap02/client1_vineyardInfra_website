@@ -36,8 +36,6 @@ import {
 import founderImg from "@/assets/founder.jpg";
 import heroImg from "@/assets/hero-property.jpg";
 import interiorImg from "@/assets/interior-living.jpg";
-import sumitiImg from "@/assets/sumiti.jpeg";
-import poojaImg from "@/assets/pooja.jpeg";
 
 export const Route = createFileRoute("/about")({
   head: () => {
@@ -187,12 +185,13 @@ function Stat({ icon, label }: { icon: React.ReactNode; label: string }) {
 
 /* ---------- 2. Founder Spotlight ---------- */
 const TIMELINE = [
-  { year: "2012", title: "The Beginning", body: "Started journey in real estate as an advisor in Dehradun." },
-  { year: "2015", title: "Investor Network", body: "Built a trusted network of HNI investors across North India." },
-  { year: "2018", title: "Premium Projects", body: "Expanded into luxury villas and gated community partnerships." },
-  { year: "2021", title: "Vineyard Infra", body: "Formally launched as a full-service real estate advisory." },
-  { year: "2024", title: "Family Of 500+", body: "Helping families and investors discover the right opportunities." },
+  { year: "2012", title: "The Beginning - Vineyard Infra", body: "Started journey in real estate as an advisor in Dehradun." },
+  { year: "2015", title: "Investor Network", body: "Built a trusted network of HNI investors, Builders, Developers and premium projects across Dehradun, India." },
+  { year: "2018", title: "Premium Projects", body: "Expanded into luxury Flats ,Villas and gated community partnerships." },
+  { year: "2024", title: "Family Of 200+", body: "Helping families and investors discover the right opportunities." },
+  { year: "2026", title: "Registered - Vineyard Infra Realcon LLP", body: "Officially incorporated as Vineyard Infra Realcon LLP, setting new benchmarks in trust, compliance, and excellence." },
 ];
+
 
 function FounderSpotlight() {
   const [active, setActive] = useState(0);
@@ -206,7 +205,7 @@ function FounderSpotlight() {
             <div className="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-navy-deep to-transparent text-white">
               <p className="font-display text-2xl font-semibold">RUDRA THAKUR</p>
               <p className="text-sm text-gold">MD</p>
-              <p className="text-xs text-white/70 mt-1">12+ years • Dehradun Market</p>
+              <p className="text-xs text-white/70 mt-1">15+ years • Dehradun Market</p>
             </div>
           </div>
         </div>
@@ -263,11 +262,11 @@ function FounderSpotlight() {
 
 /* ---------- 3. Trust Metrics ---------- */
 const METRICS = [
-  { value: 320, suffix: "+", label: "Properties Sold", icon: Home },
-  { value: 500, suffix: "+", label: "Happy Families", icon: Users },
-  { value: 12, suffix: "yrs", label: "Of Experience", icon: Calendar },
-  { value: 1200, suffix: "+", label: "Projects Evaluated", icon: Search },
-  { value: 2400, suffix: "+", label: "Site Visits Organized", icon: MapPin },
+  { value: 180, suffix: "+", label: "Properties Sold", icon: Home },
+  { value: 200, suffix: "+", label: "Happy Families", icon: Users },
+  { value: 15, suffix: "yrs", label: "Of Experience", icon: Calendar },
+  { value: 150, suffix: "+", label: "Projects Evaluated", icon: Search },
+  { value: 1800, suffix: "+", label: "Site Visits Organized", icon: MapPin },
 ];
 
 function MetricCard({ m, start }: { m: (typeof METRICS)[0]; start: boolean }) {
@@ -310,12 +309,11 @@ function TrustMetrics() {
 
 /* ---------- 4. Journey Timeline ---------- */
 const JOURNEY = [
-  { year: "2012", title: "Real Estate Journey", body: "First independent property advisory in Dehradun." },
-  { year: "2015", title: "Builder Partnerships", body: "Tied up with 8 leading local developers." },
-  { year: "2018", title: "₹100 Cr Milestone", body: "Crossed cumulative ₹100 crore in transactions." },
-  { year: "2021", title: "Vineyard Infra Launch", body: "Formal brand launch with full-service advisory." },
-  { year: "2023", title: "Premium Vertical", body: "Expanded into luxury villas and gated communities." },
-  { year: "2024", title: "500+ Families", body: "Recognized as a top trusted advisor in the region." },
+  { year: "2012", title: "The Beginning - Vineyard Infra", body: "Started journey in real estate as an advisor in Dehradun." },
+  { year: "2015", title: "Investor Network", body: "Built a trusted network of HNI investors, Builders, Developers and premium projects across Dehradun, India." },
+  { year: "2018", title: "Premium Projects", body: "Expanded into luxury Flats ,Villas and gated community partnerships." },
+  { year: "2024", title: "Family Of 200+", body: "Helping families and investors discover the right opportunities." },
+  { year: "2026", title: "Registered - Vineyard Infra Realcon LLP", body: "Officially incorporated as Vineyard Infra Realcon LLP, setting new benchmarks in trust, compliance, and excellence." },
 ];
 
 function JourneySection() {
@@ -444,7 +442,7 @@ function MarketExpertise() {
               <div className="text-xs text-slate-soft mt-1">Builder Partners</div>
             </div>
             <div className="text-center p-4 bg-warm-bg rounded-lg">
-              <div className="font-display text-2xl font-bold text-navy-deep">12yr</div>
+              <div className="font-display text-2xl font-bold text-navy-deep">15yr</div>
               <div className="text-xs text-slate-soft mt-1">Market Data</div>
             </div>
           </div>
@@ -491,9 +489,9 @@ function MarketExpertise() {
 
 /* ---------- 7. Partner Network ---------- */
 const PARTNERS = [
-  "Pacific Group", "Doon Realty", "Himalayan Builders", "Greenfield Estates",
+  "Pacific Group", "GRES", "ATS", "Platinum Township",
   "HDFC Bank", "ICICI HFC", "SBI Home Loans", "Axis Bank",
-  "Khaitan Legal", "Doon Advocates", "Verify360", "ClearTitle Co.",
+  "Rudra living", "Mist Society", "Sangam Valley", "Landmark",
 ];
 
 function PartnerNetwork() {
@@ -501,7 +499,7 @@ function PartnerNetwork() {
     <section className="bg-warm-bg py-20 md:py-24">
       <div className="max-w-7xl mx-auto px-5 md:px-10">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <p className="text-xs uppercase tracking-[0.2em] text-gold font-semibold">Partner Network</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-gold font-semibold">Partner Network & Projects</p>
           <h2 className="font-display text-3xl md:text-5xl font-semibold text-navy-deep mt-3 leading-tight">
             Backed by builders, banks & <span className="font-italic-serif text-gold">legal</span> experts.
           </h2>
@@ -526,103 +524,103 @@ function PartnerNetwork() {
   );
 }
 
-/* ---------- 8. Success Stories ---------- */
-const STORIES = [
-  {
-    tag: "Family Home",
-    title: "Finding a Family-Friendly Home",
-    challenge: "A young family with two children needed a 3BHK near reputed schools.",
-    solution: "Curated 6 verified options across Jakhan and Dalanwala within budget.",
-    result: "Closed on a 3BHK villa with school 5 min away, in 28 days.",
-    img: interiorImg,
-  },
-  {
-    tag: "NRI Investor",
-    title: "Long-Distance Investment, Zero Stress",
-    challenge: "An NRI client wanted a hands-off plot investment with strong appreciation.",
-    solution: "Identified Sahastradhara corridor plot, handled paperwork and registration end-to-end.",
-    result: "₹65 L plot now valued at ₹89 L within 26 months. Fully managed.",
-    img: heroImg,
-  },
-  {
-    tag: "First-Time Buyer",
-    title: "From Renter to Homeowner",
-    challenge: "First-time buyer unsure about loan eligibility and right neighborhood.",
-    solution: "Bank tie-up secured 85% loan; shortlisted 4 ready-to-move 2BHKs.",
-    result: "Possession in 45 days. EMI lower than previous rent.",
-    img: founderImg,
-  },
-];
+// /* ---------- 8. Success Stories ---------- */
+// const STORIES = [
+//   {
+//     tag: "Family Home",
+//     title: "Finding a Family-Friendly Home",
+//     challenge: "A young family with two children needed a 3BHK near reputed schools.",
+//     solution: "Curated 6 verified options across Jakhan and Dalanwala within budget.",
+//     result: "Closed on a 3BHK villa with school 5 min away, in 28 days.",
+//     img: interiorImg,
+//   },
+//   {
+//     tag: "NRI Investor",
+//     title: "Long-Distance Investment, Zero Stress",
+//     challenge: "An NRI client wanted a hands-off plot investment with strong appreciation.",
+//     solution: "Identified Sahastradhara corridor plot, handled paperwork and registration end-to-end.",
+//     result: "₹65 L plot now valued at ₹89 L within 26 months. Fully managed.",
+//     img: heroImg,
+//   },
+//   {
+//     tag: "First-Time Buyer",
+//     title: "From Renter to Homeowner",
+//     challenge: "First-time buyer unsure about loan eligibility and right neighborhood.",
+//     solution: "Bank tie-up secured 85% loan; shortlisted 4 ready-to-move 2BHKs.",
+//     result: "Possession in 45 days. EMI lower than previous rent.",
+//     img: founderImg,
+//   },
+// ];
 
-function SuccessStories() {
-  const [active, setActive] = useState(0);
-  const s = STORIES[active];
-  return (
-    <section className="bg-navy-deep py-20 md:py-28 text-white">
-      <div className="max-w-7xl mx-auto px-5 md:px-10">
-        <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-gold font-semibold">Client Stories</p>
-            <h2 className="font-display text-3xl md:text-5xl font-semibold mt-3 max-w-2xl leading-tight">
-              Real challenges. Real <span className="font-italic-serif text-gold">outcomes.</span>
-            </h2>
-          </div>
-          <div className="flex gap-2">
-            {STORIES.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActive(i)}
-                className={`h-2 rounded-full transition-all ${active === i ? "w-10 bg-gold" : "w-2 bg-white/30 hover:bg-white/50"
-                  }`}
-                aria-label={`Story ${i + 1}`}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="grid md:grid-cols-12 gap-8 items-stretch">
-          <div className="md:col-span-5 relative rounded-2xl overflow-hidden min-h-[360px]">
-            <img src={s.img} alt={s.title} className="absolute inset-0 h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-deep via-navy-deep/30 to-transparent" />
-            <div className="absolute bottom-0 inset-x-0 p-6">
-              <span className="inline-block px-3 py-1 rounded-full bg-gold text-navy-deep text-xs font-medium uppercase tracking-wide">
-                {s.tag}
-              </span>
-              <h3 className="font-display text-2xl font-semibold mt-3">{s.title}</h3>
-            </div>
-          </div>
-          <div className="md:col-span-7 bg-white/5 backdrop-blur rounded-2xl p-7 md:p-9 border border-white/10">
-            <StoryBlock label="The Challenge" body={s.challenge} />
-            <div className="h-px bg-white/10 my-6" />
-            <StoryBlock label="Our Solution" body={s.solution} />
-            <div className="h-px bg-white/10 my-6" />
-            <StoryBlock label="The Result" body={s.result} highlight />
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button className="bg-gold text-navy-deep hover:bg-gold-soft">
-                Start Your Story <ArrowRight className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white hover:text-navy-deep">
-                Read More Stories
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+// function SuccessStories() {
+//   const [active, setActive] = useState(0);
+//   const s = STORIES[active];
+//   return (
+//     <section className="bg-navy-deep py-20 md:py-28 text-white">
+//       <div className="max-w-7xl mx-auto px-5 md:px-10">
+//         <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
+//           <div>
+//             <p className="text-xs uppercase tracking-[0.2em] text-gold font-semibold">Client Stories</p>
+//             <h2 className="font-display text-3xl md:text-5xl font-semibold mt-3 max-w-2xl leading-tight">
+//               Real challenges. Real <span className="font-italic-serif text-gold">outcomes.</span>
+//             </h2>
+//           </div>
+//           <div className="flex gap-2">
+//             {STORIES.map((_, i) => (
+//               <button
+//                 key={i}
+//                 onClick={() => setActive(i)}
+//                 className={`h-2 rounded-full transition-all ${active === i ? "w-10 bg-gold" : "w-2 bg-white/30 hover:bg-white/50"
+//                   }`}
+//                 aria-label={`Story ${i + 1}`}
+//               />
+//             ))}
+//           </div>
+//         </div>
+//         <div className="grid md:grid-cols-12 gap-8 items-stretch">
+//           <div className="md:col-span-5 relative rounded-2xl overflow-hidden min-h-[360px]">
+//             <img src={s.img} alt={s.title} className="absolute inset-0 h-full w-full object-cover" />
+//             <div className="absolute inset-0 bg-gradient-to-t from-navy-deep via-navy-deep/30 to-transparent" />
+//             <div className="absolute bottom-0 inset-x-0 p-6">
+//               <span className="inline-block px-3 py-1 rounded-full bg-gold text-navy-deep text-xs font-medium uppercase tracking-wide">
+//                 {s.tag}
+//               </span>
+//               <h3 className="font-display text-2xl font-semibold mt-3">{s.title}</h3>
+//             </div>
+//           </div>
+//           <div className="md:col-span-7 bg-white/5 backdrop-blur rounded-2xl p-7 md:p-9 border border-white/10">
+//             <StoryBlock label="The Challenge" body={s.challenge} />
+//             <div className="h-px bg-white/10 my-6" />
+//             <StoryBlock label="Our Solution" body={s.solution} />
+//             <div className="h-px bg-white/10 my-6" />
+//             <StoryBlock label="The Result" body={s.result} highlight />
+//             <div className="mt-8 flex flex-wrap gap-3">
+//               <Button className="bg-gold text-navy-deep hover:bg-gold-soft">
+//                 Start Your Story <ArrowRight className="h-4 w-4" />
+//               </Button>
+//               <Button variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white hover:text-navy-deep">
+//                 Read More Stories
+//               </Button>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </section>
+//   );
+// }
 
-function StoryBlock({ label, body, highlight }: { label: string; body: string; highlight?: boolean }) {
-  return (
-    <div>
-      <p className={`text-xs uppercase tracking-[0.2em] font-semibold ${highlight ? "text-gold" : "text-white/60"}`}>
-        {label}
-      </p>
-      <p className={`mt-2 leading-relaxed ${highlight ? "text-white text-lg font-medium" : "text-white/80"}`}>
-        {body}
-      </p>
-    </div>
-  );
-}
+// function StoryBlock({ label, body, highlight }: { label: string; body: string; highlight?: boolean }) {
+//   return (
+//     <div>
+//       <p className={`text-xs uppercase tracking-[0.2em] font-semibold ${highlight ? "text-gold" : "text-white/60"}`}>
+//         {label}
+//       </p>
+//       <p className={`mt-2 leading-relaxed ${highlight ? "text-white text-lg font-medium" : "text-white/80"}`}>
+//         {body}
+//       </p>
+//     </div>
+//   );
+// }
 
 /* ---------- 9. Our Promise ---------- */
 const PROMISES = [
@@ -668,9 +666,7 @@ function OurPromise() {
 
 /* ---------- 10. Team ---------- */
 const TEAM = [
-  { name: "RUDRA THAKUR", role: "MD", img: founderImg },
-  { name: "Sumiti", role: "Telecaller Executive", img: sumitiImg },
-  { name: "Pooja", role: "Telecaller Executive", img: poojaImg },
+  { name: "RUDRA THAKUR", role: "MD", img: founderImg }
 ];
 
 function TeamSection() {
@@ -819,7 +815,7 @@ function AboutPage() {
       <HowWeWork />
       <MarketExpertise />
       <PartnerNetwork />
-      <SuccessStories />
+      {/* <SuccessStories /> */}
       <OurPromise />
       <TeamSection />
       <FAQSection />

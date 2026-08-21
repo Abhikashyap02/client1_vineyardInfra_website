@@ -24,11 +24,11 @@ import { toast } from "sonner";
 import { submitLead } from "@/api/leads";
 
 export const Route = createFileRoute("/")({
-  loader: () => {},
+  loader: () => { },
   head: () => {
     const title = "Real Estate & Plots for Sale in Dehradun | Vineyard Infra";
     const desc = "Looking for premium property in Sahastradhara Road or Dehradun? Explore luxury apartments, residential plots, and villas for sale with Vineyard Infra today.";
-    
+
     const orgSchema = {
       "@context": "https://schema.org",
       "@type": "Organization",
@@ -116,8 +116,8 @@ const navLinks: { label: string; to: "/" | "/properties" | "/about" | "/contact"
 
 const stats = [
   { value: "15+", label: "Years of Experience" },
-  { value: "500+", label: "Happy Families" },
-  { value: "₹750 Cr+", label: "Worth Properties Sold" },
+  { value: "200+", label: "Happy Families" },
+  { value: "₹220 Cr+", label: "Worth Properties Sold" },
   { value: "20+", label: "Projects Delivered" },
 ];
 
@@ -425,7 +425,7 @@ function Home() {
         <div className="mx-auto grid max-w-7xl grid-cols-1 md:grid-cols-[42%_58%] lg:grid-cols-[45%_55%] items-center gap-12 lg:gap-20 px-6 py-24 relative z-10">
           {/* Left Column: Premium Card holding the illustration */}
           <div className="flex justify-center w-full">
-            <motion.div 
+            <motion.div
               animate={{ y: [0, -3, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
               className="w-full max-w-[380px] md:max-w-none bg-white rounded-[20px] border border-[#D4AF37]/8 p-4 md:p-5 shadow-[0_12px_40px_rgba(212,175,55,0.04)] hover:shadow-[0_20px_50px_rgba(212,175,55,0.09)] transition-all duration-300 hover:scale-[1.02] relative"
@@ -455,24 +455,24 @@ function Home() {
             <p className="mt-[28px] max-w-xl text-[14.5px] leading-relaxed text-slate-soft">
               Get curated property suggestions, honest guidance, and direct answers. Contact us directly to fast-track your investment journey.
             </p>
-            
+
             {/* Call to Actions */}
             <div className="mt-[36px] flex flex-col sm:flex-row gap-4 items-center">
-              <a 
-                href="tel:+916397688989" 
+              <a
+                href="tel:+916397688989"
                 className="w-full sm:w-auto h-[60px] inline-flex items-center justify-center gap-3 rounded-[16px] px-8 text-sm font-medium text-navy-deep shadow-[0_4px_20px_rgba(212,175,55,0.15)] hover:shadow-[0_6px_25px_rgba(212,175,55,0.25)] transition-all duration-300 hover:-translate-y-[2px]"
                 style={{ background: "var(--gradient-gold)" }}
               >
-                <Phone className="size-4 shrink-0" /> 
+                <Phone className="size-4 shrink-0" />
                 <span>Call +91 63976 88989</span>
               </a>
-              <a 
-                href="https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I'm%20interested%20in%20exploring%20properties%20in%20Dehradun." 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://wa.me/916397688989?text=Hi%20Vineyard%20Infra%2C%20I'm%20interested%20in%20exploring%20properties%20in%20Dehradun."
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full sm:w-auto h-[60px] inline-flex items-center justify-center gap-3 rounded-[16px] border border-emerald-600/30 bg-emerald-500/5 hover:bg-emerald-500/10 px-8 text-sm font-medium text-emerald-700 transition-all duration-300 hover:-translate-y-[2px]"
               >
-                <MessageCircle className="size-4 text-emerald-600 shrink-0" /> 
+                <MessageCircle className="size-4 text-emerald-600 shrink-0" />
                 <span>WhatsApp Now</span>
               </a>
             </div>

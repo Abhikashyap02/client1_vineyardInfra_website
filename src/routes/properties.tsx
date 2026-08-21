@@ -238,7 +238,7 @@ function PropertiesPage() {
   }, [featuredRaw]);
 
   const searchParams = Route.useSearch();
-  const navigate = useNavigate();
+  const navigate = useNavigate({ from: "/properties" });
 
   const locationOptions = useMemo(() => {
     const primaries = locations.map(loc => getPrimaryLocation(loc)).filter(Boolean);

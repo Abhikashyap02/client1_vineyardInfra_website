@@ -553,7 +553,7 @@ function AdvisorSection() {
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-deep to-transparent p-6 text-white">
                 <p className="font-display text-2xl font-semibold">RUDRA THAKUR</p>
                 <p className="text-sm text-gold">MD</p>
-                <p className="mt-1 text-xs text-white/70">12+ years • Dehradun Market Expert</p>
+                <p className="mt-1 text-xs text-white/70">15+ years • Dehradun Market Expert</p>
               </div>
             </div>
           </div>
@@ -575,9 +575,9 @@ function AdvisorSection() {
             </div>
             <div className="mt-8 grid grid-cols-3 gap-6 border-t border-border pt-6">
               {[
-                { value: "12+", label: "Years Experience" },
-                { value: "500+", label: "Families Guided" },
-                { value: "₹750Cr+", label: "Transactions" },
+                { value: "15+", label: "Years Experience" },
+                { value: "200+", label: "Families Guided" },
+                { value: "₹220Cr+", label: "Transactions" },
               ].map((s) => (
                 <div key={s.label}>
                   <p className="font-display text-2xl font-bold text-navy-deep">{s.value}</p>

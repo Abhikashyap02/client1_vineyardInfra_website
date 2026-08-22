@@ -55,7 +55,7 @@ export function HeroCarousel({
         const isSangam = b.link?.toLowerCase().includes("sangam-valley") || b.title?.toLowerCase().includes("sangam");
         const isPlatinum = b.link?.toLowerCase().includes("platinum-township") || b.title?.toLowerCase().includes("platinum");
         const isShikhar = b.link?.toLowerCase().includes("shikhar-heights") || b.title?.toLowerCase().includes("shikhar");
-        const isLiveLuxury = b.link?.toLowerCase().includes("live-luxury") || b.title?.toLowerCase().includes("live-luxury");
+        const isLiveLuxury = b.link?.toLowerCase().includes("live-luxury") || b.title?.toLowerCase().includes("live-luxury") || b.link?.toLowerCase().includes("shivaan-nest") || b.title?.toLowerCase().includes("shivaan");
         
         let image = b.image;
         let mobileImage = undefined;

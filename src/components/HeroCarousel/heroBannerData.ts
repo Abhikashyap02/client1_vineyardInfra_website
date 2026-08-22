@@ -46,13 +46,13 @@ export const heroBanners: BannerSlide[] = [
   },
   {
     id: 4,
-    title: "Live-Luxury",
+    title: "Shivaan Nest",
     image: liveLuxuryDesktop,
     mobileImage: liveLuxuryMobile,
-    link: "/projects/live-luxury",
+    link: "/projects/Shivaan-nest",
     displayOrder: 4,
     isActive: true,
-    alt: "Live-Luxury – 4-Storey Premium Living in Kalagoan, near DPS School, Dehradun. 1 BHK Starting from ₹40 Lacs* and 2 BHK from ₹69 Lacs*.",
+    alt: "Shivaan Nest – 4-Storey Premium Living in Kalagoan, near DPS School, Dehradun. 1 BHK Starting from ₹40 Lacs* and 2 BHK from ₹69 Lacs*.",
   },
 ];
 

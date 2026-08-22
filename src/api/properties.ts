@@ -113,8 +113,8 @@ export interface SearchFilters {
  */
 export const mockLiveLuxuryProperty: Property = {
   id: "77721eb8-a828-4437-9e09-8d06a3751580",
-  slug: "live-luxury",
-  name: "Live-Luxury",
+  slug: "shivaan-nest",
+  name: "Shivaan Nest",
   category: "Luxury",
   sub_type: "Apartment",
   location: "Kalagoan, Near DPS School",
@@ -122,8 +122,8 @@ export const mockLiveLuxuryProperty: Property = {
   state: "Uttarakhand",
   starting_price: 4000000,
   possession_status: "Under Construction",
-  short_description: "🌟 Live-Luxury – 4-Storey Premium Living 🌟 Experience elevated everyday living with MDDA approved luxury 1 & 2 BHK floors in Kalagoan, Dehradun. Starting from ₹40 Lacs*.",
-  about: "Live-Luxury is an exclusive 4-storey premium residential development located in the peaceful and highly connected neighborhood of Kalagoan, near DPS School, Dehradun. Offering meticulously planned 1 BHK and 2 BHK independent floors, the project combines modern amenities with serene surroundings. Designed for those who value privacy, comfort, and premium craftsmanship, each unit features wide balconies, ventilation on three sides, and high-quality structural elements.",
+  short_description: "🌟 Shivaan Nest – 4-Storey Premium Living 🌟 Experience elevated everyday living with MDDA approved luxury 1 & 2 BHK floors in Kalagoan, Dehradun. Starting from ₹40 Lacs*.",
+  about: "Shivaan Nest is an exclusive 4-storey premium residential development located in the peaceful and highly connected neighborhood of Kalagoan, near DPS School, Dehradun. Offering meticulously planned 1 BHK and 2 BHK independent floors, the project combines modern amenities with serene surroundings. Designed for those who value privacy, comfort, and premium craftsmanship, each unit features wide balconies, ventilation on three sides, and high-quality structural elements.",
   why_choose: "MDDA Approved Project: Completely legal and approved for easy home loans and registration security.\nPremium Location: Situated near DPS School in Kalagoan, providing rapid access to major educational institutions, hospitals, and transit points.\n4-Storey Low Density Living: Highly exclusive layout ensuring peace, security, and low maintenance.",
   brochure_url: null,
   google_map_url: null,
@@ -262,8 +262,8 @@ export const mockLiveLuxuryDetail: PropertyDetail = {
     {
       id: "faq1",
       property_id: "77721eb8-a828-4437-9e09-8d06a3751580",
-      question: "Where is Live-Luxury located?",
-      answer: "Live-Luxury is located in Kalagoan, near DPS School, Dehradun, which is a highly premium residential zone.",
+      question: "Where is Shivaan Nest located?",
+      answer: "Shivaan Nest is located in Kalagoan, near DPS School, Dehradun, which is a highly premium residential zone.",
       display_order: 1,
       created_at: "2026-08-22T00:00:00.000Z"
     },
@@ -271,7 +271,7 @@ export const mockLiveLuxuryDetail: PropertyDetail = {
       id: "faq2",
       property_id: "77721eb8-a828-4437-9e09-8d06a3751580",
       question: "Is the project MDDA approved?",
-      answer: "Yes, Live-Luxury is an MDDA approved project.",
+      answer: "Yes, Shivaan Nest is an MDDA approved project.",
       display_order: 2,
       created_at: "2026-08-22T00:00:00.000Z"
     },
@@ -292,7 +292,7 @@ export async function searchProperties(filters?: SearchFilters): Promise<Propert
       method: "GET",
       params: filters,
     });
-    if (!results.some(p => p.slug?.toLowerCase() === "live-luxury")) {
+    if (!results.some(p => p.slug?.toLowerCase() === "shivaan-nest")) {
       let match = true;
       if (filters?.category && filters.category !== "Luxury" && filters.category !== "Residential") {
         match = false;
@@ -325,7 +325,7 @@ export async function getPropertyBySlug(slug: string): Promise<PropertyDetail> {
     });
   } catch (error) {
     console.error(`API Error in getPropertyBySlug for slug '${slug}':`, error);
-    if (slug.toLowerCase() === "live-luxury") {
+    if (slug.toLowerCase() === "shivaan-nest") {
       return mockLiveLuxuryDetail;
     }
     throw error;

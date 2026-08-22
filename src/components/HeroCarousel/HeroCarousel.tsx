@@ -36,7 +36,7 @@ import { optimizeImageKitUrl } from "@/mappers/propertyMapper";
  * - Full ARIA accessibility attributes (live region, roledescription, focus styles)
  */
 export function HeroCarousel({
-  autoPlayInterval = 5500,
+  autoPlayInterval = 11000,
   pauseOnHover = true,
 }: HeroCarouselProps) {
   // Query backend for active banners
@@ -56,10 +56,10 @@ export function HeroCarousel({
         const isPlatinum = b.link?.toLowerCase().includes("platinum-township") || b.title?.toLowerCase().includes("platinum");
         const isShikhar = b.link?.toLowerCase().includes("shikhar-heights") || b.title?.toLowerCase().includes("shikhar");
         const isLiveLuxury = b.link?.toLowerCase().includes("live-luxury") || b.title?.toLowerCase().includes("live-luxury") || b.link?.toLowerCase().includes("shivaan-nest") || b.title?.toLowerCase().includes("shivaan");
-        
+
         let image = b.image;
         let mobileImage = undefined;
-        
+
         if (isSangam) {
           image = sangamValleyDesktop;
           mobileImage = sangamValleyMobile;

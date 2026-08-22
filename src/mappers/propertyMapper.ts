@@ -128,28 +128,49 @@ export function getAreaLabel(variants: PropertyVariant[]): string {
     .filter((a): a is string => a !== null && a !== undefined && a !== "");
 
   if (areas.length === 0) return "";
-  const cleanAreas = areas.map((a) => {
-    // Remove non-numeric characters to parse
-    const num = parseInt(a.replace(/[^0-9]/g, ""), 10);
-    return { original: a, num: isNaN(num) ? 0 : num };
-  }).filter(item => item.num > 0);
 
-  if (cleanAreas.length === 0) {
+  // Parse each area string into a formatted range and sort value
+  const parsedRanges = areas.map((a) => {
+    const numbers = a.match(/\d+/g)?.map(Number) || [];
+    const lower = a.toLowerCase();
+    const hasYd = lower.includes("yd") || lower.includes("yard") || lower.includes("gaj");
+    
+    if (numbers.length >= 2) {
+      return {
+        formatted: `${numbers[0]} to ${numbers[1]}`,
+        sortVal: numbers[0],
+        hasYd
+      };
+    } else if (numbers.length === 1) {
+      return {
+        formatted: `${numbers[0]}`,
+        sortVal: numbers[0],
+        hasYd
+      };
+    }
+    return {
+      formatted: a,
+      sortVal: 0,
+      hasYd
+    };
+  }).filter(item => item.sortVal > 0 || item.formatted !== "");
+
+  if (parsedRanges.length === 0) {
     return areas[0];
   }
 
-  cleanAreas.sort((a, b) => a.num - b.num);
-  const minArea = cleanAreas[0];
-  const maxArea = cleanAreas[cleanAreas.length - 1];
+  // Sort ranges by minimum area value
+  parsedRanges.sort((a, b) => a.sortVal - b.sortVal);
 
-  // Detect suffix type (Sq.Ft. or Sq.Yd.)
-  const sampleArea = minArea.original.toLowerCase();
-  const suffix = sampleArea.includes("yd") || sampleArea.includes("yard") ? "Sq.Yd." : "Sq.Ft.";
+  // Collect unique ranges to prevent duplicates
+  const uniqueRanges = Array.from(new Set(parsedRanges.map(r => r.formatted)));
 
-  if (minArea.num === maxArea.num) {
-    return `${minArea.num} ${suffix}`;
-  }
-  return `${minArea.num} – ${maxArea.num} ${suffix}`;
+  // Determine suffix (Sq.Yd. if any variant specifies yards/gaj, otherwise Sq.Ft.)
+  const hasYd = parsedRanges.some(r => r.hasYd);
+  const suffix = hasYd ? "Sq.Yd." : "Sq.Ft.";
+
+  // Combine ranges
+  return `${uniqueRanges.join(" - ")} ${suffix}`;
 }
 
 /**

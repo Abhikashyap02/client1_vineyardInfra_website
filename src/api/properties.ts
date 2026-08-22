@@ -292,7 +292,7 @@ export async function searchProperties(filters?: SearchFilters): Promise<Propert
       method: "GET",
       params: filters,
     });
-    if (!results.some(p => p.slug === "live-luxury")) {
+    if (!results.some(p => p.slug?.toLowerCase() === "live-luxury")) {
       let match = true;
       if (filters?.category && filters.category !== "Luxury" && filters.category !== "Residential") {
         match = false;

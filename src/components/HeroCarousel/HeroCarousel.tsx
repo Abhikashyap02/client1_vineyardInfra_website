@@ -52,10 +52,10 @@ export function HeroCarousel({
   const slides: BannerSlide[] = useMemo(() => {
     if (apiBanners && Array.isArray(apiBanners) && apiBanners.length > 0) {
       return apiBanners.map((b) => {
-        const isSangam = b.link?.includes("sangam-valley") || b.title?.toLowerCase().includes("sangam");
-        const isPlatinum = b.link?.includes("platinum-township") || b.title?.toLowerCase().includes("platinum");
-        const isShikhar = b.link?.includes("shikhar-heights") || b.title?.toLowerCase().includes("shikhar");
-        const isLiveLuxury = b.link?.includes("live-luxury") || b.title?.toLowerCase().includes("live-luxury");
+        const isSangam = b.link?.toLowerCase().includes("sangam-valley") || b.title?.toLowerCase().includes("sangam");
+        const isPlatinum = b.link?.toLowerCase().includes("platinum-township") || b.title?.toLowerCase().includes("platinum");
+        const isShikhar = b.link?.toLowerCase().includes("shikhar-heights") || b.title?.toLowerCase().includes("shikhar");
+        const isLiveLuxury = b.link?.toLowerCase().includes("live-luxury") || b.title?.toLowerCase().includes("live-luxury");
         
         let image = b.image;
         let mobileImage = undefined;

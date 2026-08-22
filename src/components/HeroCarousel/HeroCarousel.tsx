@@ -14,7 +14,10 @@ import platinumTownshipDesktop from "@/assets/banners/platinum_township_desktop.
 import platinumTownshipMobile from "@/assets/banners/platinum_township_mobile.webp";
 import shikharHeightsDesktop from "@/assets/banners/shikhar_desktop.webp";
 import shikharHeightsMobile from "@/assets/banners/shikhar_mobile.webp";
+import liveLuxuryDesktop from "@/assets/banners/live_luxury_desktop.webp";
+import liveLuxuryMobile from "@/assets/banners/live_luxury_mobile.webp";
 import { optimizeImageKitUrl } from "@/mappers/propertyMapper";
+
 
 /**
  * Full-width cinematic hero banner carousel with TanStack Query integration.
@@ -52,6 +55,7 @@ export function HeroCarousel({
         const isSangam = b.link?.includes("sangam-valley") || b.title?.toLowerCase().includes("sangam");
         const isPlatinum = b.link?.includes("platinum-township") || b.title?.toLowerCase().includes("platinum");
         const isShikhar = b.link?.includes("shikhar-heights") || b.title?.toLowerCase().includes("shikhar");
+        const isLiveLuxury = b.link?.includes("live-luxury") || b.title?.toLowerCase().includes("live-luxury");
         
         let image = b.image;
         let mobileImage = undefined;
@@ -65,6 +69,9 @@ export function HeroCarousel({
         } else if (isShikhar) {
           image = shikharHeightsDesktop;
           mobileImage = shikharHeightsMobile;
+        } else if (isLiveLuxury) {
+          image = liveLuxuryDesktop;
+          mobileImage = liveLuxuryMobile;
         } else {
           // Optimize custom API banners on the fly if they are ImageKit URLs
           if (b.image && b.image.includes("ik.imagekit.io")) {

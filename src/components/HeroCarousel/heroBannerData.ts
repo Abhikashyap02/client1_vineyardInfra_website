@@ -6,6 +6,8 @@ import platinumTownshipDesktop from "@/assets/banners/platinum_township_desktop.
 import platinumTownshipMobile from "@/assets/banners/platinum_township_mobile.webp";
 import shikharHeightsDesktop from "@/assets/banners/shikhar_desktop.webp";
 import shikharHeightsMobile from "@/assets/banners/shikhar_mobile.webp";
+import liveLuxuryDesktop from "@/assets/banners/live_luxury_desktop.webp";
+import liveLuxuryMobile from "@/assets/banners/live_luxury_mobile.webp";
 
 /**
  * Static banner configuration for the hero carousel.
@@ -42,5 +44,16 @@ export const heroBanners: BannerSlide[] = [
     isActive: true,
     alt: "Shikhar Heights – Ultra-premium 3 BHK apartments at Dhoran Road, near Ghati, River Valley, Dehradun. MDDA Approved, starting from ₹1.05 Cr*.",
   },
+  {
+    id: 4,
+    title: "Live-Luxury",
+    image: liveLuxuryDesktop,
+    mobileImage: liveLuxuryMobile,
+    link: "/projects/live-luxury",
+    displayOrder: 4,
+    isActive: true,
+    alt: "Live-Luxury – 4-Storey Premium Living in Kalagoan, near DPS School, Dehradun. 1 BHK Starting from ₹40 Lacs* and 2 BHK from ₹69 Lacs*.",
+  },
 ];
+
 

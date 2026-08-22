@@ -309,6 +309,28 @@ def seed_data():
         )
         db.add(prop_13)
         
+        prop_14 = Property(
+            id=uuid.UUID('77721eb8-a828-4437-9e09-8d06a3751580'),
+            slug='live-luxury',
+            name='Live-Luxury',
+            category='Residential',
+            sub_type='Apartment',
+            location='Kalagoan, Near DPS School',
+            city='Dehradun',
+            state='Uttarakhand',
+            starting_price=Decimal('4000000.00'),
+            possession_status='Under Construction',
+            short_description='🌟 Live-Luxury – 4-Storey Premium Living 🌟 Experience elevated everyday living with MDDA approved luxury 1 & 2 BHK floors in Kalagoan, Dehradun. Starting from ₹40 Lacs*.',
+            about='Live-Luxury is an exclusive 4-storey premium residential development located in the peaceful and highly connected neighborhood of Kalagoan, near DPS School, Dehradun. Offering meticulously planned 1 BHK and 2 BHK independent floors, the project combines modern amenities with serene surroundings. Designed for those who value privacy, comfort, and premium craftsmanship, each unit features wide balconies, ventilation on three sides, and high-quality structural elements.',
+            why_choose='MDDA Approved Project: Completely legal and approved for easy home loans and registration security.\nPremium Location: Situated near DPS School in Kalagoan, providing rapid access to major educational institutions, hospitals, and transit points.\n4-Storey Low Density Living: Highly exclusive layout ensuring peace, security, and low maintenance.',
+            brochure_url=None,
+            google_map_url=None,
+            featured=True,
+            status='Active'
+        )
+        db.add(prop_14)
+
+        
 
         print('Seeding variants...')
         db.add(PropertyVariant(
@@ -515,6 +537,30 @@ def seed_data():
             front_road='30 Ft. Road',
             availability='Available'
         ))
+        db.add(PropertyVariant(
+            id=uuid.UUID('34d06ae9-251a-490c-9c2e-49fa3f971afe'),
+            property_id=prop_14.id,
+            variant_name='1 BHK Floors',
+            area='650 - 750 Sq. Ft.',
+            bedrooms=1,
+            bathrooms=1,
+            price=Decimal('4000000.00'),
+            facing='East Facing',
+            front_road='30 Ft. Road',
+            availability='Available'
+        ))
+        db.add(PropertyVariant(
+            id=uuid.UUID('35d06ae9-251a-490c-9c2e-49fa3f971afe'),
+            property_id=prop_14.id,
+            variant_name='2 BHK Floors',
+            area='1150 - 1250 Sq. Ft.',
+            bedrooms=2,
+            bathrooms=2,
+            price=Decimal('6900000.00'),
+            facing='East Facing',
+            front_road='30 Ft. Road',
+            availability='Available'
+        ))
 
         print('Seeding media...')
         db.add(PropertyMedia(
@@ -532,6 +578,24 @@ def seed_data():
             media_type='Gallery Image',
             media_url='https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=80',
             title='Aviraj Apartments Interior Living',
+            is_hero=False,
+            display_order=2
+        ))
+        db.add(PropertyMedia(
+            id=uuid.UUID('0ab793ab-9f5c-4ce8-a9b1-5f0e9230a698'),
+            property_id=prop_14.id,
+            media_type='Hero Image',
+            media_url='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80',
+            title='Live-Luxury Exterior Facade',
+            is_hero=True,
+            display_order=1
+        ))
+        db.add(PropertyMedia(
+            id=uuid.UUID('1b5ac0af-9e1e-42ee-b829-31e4b5eea613'),
+            property_id=prop_14.id,
+            media_type='Gallery Image',
+            media_url='https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=80',
+            title='Live-Luxury Interior Living',
             is_hero=False,
             display_order=2
         ))
@@ -1564,6 +1628,62 @@ def seed_data():
             feature_name='24/7 Gated Security',
             display_order=3
         ))
+        db.add(PropertyFeature(
+            id=uuid.UUID('12a3e2f1-4801-4628-bfc6-998a842e792d'),
+            property_id=prop_14.id,
+            feature_type='RERA',
+            feature_name='MDDA Approved',
+            display_order=1
+        ))
+        db.add(PropertyFeature(
+            id=uuid.UUID('13a3e2f1-4801-4628-bfc6-998a842e792d'),
+            property_id=prop_14.id,
+            feature_type='USP',
+            feature_name='4-Storey Low Density Design',
+            display_order=2
+        ))
+        db.add(PropertyFeature(
+            id=uuid.UUID('14a3e2f1-4801-4628-bfc6-998a842e792d'),
+            property_id=prop_14.id,
+            feature_type='USP',
+            feature_name='Excellent Road Access',
+            display_order=3
+        ))
+        db.add(PropertyFeature(
+            id=uuid.UUID('15a3e2f1-4801-4628-bfc6-998a842e792d'),
+            property_id=prop_14.id,
+            feature_type='AMENITY',
+            feature_name='24/7 Gated Security',
+            display_order=4
+        ))
+        db.add(PropertyFeature(
+            id=uuid.UUID('16a3e2f1-4801-4628-bfc6-998a842e792d'),
+            property_id=prop_14.id,
+            feature_type='AMENITY',
+            feature_name='Power Backup',
+            display_order=5
+        ))
+        db.add(PropertyFeature(
+            id=uuid.UUID('17a3e2f1-4801-4628-bfc6-998a842e792d'),
+            property_id=prop_14.id,
+            feature_type='AMENITY',
+            feature_name='Dedicated Covered Parking',
+            display_order=6
+        ))
+        db.add(PropertyFeature(
+            id=uuid.UUID('18a3e2f1-4801-4628-bfc6-998a842e792d'),
+            property_id=prop_14.id,
+            feature_type='NEARBY',
+            feature_name='DPS School - 2 Mins',
+            display_order=7
+        ))
+        db.add(PropertyFeature(
+            id=uuid.UUID('19a3e2f1-4801-4628-bfc6-998a842e792d'),
+            property_id=prop_14.id,
+            feature_type='NEARBY',
+            feature_name='Main Market - 5 Mins',
+            display_order=8
+        ))
 
         print('Seeding FAQs...')
         db.add(FAQ(
@@ -1950,6 +2070,27 @@ def seed_data():
             question='What is the asking price and parking setup?',
             answer='The asking price is ₹78 Lakhs for 3BHK and ₹65 lakhs for 2BHK. Each flat includes dedicated parking space for 1 car and 2 wheelers, along with automatic power backup for common areas and a guard room for 24/7 security.',
             display_order=1
+        ))
+        db.add(FAQ(
+            id=uuid.UUID('fa075432-ac91-4a51-9805-418abf80b767'),
+            property_id=prop_14.id,
+            question='Where is Live-Luxury located?',
+            answer='Live-Luxury is located in Kalagoan, near DPS School, Dehradun, which is a highly premium residential zone.',
+            display_order=1
+        ))
+        db.add(FAQ(
+            id=uuid.UUID('fb075432-ac91-4a51-9805-418abf80b767'),
+            property_id=prop_14.id,
+            question='Is the project MDDA approved?',
+            answer='Yes, Live-Luxury is an MDDA approved project.',
+            display_order=2
+        ))
+        db.add(FAQ(
+            id=uuid.UUID('fc075432-ac91-4a51-9805-418abf80b767'),
+            property_id=prop_14.id,
+            question='What are the starting prices?',
+            answer='1 BHK floors start at ₹40 Lacs onwards, and 2 BHK floors start at ₹69 Lacs onwards.',
+            display_order=3
         ))
 
         db.commit()

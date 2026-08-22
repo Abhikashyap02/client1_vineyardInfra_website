@@ -319,9 +319,6 @@ export async function getPropertyBySlug(slug: string): Promise<PropertyDetail> {
   if (!slug) {
     throw new Error("Slug parameter is required.");
   }
-  if (slug.toLowerCase() === "live-luxury") {
-    return mockLiveLuxuryDetail;
-  }
   try {
     return await apiFetch<PropertyDetail>(`/properties/${encodeURIComponent(slug)}`, {
       method: "GET",

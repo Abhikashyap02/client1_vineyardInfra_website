@@ -99,7 +99,7 @@ def get_property_by_slug(db: Session, slug: str) -> Optional[models.Property]:
         selectinload(models.Property.media),
         selectinload(models.Property.features),
         selectinload(models.Property.faqs)
-    ).filter(models.Property.slug == slug).first()
+    ).filter(models.Property.slug.ilike(slug)).first()
 
 def create_lead(db: Session, lead: schemas.LeadCreate) -> models.Lead:
     lead_data = lead.model_dump()

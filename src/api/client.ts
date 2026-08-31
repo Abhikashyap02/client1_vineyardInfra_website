@@ -10,7 +10,7 @@ const getBackendUrl = () => {
   }
 
   let apiUrl = (import.meta.env.VITE_API_URL as string) || "";
-  
+
   if (apiUrl) {
     // Ensure the API URL has a protocol scheme
     if (!apiUrl.startsWith("http://") && !apiUrl.startsWith("https://")) {
@@ -22,7 +22,7 @@ const getBackendUrl = () => {
     }
     return apiUrl;
   }
-  
+
   return "http://localhost:8000";
 };
 
@@ -77,8 +77,8 @@ export async function apiFetch<T>(path: string, options: FetchOptions = {}): Pro
     try {
       const errorData = await response.json();
       if (errorData?.detail) {
-        errorMessage = typeof errorData.detail === "string" 
-          ? errorData.detail 
+        errorMessage = typeof errorData.detail === "string"
+          ? errorData.detail
           : JSON.stringify(errorData.detail);
       }
     } catch {

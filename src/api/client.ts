@@ -4,7 +4,7 @@ const getBackendUrl = () => {
   if (import.meta.env.DEV) {
     const apiUrl = (import.meta.env.VITE_API_URL as string) || "";
     if (apiUrl && !apiUrl.includes("up.railway.app")) {
-      return apiUrl;
+      return apiUrl.endsWith("/") ? apiUrl.slice(0, -1) : apiUrl;
     }
     return "http://localhost:8000";
   }
@@ -20,7 +20,8 @@ const getBackendUrl = () => {
         apiUrl = `https://${apiUrl}`;
       }
     }
-    return apiUrl;
+    // Remove trailing slash to prevent double-slash issues with endpoints
+    return apiUrl.endsWith("/") ? apiUrl.slice(0, -1) : apiUrl;
   }
 
   return "http://localhost:8000";
@@ -35,8 +36,9 @@ interface FetchOptions extends RequestInit {
 export async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T> {
   const { params, headers, ...restOptions } = options;
 
-  // Construct URL with query parameters if present
-  let url = `${BACKEND_URL}${path}`;
+  // Construct URL with query parameters if present, ensuring single slash separator
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  let url = `${BACKEND_URL}${cleanPath}`;
   if (params) {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {

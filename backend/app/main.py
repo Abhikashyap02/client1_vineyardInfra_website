@@ -20,10 +20,12 @@ logger = logging.getLogger("app.main")
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title=settings.PROJECT_NAME,
-    docs_url="/docs" if settings.SHOW_DOCS else None,
-    redoc_url="/redoc" if settings.SHOW_DOCS else None,
-    openapi_url="/openapi.json" if settings.SHOW_DOCS else None,
+    title="Vineyard Infra API",
+    description="Backend API for Vineyard Infra real estate platform",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
 )
 
 # Centralized IP extraction supporting reverse proxies
@@ -91,7 +93,19 @@ async def add_security_headers(request: Request, call_next):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Strict-Transport-Security"] = "max-age=63072000; includeSubDomains; preload"
-    response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
+    
+    # Relax CSP for documentation routes (/docs, /redoc, /openapi.json) so Swagger UI and ReDoc assets load cleanly
+    if request.url.path in ["/docs", "/redoc", "/openapi.json"]:
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            "img-src 'self' data: https://fastapi.tiangolo.com https://cdn.jsdelivr.net; "
+            "connect-src 'self'; "
+            "frame-ancestors 'none'"
+        )
+    else:
+        response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
     return response
 # Root endpoint
 @app.get("/")

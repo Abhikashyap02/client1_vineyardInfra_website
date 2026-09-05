@@ -9,20 +9,28 @@ from pydantic_settings import BaseSettings
 load_dotenv()
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Vineyard Infra Chatbot Backend"
+    PROJECT_NAME: str = "Vineyard Infra API"
     API_V1_STR: str = "/api"
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./chatbot.db")
     CORS_ORIGINS: Union[list[str], str] = [
+        "https://vineyardinfra.in",
+        "https://www.vineyardinfra.in",
         "http://localhost:8080",
         "http://127.0.0.1:8080",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
         "http://192.168.1.6:8080",
         "http://192.168.1.6:3000",
         "http://192.168.1.6:5173",
     ]
-    # Match any localhost (with port) and any Cloudflare Workers or Pages domain (allowing multi-level subdomains)
-    CORS_ORIGINS_REGEX: Optional[str] = r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$|^https://[a-zA-Z0-9_.-]+\.(pages|workers)\.dev$"
+    # Match any localhost (with port), any Cloudflare Workers or Pages domain (allowing multi-level subdomains), and vineyardinfra.in
+    CORS_ORIGINS_REGEX: Optional[str] = (
+        r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$"
+        r"|^https://([a-zA-Z0-9_.-]+\.)?(pages|workers)\.dev$"
+        r"|^https://([a-zA-Z0-9_.-]+\.)?vineyardinfra\.in$"
+    )
 
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
@@ -40,7 +48,7 @@ class Settings(BaseSettings):
 
     GOOGLE_SERVICE_ACCOUNT_FILE: Optional[str] = os.getenv("GOOGLE_SERVICE_ACCOUNT_FILE")
     GOOGLE_SPREADSHEET_ID: Optional[str] = os.getenv("GOOGLE_SPREADSHEET_ID")
-    SHOW_DOCS: bool = os.getenv("SHOW_DOCS", "False").lower() == "true"
+    SHOW_DOCS: bool = os.getenv("SHOW_DOCS", "True").lower() == "true"
     GOOGLE_SERVICE_ACCOUNT_JSON: Optional[str] = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
 
     class Config:

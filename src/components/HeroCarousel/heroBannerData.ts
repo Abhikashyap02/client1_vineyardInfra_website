@@ -32,7 +32,7 @@ export const heroBanners: BannerSlide[] = [
     link: "/projects/platinum-township",
     displayOrder: 2,
     isActive: true,
-    alt: "Platinum Township – Premium Plots on Chandpur-Sahaspur Road, Dehradun. Starting from ₹40K per Sq. Yard.",
+    alt: "Platinum Township – Premium Plots on Chandpur-Sahaspur Road, Dehradun. Starting from ₹45K per Sq. Yard.",
   },
   {
     id: 3,
